@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
-import nl.recipes.controllers.RootController;
+import nl.recipes.controllers.views.RootController;
 
 @Component
 public class PrimaryStageInitializer implements ApplicationListener<StageReadyEvent> {
