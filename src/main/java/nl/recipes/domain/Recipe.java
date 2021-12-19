@@ -22,12 +22,15 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Recipe {
 
 	@Id
@@ -39,10 +42,8 @@ public class Recipe {
 	@Size(max = 60, message="Naam mag niet langer zijn dan 60 karakters")
 	private String name;
 	
-	@Lob
 	private String servingTips;
 
-	@Lob
 	private String notes;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe", orphanRemoval = true)
@@ -66,10 +67,9 @@ public class Recipe {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate lastServed;
 
-	@Lob
+
 	private String preparations;
 	
-	@Lob
 	private String directions;
 
 	private Integer rating;
