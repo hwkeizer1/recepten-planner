@@ -42,9 +42,25 @@ public class RootController {
 	}
 	
 	@FXML
-	public void showTagListTableView(ActionEvent actionEvent) {
-		rootWindow.setCenter(tagTableView.getTableView());
+	public void closeSideBar(ActionEvent actionEvent) {
+		rootWindow.setLeft(null);
 	}
+	
+	@FXML
+	public void showTagListTableView(ActionEvent actionEvent) {
+		rootWindow.setLeft(tagTableView.getTableView());
+	}
+	
+	@FXML
+	public void showMeasureUnitListTableView(ActionEvent actionEvent) {
+		log.debug("MeasureUnitList");
+	}
+	
+	@FXML
+	public void showIngredientNameListTableView(ActionEvent actionEvent) {
+		log.debug("IngredientNameList");
+	}
+
 	
 	@FXML
 	public void closeProgram(ActionEvent actionEvent) {

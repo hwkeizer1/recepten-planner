@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootWindow" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.RootController">
+<BorderPane fx:id="rootWindow" prefHeight="800.0" prefWidth="1000.0" style="-fx-border-style: solid; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.RootController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -20,7 +28,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Categorieën">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#showTagListTableView" text="Toon lijst" />
+                  <CheckMenuItem mnemonicParsing="false" onAction="#showTagListTableView" text="Toon categorie lijst" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
@@ -31,4 +39,51 @@
         </menus>
       </MenuBar>
    </top>
+   <bottom>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+            <VBox prefWidth="150.0" spacing="4.0" styleClass="vbox">
+               <children>
+                  <Label text="Zijpaneel">
+                     <font>
+                        <Font size="11.0" />
+                        <Font style="Bold" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <RadioButton mnemonicParsing="false" onAction="#closeSideBar" selected="true" text="Uit">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="sidePanel" />
+                     </toggleGroup>
+                     <font>
+                        <Font size="11.0" />
+                     </font></RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#showTagListTableView" text="Categorieën" toggleGroup="$sidePanel">
+                     <font>
+                        <Font size="11.0" />
+                     </font></RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#showMeasureUnitListTableView" text="Maateenheden" toggleGroup="$sidePanel">
+                     <font>
+                        <Font size="11.0" />
+                     </font></RadioButton>
+                  <RadioButton mnemonicParsing="false" onAction="#showIngredientNameListTableView" text="Ingrediënten" toggleGroup="$sidePanel">
+                     <font>
+                        <Font size="11.0" />
+                     </font></RadioButton>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" top="5.0" />
+               </padding>
+            </VBox>
+        </items>
+      </ToolBar>
+   </bottom>
 </BorderPane>

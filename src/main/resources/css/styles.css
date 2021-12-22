@@ -14,3 +14,11 @@
     -fx-padding: 0;
     -fx-shape: null;
 }
+
+.vbox {
+    -fx-border-color: #b3b3cb;
+    -fx-border-width: 1px;
+}
+
+ 
+
