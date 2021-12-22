@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
+import nl.recipes.views.TagTableView;
 
 @Slf4j
 @Controller
@@ -20,9 +21,11 @@ import net.rgielen.fxweaver.core.FxmlView;
 public class RootController {
 
 	private final FxWeaver fxWeaver;
+	private final TagTableView tagTableView;
 	
-	public RootController(FxWeaver fxWeaver) {
+	public RootController(FxWeaver fxWeaver, TagTableView tagTableView) {
 		this.fxWeaver = fxWeaver;
+		this.tagTableView = tagTableView;
 	}
 
 	@FXML
@@ -36,6 +39,11 @@ public class RootController {
 	@FXML
 	public void showRestoreBackupDialog(ActionEvent actionEvent) {
 		fxWeaver.loadController(RestoreBackupDialogController.class).show();
+	}
+	
+	@FXML
+	public void showTagListTableView(ActionEvent actionEvent) {
+		rootWindow.setCenter(tagTableView.getTableView());
 	}
 	
 	@FXML

@@ -8,12 +8,14 @@ import javax.persistence.Id;
 
 import org.springframework.lang.NonNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Tag {
 
 	@Id

@@ -6,7 +6,6 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.BorderPane?>
 
-
 <BorderPane fx:id="rootWindow" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.RootController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
@@ -19,9 +18,9 @@
               <MenuItem mnemonicParsing="false" onAction="#closeProgram" text="Afsluiten" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Categorieën">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" onAction="#showTagListTableView" text="Toon lijst" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
