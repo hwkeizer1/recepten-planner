@@ -15,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
-import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.TagRepository;
 import nl.recipes.util.TestData;
 

@@ -20,5 +20,9 @@
     -fx-border-width: 1px;
 }
 
+.root_window {
+	-fx-background-color: #b3f0ff;
+}
+
  
 

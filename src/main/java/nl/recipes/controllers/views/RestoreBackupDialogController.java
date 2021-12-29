@@ -1,14 +1,11 @@
 package nl.recipes.controllers.views;
 
 import java.io.File;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 import org.springframework.stereotype.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -19,7 +16,7 @@ import nl.recipes.services.BackupService;
 
 @Controller
 @FxmlView("restoreBackupDialog.fxml")
-public class RestoreBackupDialogController implements Initializable {
+public class RestoreBackupDialogController {
 
 	private final BackupService backupService;
 	
@@ -36,8 +33,7 @@ public class RestoreBackupDialogController implements Initializable {
 		this.backupService = backupService;
 	}
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	public void initialize() {
 		this.stage = new Stage();
 		stage.setScene(new Scene(anchorPane));
 		stage.setTitle("Backup terugzetten");

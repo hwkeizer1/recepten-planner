@@ -1,6 +1,5 @@
 package nl.recipes.controllers.views;
 
-import java.io.File;
 
 import org.springframework.stereotype.Controller;
 
@@ -8,12 +7,9 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
-import nl.recipes.views.TagTableView;
 
 @Slf4j
 @Controller
@@ -21,19 +17,26 @@ import nl.recipes.views.TagTableView;
 public class RootController {
 
 	private final FxWeaver fxWeaver;
-	private final TagTableView tagTableView;
+	private final TagListViewController tagListViewController;
 	
-	public RootController(FxWeaver fxWeaver, TagTableView tagTableView) {
+
+
+	public RootController(FxWeaver fxWeaver, TagListViewController tagListViewController) {
 		this.fxWeaver = fxWeaver;
-		this.tagTableView = tagTableView;
+		this.tagListViewController = tagListViewController;
 	}
+
 
 	@FXML
 	private BorderPane rootWindow;
 	
+	public void initialize() {
+		tagListViewController.setRootController(this);
+	}
+	
 	@FXML
 	public void showCreateBackupDialog(ActionEvent actionEvent) {
-		
+		// TO be implemented
 	}
 	
 	@FXML
@@ -42,13 +45,14 @@ public class RootController {
 	}
 	
 	@FXML
-	public void closeSideBar(ActionEvent actionEvent) {
+	public void closeLeftSidePanel() {
 		rootWindow.setLeft(null);
 	}
 	
 	@FXML
-	public void showTagListTableView(ActionEvent actionEvent) {
-		rootWindow.setLeft(tagTableView.getTableView());
+	public void showTagListView(ActionEvent actionEvent) {
+		fxWeaver.loadView(TagListViewController.class);
+		rootWindow.setLeft(tagListViewController.tagListViewPanel);
 	}
 	
 	@FXML
