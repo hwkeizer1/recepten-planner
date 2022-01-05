@@ -51,7 +51,7 @@ public class RootController {
 	
 	@FXML
 	public void showTagListView(ActionEvent actionEvent) {
-		fxWeaver.loadView(TagListViewController.class);
+		fxWeaver.loadController(TagListViewController.class);
 		rootWindow.setLeft(tagListViewController.tagListViewPanel);
 	}
 	

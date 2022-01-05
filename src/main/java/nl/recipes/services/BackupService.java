@@ -22,6 +22,7 @@ import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.IllegalValueException;
 
 @Slf4j
 @Service
@@ -83,7 +84,7 @@ public class BackupService {
 	private void createTag(Tag tag) {
 		try {
 			tagService.create(tag);
-		} catch (AlreadyExistsException ex) {
+		} catch (AlreadyExistsException | IllegalValueException ex) {
 			log.error("Tag {} already exists", tag.getName());
 		}
 	}
