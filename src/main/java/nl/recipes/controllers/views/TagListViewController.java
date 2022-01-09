@@ -20,7 +20,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
@@ -28,7 +27,6 @@ import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.TagService;
 
-@Slf4j
 @Controller
 @FxmlView("TagListView.fxml")
 public class TagListViewController {
@@ -37,10 +35,6 @@ public class TagListViewController {
 	
 	private RootController rootController;
 	
-	public TagListViewController(TagService tagService) {
-		this.tagService = tagService;
-	}
-
 	@FXML AnchorPane tagListViewPanel;
 	
 	@FXML ListView<Tag> tagListView;
@@ -59,6 +53,10 @@ public class TagListViewController {
 	private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 	private ChangeListener<Tag> tagChangeListener;
 	
+	public TagListViewController(TagService tagService) {
+		this.tagService = tagService;
+	}
+
 	public AnchorPane getTagListView() {
 		return tagListViewPanel;
 	}
@@ -85,7 +83,7 @@ public class TagListViewController {
 			if (newValue != null) {
 				tagNameTextField.setText(selectedTag.getName());
 			} else {
-				tagNameTextField.setText(null);
+				tagNameTextField.setText("");
 			}
 		};
 
@@ -93,7 +91,6 @@ public class TagListViewController {
 	}
 	
 	private void initializeButtons() {
-		log.debug("{}", tagListView.getSelectionModel().selectedItemProperty());
 		removeButton.disableProperty().bind(tagListView.getSelectionModel().selectedItemProperty().isNull());
 		updateButton.disableProperty()
 		.bind(tagListView.getSelectionModel().selectedItemProperty().isNull().or(modifiedProperty.not()).or(
@@ -116,38 +113,32 @@ public class TagListViewController {
 	@FXML
 	private void createTag(ActionEvent actionEvent) {
 		Tag tag = new Tag(tagNameTextField.getText());
-		log.debug("Create tag: {}", tag);
 		try {
 			tagService.create(tag);
 			tagListView.getSelectionModel().select(tag);
 		} catch (AlreadyExistsException | IllegalValueException e) {
 			tagNameError.setText(e.getMessage());
-			log.debug(e.getMessage());
 		}
 	}
 	
 	@FXML
 	private void updateTag(ActionEvent actionEvent) {
-		Tag tag = selectedTag;
-		log.debug("Tag to update: {}", tag);
+//		Tag tag = selectedTag;
 		try {
-			tagService.update(tag, tagNameTextField.getText());
+			tagService.update(selectedTag, tagNameTextField.getText());
 		} catch (NotFoundException | AlreadyExistsException e) {
 			tagNameError.setText(e.getMessage());
-			log.debug(e.getMessage());
 		}
 		modifiedProperty.set(false);
 	}
 	
 	@FXML
 	private void removeTag(ActionEvent actionEvent) {
-		Tag tag = selectedTag;
-		log.debug("Remove tag: {}", tag);
+//		Tag tag = selectedTag;
 		try {
-			tagService.remove(tag);
+			tagService.remove(selectedTag);
 		} catch (NotFoundException e) {
 			tagNameError.setText(e.getMessage());
-			log.debug(e.getMessage());
 		}
 	}
 }

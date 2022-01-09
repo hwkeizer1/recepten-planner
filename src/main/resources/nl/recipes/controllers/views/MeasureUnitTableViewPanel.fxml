@@ -4,7 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -14,13 +15,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="tagListViewPanel" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.TagListViewController">
+<AnchorPane fx:id="measureUnitTableViewPanel" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.MeasureUnitTableViewPanelController">
    <children>
-      <VBox fx:id="changeTagVBox" alignment="BOTTOM_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="changeMeasureUnitVBox" alignment="BOTTOM_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox alignment="CENTER_RIGHT">
                <children>
-                  <Label contentDisplay="CENTER" text="Categorieën bewerken">
+                  <Label contentDisplay="CENTER" text="Maateenheden bewerken">
                      <font>
                         <Font name="System Bold" size="13.0" />
                      </font>
@@ -28,14 +29,19 @@
                         <Insets bottom="3.0" right="50.0" top="3.0" />
                      </padding>
                   </Label>
-                  <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeTagListViewPanel" text="X" textFill="#f50606">
+                  <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeMeasureUnitTableViewPanel" text="X" textFill="#f50606">
                      <font>
                         <Font name="System Bold" size="13.0" />
                      </font>
                   </Button>
                </children>
             </HBox>
-            <ListView fx:id="tagListView" VBox.vgrow="ALWAYS" />
+            <TableView fx:id="measureUnitTableView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="colName" prefWidth="${measureUnitTableView.width*0.4}" text="Naam" />
+                <TableColumn fx:id="colPluralName" prefWidth="${measureUnitTableView.width*0.6}" text="Meervoud" />
+              </columns>
+            </TableView>
             <VBox alignment="BOTTOM_CENTER">
                <children>
                   <GridPane alignment="TOP_CENTER">
@@ -49,17 +55,26 @@
                     <rowConstraints>
                       <RowConstraints vgrow="SOMETIMES" />
                         <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Categorie :" GridPane.columnIndex="1">
+                        <Label text="Naam :" GridPane.columnIndex="1">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin></Label>
-                        <TextField fx:id="tagNameTextField" onKeyReleased="#handleKeyReleasedAction" GridPane.columnIndex="3" />
-                        <Label fx:id="tagNameError" textFill="#fc0202" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <TextField fx:id="nameTextField" onKeyReleased="#handleKeyReleasedAction" GridPane.columnIndex="3" />
+                        <Label fx:id="nameError" textFill="#fc0202" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Label>
+                        <Label text="Meervoud :" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="pluralNameTextField" onKeyReleased="#handleKeyReleasedAction" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label fx:id="pluralNameError" textFill="#fc0202" GridPane.columnIndex="3" GridPane.rowIndex="3">
                            <font>
                               <Font size="11.0" />
                            </font>
@@ -71,9 +86,9 @@
                   </GridPane>
                   <ButtonBar buttonMinWidth="100.0">
                     <buttons>
-                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createTag" text="Toevoegen" />
-                        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateTag" text="Wijzigen" />
-                      <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeTag" text="Verwijderen" />
+                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createMeasureUnit" text="Toevoegen" />
+                        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateMeasureUnit" text="Wijzigen" />
+                      <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeMeasureUnit" text="Verwijderen" />
                     </buttons>
                      <opaqueInsets>
                         <Insets />

@@ -18,12 +18,15 @@ public class RootController {
 
 	private final FxWeaver fxWeaver;
 	private final TagListViewController tagListViewController;
-	
+	private final MeasureUnitTableViewPanelController measureUnitTableViewPanelController;
 
 
-	public RootController(FxWeaver fxWeaver, TagListViewController tagListViewController) {
+	public RootController(FxWeaver fxWeaver, 
+			TagListViewController tagListViewController, 
+			MeasureUnitTableViewPanelController measureUnitTableViewPanelController) {
 		this.fxWeaver = fxWeaver;
 		this.tagListViewController = tagListViewController;
+		this.measureUnitTableViewPanelController = measureUnitTableViewPanelController;
 	}
 
 
@@ -32,6 +35,7 @@ public class RootController {
 	
 	public void initialize() {
 		tagListViewController.setRootController(this);
+		measureUnitTableViewPanelController.setRootController(this);
 	}
 	
 	@FXML
@@ -52,16 +56,17 @@ public class RootController {
 	@FXML
 	public void showTagListView(ActionEvent actionEvent) {
 		fxWeaver.loadController(TagListViewController.class);
-		rootWindow.setLeft(tagListViewController.tagListViewPanel);
+		rootWindow.setLeft(tagListViewController.getTagListView());
 	}
 	
 	@FXML
-	public void showMeasureUnitListTableView(ActionEvent actionEvent) {
-		log.debug("MeasureUnitList");
+	public void showMeasureUnitTableViewPanel(ActionEvent actionEvent) {
+		fxWeaver.loadController(MeasureUnitTableViewPanelController.class);
+		rootWindow.setLeft(measureUnitTableViewPanelController.getMeasureUnitTableViewPanel());
 	}
 	
 	@FXML
-	public void showIngredientNameListTableView(ActionEvent actionEvent) {
+	public void showIngredientNameListView(ActionEvent actionEvent) {
 		log.debug("IngredientNameList");
 	}
 

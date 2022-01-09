@@ -1,35 +1,75 @@
 package nl.recipes.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import nl.recipes.domain.MeasureUnit;
+import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.MeasureUnitRepository;
 
 @Service
 public class MeasureUnitService {
 
 	private final MeasureUnitRepository measureUnitRepository;
+	
+	private ObservableList<MeasureUnit> observableMeasureUnitList;
 
 	public MeasureUnitService(MeasureUnitRepository measureUnitRepository) {
 		this.measureUnitRepository = measureUnitRepository;
+		observableMeasureUnitList = FXCollections.observableList(measureUnitRepository.findAll());
 	}
 	
-	public List<MeasureUnit> findAll() {
-		return measureUnitRepository.findAll();
+	public ObservableList<MeasureUnit> getReadonlyMeasureUnitList() {
+		return FXCollections.unmodifiableObservableList(observableMeasureUnitList);
 	}
 	
 	public MeasureUnit create(MeasureUnit measureUnit) throws AlreadyExistsException {
 		if (measureUnitRepository.findByName(measureUnit.getName()).isPresent()) {	
 			throw new AlreadyExistsException("Maateenheid " + measureUnit.getName() + " bestaat al");
 		}
-		return measureUnitRepository.save(measureUnit);
+		MeasureUnit createdMeasureUnit = measureUnitRepository.save(measureUnit);
+		observableMeasureUnitList.add(createdMeasureUnit);
+		return createdMeasureUnit;
+	}
+	
+	public MeasureUnit update(MeasureUnit measureUnit, MeasureUnit update) throws NotFoundException, AlreadyExistsException {
+		if (!findById(measureUnit.getId()).isPresent()) {
+			throw new NotFoundException("Maateenheid " + measureUnit.getName() + " niet gevonden");
+		}
+		if (!measureUnit.getName().equals(update.getName()) && findByName(update.getName()).isPresent()) {
+			throw new AlreadyExistsException("Maateenheid " + update.getName() + " bestaat al");
+		}
+		measureUnit.setName(update.getName());
+		measureUnit.setPluralName(update.getPluralName());
+		
+		MeasureUnit updatedMeasureUnit = measureUnitRepository.save(measureUnit);
+		observableMeasureUnitList.set(observableMeasureUnitList.lastIndexOf(measureUnit), updatedMeasureUnit);
+		return updatedMeasureUnit;
+	}
+	
+	public void remove(MeasureUnit measureUnit) throws NotFoundException {
+		// TODO add check for removing measureUnits that are in use
+		if (!findById(measureUnit.getId()).isPresent()) {
+			throw new NotFoundException("Maateenheid " + measureUnit.getName() + " niet gevonden");
+		}
+		measureUnitRepository.delete(measureUnit);
+		observableMeasureUnitList.remove(measureUnit);
 	}
 	
 	public Optional<MeasureUnit> findByName(String name) {
-		return measureUnitRepository.findByName(name);
+		return observableMeasureUnitList.stream()
+				.filter(measureUnit -> name.equals(measureUnit.getName()))
+				.findAny();
+	}
+	
+	public Optional<MeasureUnit> findById(Long id) {
+		return observableMeasureUnitList.stream()
+				.filter(measureUnit -> id.equals(measureUnit.getId()))
+				.findAny();
 	}
 }

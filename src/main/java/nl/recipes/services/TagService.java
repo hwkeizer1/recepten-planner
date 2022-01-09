@@ -73,7 +73,6 @@ public class TagService {
 		return observableTagList.stream()
 				.filter(tag -> id.equals(tag.getId()))
 				.findAny();
-				
 	}
 	
 	public void addListener(ListChangeListener<Tag> listener) {

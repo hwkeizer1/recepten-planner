@@ -23,9 +23,9 @@
                   <MenuItem mnemonicParsing="false" onAction="#showTagListView" text="Bewerken" />
                </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+          <Menu mnemonicParsing="false" text="Maateenheden">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#showMeasureUnitTableViewPanel" text="Bewerken" />
             </items>
           </Menu>
         </menus>
