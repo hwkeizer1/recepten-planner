@@ -114,7 +114,7 @@ public class BackupService {
 	private void createIngredientName(IngredientName ingredientName) {
 		try {
 			ingredientNameService.create(ingredientName);
-		} catch (AlreadyExistsException ex) {
+		} catch (AlreadyExistsException | IllegalValueException ex) {
 			log.error("IngredientName {} already exists", ingredientName.getName());
 		}
 	}
