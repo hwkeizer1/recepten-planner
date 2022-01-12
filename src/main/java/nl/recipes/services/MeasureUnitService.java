@@ -5,10 +5,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import nl.recipes.domain.MeasureUnit;
-import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.MeasureUnitRepository;
 
@@ -28,8 +29,11 @@ public class MeasureUnitService {
 		return FXCollections.unmodifiableObservableList(observableMeasureUnitList);
 	}
 	
-	public MeasureUnit create(MeasureUnit measureUnit) throws AlreadyExistsException {
-		if (measureUnitRepository.findByName(measureUnit.getName()).isPresent()) {	
+	public MeasureUnit create(MeasureUnit measureUnit) throws AlreadyExistsException, IllegalValueException {
+		if (measureUnit == null || measureUnit.getName().isEmpty()) {
+			throw new IllegalValueException("Maateenheid naam mag niet leeg zijn");
+		}
+		if (findByName(measureUnit.getName()).isPresent()) {	
 			throw new AlreadyExistsException("Maateenheid " + measureUnit.getName() + " bestaat al");
 		}
 		MeasureUnit createdMeasureUnit = measureUnitRepository.save(measureUnit);
@@ -71,5 +75,18 @@ public class MeasureUnitService {
 		return observableMeasureUnitList.stream()
 				.filter(measureUnit -> id.equals(measureUnit.getId()))
 				.findAny();
+	}
+	
+	public void addListener(ListChangeListener<MeasureUnit> listener) {
+		observableMeasureUnitList.addListener(listener);
+	}
+	
+	public void removeChangeListener(ListChangeListener<MeasureUnit> listener) {
+		observableMeasureUnitList.removeListener(listener);
+	}
+	
+	// Setter for JUnit testing only
+	void setObservableMeasureUnitList(ObservableList<MeasureUnit> observableMeasureUnitList) {
+		this.observableMeasureUnitList = observableMeasureUnitList;
 	}
 }

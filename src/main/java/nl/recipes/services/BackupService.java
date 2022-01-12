@@ -144,7 +144,7 @@ public class BackupService {
 	private void createMeasureUnit(MeasureUnit measureUnit) {
 		try {
 			measureUnitService.create(measureUnit);
-		} catch (AlreadyExistsException ex) {
+		} catch (AlreadyExistsException | IllegalValueException ex) {
 			log.error("MeasureUnit {} already exists", measureUnit.getName());
 		}
 	}

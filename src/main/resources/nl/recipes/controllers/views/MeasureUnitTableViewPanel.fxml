@@ -71,6 +71,9 @@
                            <font>
                               <Font size="11.0" />
                            </font>
+                           <padding>
+                              <Insets bottom="5.0" />
+                           </padding>
                         </Label>
                         <Label text="Meervoud :" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="pluralNameTextField" onKeyReleased="#handleKeyReleasedAction" GridPane.columnIndex="3" GridPane.rowIndex="2" />

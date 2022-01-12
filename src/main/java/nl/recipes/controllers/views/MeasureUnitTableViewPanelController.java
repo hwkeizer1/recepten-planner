@@ -25,6 +25,7 @@ import javafx.scene.paint.Color;
 import net.rgielen.fxweaver.core.FxmlView;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.MeasureUnitService;
 
@@ -128,7 +129,7 @@ public class MeasureUnitTableViewPanelController {
 			measureUnitService.create(measureUnit);
 			measureUnitTableView.getSelectionModel().select(measureUnit);
 			measureUnitTableView.scrollTo(measureUnit);
-		} catch (AlreadyExistsException e) {
+		} catch (AlreadyExistsException | IllegalValueException e) {
 			nameError.setText(e.getMessage());
 		}
 	}
