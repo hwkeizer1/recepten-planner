@@ -17,12 +17,12 @@ import net.rgielen.fxweaver.core.FxmlView;
 public class RootController {
 
 	private final FxWeaver fxWeaver;
-	private final TagListViewController tagListViewController;
+	private final TagListViewPanelController tagListViewController;
 	private final MeasureUnitTableViewPanelController measureUnitTableViewPanelController;
 
 
 	public RootController(FxWeaver fxWeaver, 
-			TagListViewController tagListViewController, 
+			TagListViewPanelController tagListViewController, 
 			MeasureUnitTableViewPanelController measureUnitTableViewPanelController) {
 		this.fxWeaver = fxWeaver;
 		this.tagListViewController = tagListViewController;
@@ -55,7 +55,7 @@ public class RootController {
 	
 	@FXML
 	public void showTagListView(ActionEvent actionEvent) {
-		fxWeaver.loadController(TagListViewController.class);
+		fxWeaver.loadController(TagListViewPanelController.class);
 		rootWindow.setLeft(tagListViewController.getTagListView());
 	}
 	

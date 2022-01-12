@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="tagListViewPanel" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.TagListViewController">
+<AnchorPane fx:id="tagListViewPanel" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.TagListViewPanelController">
    <children>
       <VBox fx:id="changeTagVBox" alignment="BOTTOM_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -55,8 +55,8 @@
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin></Label>
-                        <TextField fx:id="tagNameTextField" onKeyReleased="#handleKeyReleasedAction" GridPane.columnIndex="3" />
-                        <Label fx:id="tagNameError" textFill="#fc0202" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <TextField fx:id="nameTextField" onKeyReleased="#handleKeyReleasedAction" GridPane.columnIndex="3" />
+                        <Label fx:id="nameError" textFill="#fc0202" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>

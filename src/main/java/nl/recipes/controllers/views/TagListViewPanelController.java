@@ -28,8 +28,8 @@ import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.TagService;
 
 @Controller
-@FxmlView("TagListView.fxml")
-public class TagListViewController {
+@FxmlView("TagListViewPanel.fxml")
+public class TagListViewPanelController {
 	
 	private final TagService tagService;
 	
@@ -39,8 +39,8 @@ public class TagListViewController {
 	
 	@FXML ListView<Tag> tagListView;
 	
-	@FXML TextField tagNameTextField;
-	@FXML Label tagNameError;
+	@FXML TextField nameTextField;
+	@FXML Label nameError;
 	
 	@FXML VBox changeTagVBox;
 	
@@ -53,7 +53,7 @@ public class TagListViewController {
 	private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 	private ChangeListener<Tag> tagChangeListener;
 	
-	public TagListViewController(TagService tagService) {
+	public TagListViewPanelController(TagService tagService) {
 		this.tagService = tagService;
 	}
 
@@ -81,9 +81,9 @@ public class TagListViewController {
 			selectedTag = newValue;
 			modifiedProperty.set(false);
 			if (newValue != null) {
-				tagNameTextField.setText(selectedTag.getName());
+				nameTextField.setText(selectedTag.getName());
 			} else {
-				tagNameTextField.setText("");
+				nameTextField.setText("");
 			}
 		};
 
@@ -94,7 +94,7 @@ public class TagListViewController {
 		removeButton.disableProperty().bind(tagListView.getSelectionModel().selectedItemProperty().isNull());
 		updateButton.disableProperty()
 		.bind(tagListView.getSelectionModel().selectedItemProperty().isNull().or(modifiedProperty.not()).or(
-				tagNameTextField.textProperty().isEmpty()));
+				nameTextField.textProperty().isEmpty()));
 		createButton.disableProperty().bind(tagListView.getSelectionModel().selectedItemProperty().isNotNull());
 	}
 
@@ -106,18 +106,18 @@ public class TagListViewController {
 	
 	@FXML
 	private void handleKeyReleasedAction(KeyEvent keyEvent) {
-		tagNameError.setText(null);
+		nameError.setText(null);
 		modifiedProperty.set(true);
 	}
 	
 	@FXML
 	private void createTag(ActionEvent actionEvent) {
-		Tag tag = new Tag(tagNameTextField.getText());
+		Tag tag = new Tag(nameTextField.getText());
 		try {
 			tagService.create(tag);
 			tagListView.getSelectionModel().select(tag);
 		} catch (AlreadyExistsException | IllegalValueException e) {
-			tagNameError.setText(e.getMessage());
+			nameError.setText(e.getMessage());
 		}
 	}
 	
@@ -125,9 +125,9 @@ public class TagListViewController {
 	private void updateTag(ActionEvent actionEvent) {
 //		Tag tag = selectedTag;
 		try {
-			tagService.update(selectedTag, tagNameTextField.getText());
+			tagService.update(selectedTag, nameTextField.getText());
 		} catch (NotFoundException | AlreadyExistsException e) {
-			tagNameError.setText(e.getMessage());
+			nameError.setText(e.getMessage());
 		}
 		modifiedProperty.set(false);
 	}
@@ -138,7 +138,7 @@ public class TagListViewController {
 		try {
 			tagService.remove(selectedTag);
 		} catch (NotFoundException e) {
-			tagNameError.setText(e.getMessage());
+			nameError.setText(e.getMessage());
 		}
 	}
 }
