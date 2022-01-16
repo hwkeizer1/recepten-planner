@@ -4,7 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -13,14 +14,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="tagListViewPanel" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.TagListViewPanelController">
+<AnchorPane fx:id="measureUnitPanel" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="nl.recipes.controllers.views.MeasureUnitPanelController">
    <children>
-      <VBox fx:id="changeTagVBox" alignment="BOTTOM_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="measureUnitVBox" alignment="BOTTOM_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ListView fx:id="tagListView" VBox.vgrow="ALWAYS" />
+            <TableView fx:id="measureUnitTableView" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="nameColumn" prefWidth="${measureUnitTableView.width*0.5}" text="Naam" />
+                <TableColumn fx:id="pluralNameColumn" prefWidth="${measureUnitTableView.width*0.5}" text="Meervoud" />
+              </columns>
+            </TableView>
             <VBox alignment="BOTTOM_LEFT" fillWidth="false">
                <children>
-                  <Label contentDisplay="CENTER" text="Categorie bewerken">
+                  <Label contentDisplay="CENTER" text="Maateenheid bewerken">
                      <font>
                         <Font name="System Bold" size="13.0" />
                      </font>
@@ -39,9 +45,11 @@
                     <rowConstraints>
                       <RowConstraints vgrow="SOMETIMES" />
                         <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
+                        <RowConstraints vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label text="Categorie :" GridPane.columnIndex="1">
+                        <Label text="Naam :" GridPane.columnIndex="1">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin></Label>
@@ -53,6 +61,16 @@
                            <font>
                               <Font size="11.0" />
                            </font>
+                           <padding>
+                              <Insets bottom="5.0" />
+                           </padding>
+                        </Label>
+                        <Label text="Meervoud :" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="pluralNameTextField" onKeyReleased="#handleKeyReleasedAction" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label fx:id="pluralNameError" textFill="#fc0202" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
                         </Label>
                      </children>
                      <VBox.margin>
@@ -61,9 +79,9 @@
                   </GridPane>
                   <ButtonBar buttonMinWidth="100.0">
                     <buttons>
-                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createTag" text="Toevoegen" />
-                        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateTag" text="Wijzigen" />
-                      <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeTag" text="Verwijderen" />
+                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createMeasureUnit" text="Toevoegen" />
+                        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateMeasureUnit" text="Wijzigen" />
+                      <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeMeasureUnit" text="Verwijderen" />
                     </buttons>
                      <opaqueInsets>
                         <Insets />

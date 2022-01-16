@@ -28,19 +28,19 @@ import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.TagService;
 
 @Controller
-@FxmlView("TagListViewPanel.fxml")
-public class TagListViewPanelController {
+@FxmlView("TagPanel.fxml")
+public class TagPanelController {
 	
 	private final TagService tagService;
 	
-	@FXML AnchorPane tagListViewPanel;
+	@FXML AnchorPane tagPanel;
 	
 	@FXML ListView<Tag> tagListView;
 	
 	@FXML TextField nameTextField;
 	@FXML Label nameError;
 	
-	@FXML VBox changeTagVBox;
+	@FXML VBox tagVBox;
 	
 	@FXML Button createButton;
 	@FXML Button updateButton;
@@ -51,7 +51,7 @@ public class TagListViewPanelController {
 	private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 	ChangeListener<Tag> tagChangeListener;
 	
-	public TagListViewPanelController(TagService tagService) {
+	public TagPanelController(TagService tagService) {
 		this.tagService = tagService;
 		
 		tagChangeListener = (observable, oldValue, newValue) -> {
@@ -65,15 +65,15 @@ public class TagListViewPanelController {
 		};
 	}
 
-	public AnchorPane getTagListView() {
-		return tagListViewPanel;
+	public AnchorPane getTagPanel() {
+		return tagPanel;
 	}
 
 
 	public void initialize() {
-		AnchorPane.setTopAnchor(changeTagVBox, 0.0);
-		AnchorPane.setBottomAnchor(changeTagVBox, 0.0);
-		changeTagVBox.setBackground(new Background(new BackgroundFill(Color.web("#ffffcc"), CornerRadii.EMPTY , Insets.EMPTY)));
+		AnchorPane.setTopAnchor(tagVBox, 0.0);
+		AnchorPane.setBottomAnchor(tagVBox, 0.0);
+		tagVBox.setBackground(new Background(new BackgroundFill(Color.web("#ffffcc"), CornerRadii.EMPTY , Insets.EMPTY)));
 		
 		initializeTagListView();
 		initializeButtons();

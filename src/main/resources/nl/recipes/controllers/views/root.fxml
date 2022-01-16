@@ -12,9 +12,9 @@
         <menus>
           <Menu mnemonicParsing="false" text="Recepten-planner">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#showTagListViewPanel" text="Categorieën" />
-              <MenuItem mnemonicParsing="false" onAction="#showMeasureUnitTableViewPanel" text="Maateenheden" />
-                <MenuItem mnemonicParsing="false" onAction="#showIngredientNameTableViewPanel" text="Ingrediënten" />
+                  <MenuItem mnemonicParsing="false" onAction="#showTagPanel" text="Categorieën" />
+              <MenuItem mnemonicParsing="false" onAction="#showMeasureUnitPanel" text="Maateenheden" />
+                <MenuItem mnemonicParsing="false" onAction="#showIngredientNamePanel" text="Ingrediënten" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#showCreateBackupDialog" text="Backup maken" />
                   <MenuItem mnemonicParsing="false" onAction="#showRestoreBackupDialog" text="Backup terugzetten" />

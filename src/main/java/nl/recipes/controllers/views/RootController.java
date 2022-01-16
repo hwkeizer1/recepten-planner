@@ -15,18 +15,18 @@ import net.rgielen.fxweaver.core.FxmlView;
 public class RootController {
 
 	private final FxWeaver fxWeaver;
-	private final TagListViewPanelController tagListViewController;
-	private final MeasureUnitTableViewPanelController measureUnitTableViewPanelController;
-	private final IngredientNameTableViewPanelController ingredientNameTableViewPanelController;
+	private final TagPanelController tagPanelController;
+	private final MeasureUnitPanelController measureUnitPanelController;
+	private final IngredientNamePanelController ingredientNamePanelController;
 
 
 	public RootController(FxWeaver fxWeaver, 
-			TagListViewPanelController tagListViewController, 
-			MeasureUnitTableViewPanelController measureUnitTableViewPanelController, IngredientNameTableViewPanelController ingredientNameTableViewPanelController) {
+			TagPanelController tagPanelController, 
+			MeasureUnitPanelController measureUnitPanelController, IngredientNamePanelController ingredientNamePanelController) {
 		this.fxWeaver = fxWeaver;
-		this.tagListViewController = tagListViewController;
-		this.measureUnitTableViewPanelController = measureUnitTableViewPanelController;
-		this.ingredientNameTableViewPanelController = ingredientNameTableViewPanelController;
+		this.tagPanelController = tagPanelController;
+		this.measureUnitPanelController = measureUnitPanelController;
+		this.ingredientNamePanelController = ingredientNamePanelController;
 	}
 
 
@@ -54,21 +54,21 @@ public class RootController {
 	}
 	
 	@FXML
-	public void showTagListViewPanel(ActionEvent actionEvent) {
-		fxWeaver.loadController(TagListViewPanelController.class);
-		rootWindow.setCenter(tagListViewController.getTagListView());
+	public void showTagPanel(ActionEvent actionEvent) {
+		fxWeaver.loadController(TagPanelController.class);
+		rootWindow.setCenter(tagPanelController.getTagPanel());
 	}
 	
 	@FXML
-	public void showMeasureUnitTableViewPanel(ActionEvent actionEvent) {
-		fxWeaver.loadController(MeasureUnitTableViewPanelController.class);
-		rootWindow.setCenter(measureUnitTableViewPanelController.getMeasureUnitTableViewPanel());
+	public void showMeasureUnitPanel(ActionEvent actionEvent) {
+		fxWeaver.loadController(MeasureUnitPanelController.class);
+		rootWindow.setCenter(measureUnitPanelController.getMeasureUnitPanel());
 	}
 	
 	@FXML
-	public void showIngredientNameTableViewPanel(ActionEvent actionEvent) {
-		fxWeaver.loadController(IngredientNameTableViewPanelController.class);
-		rootWindow.setCenter(ingredientNameTableViewPanelController.getIngredientNameTableViewPanel());
+	public void showIngredientNamePanel(ActionEvent actionEvent) {
+		fxWeaver.loadController(IngredientNamePanelController.class);
+		rootWindow.setCenter(ingredientNamePanelController.getIngredientNamePanel());
 	}
 
 	

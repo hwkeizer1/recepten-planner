@@ -29,16 +29,16 @@ import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.MeasureUnitService;
 
 @Controller
-@FxmlView("MeasureUnitTableViewPanel.fxml")
-public class MeasureUnitTableViewPanelController {
+@FxmlView("MeasureUnitPanel.fxml")
+public class MeasureUnitPanelController {
 
 	private final MeasureUnitService measureUnitService;
 
-	@FXML AnchorPane measureUnitTableViewPanel;
+	@FXML AnchorPane measureUnitPanel;
 	
 	@FXML TableView<MeasureUnit> measureUnitTableView;
-	@FXML TableColumn<MeasureUnit, String> colName;
-	@FXML TableColumn<MeasureUnit, String> colPluralName;
+	@FXML TableColumn<MeasureUnit, String> nameColumn;
+	@FXML TableColumn<MeasureUnit, String> pluralNameColumn;
 	
 	@FXML TextField nameTextField;
 	@FXML Label nameError;
@@ -46,7 +46,7 @@ public class MeasureUnitTableViewPanelController {
 	@FXML TextField pluralNameTextField;
 	@FXML Label pluralNameError;
 	
-	@FXML VBox changeMeasureUnitVBox;
+	@FXML VBox measureUnitVBox;
 	
 	@FXML Button createButton;
 	@FXML Button updateButton;
@@ -56,7 +56,7 @@ public class MeasureUnitTableViewPanelController {
 	private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 	ChangeListener<MeasureUnit> measureUnitChangeListener;
 	
-	public MeasureUnitTableViewPanelController(MeasureUnitService measureUnitService) {
+	public MeasureUnitPanelController(MeasureUnitService measureUnitService) {
 		this.measureUnitService = measureUnitService;
 		
 		measureUnitChangeListener = (observable, oldValue, newValue) -> {
@@ -72,14 +72,14 @@ public class MeasureUnitTableViewPanelController {
 		};
 	}
 
-	public AnchorPane getMeasureUnitTableViewPanel() {
-		return measureUnitTableViewPanel;
+	public AnchorPane getMeasureUnitPanel() {
+		return measureUnitPanel;
 	}
 	
 	public void initialize() {
-		AnchorPane.setTopAnchor(changeMeasureUnitVBox, 0.0);
-		AnchorPane.setBottomAnchor(changeMeasureUnitVBox, 0.0);
-		changeMeasureUnitVBox.setBackground(new Background(new BackgroundFill(Color.web("#ffffcc"), CornerRadii.EMPTY , Insets.EMPTY)));
+		AnchorPane.setTopAnchor(measureUnitVBox, 0.0);
+		AnchorPane.setBottomAnchor(measureUnitVBox, 0.0);
+		measureUnitVBox.setBackground(new Background(new BackgroundFill(Color.web("#ffffcc"), CornerRadii.EMPTY , Insets.EMPTY)));
 		
 		initializeMeasureUnitTableView();
 		initializeButtons();
@@ -88,8 +88,8 @@ public class MeasureUnitTableViewPanelController {
 	private void initializeMeasureUnitTableView() {
 		measureUnitTableView.setItems(measureUnitService.getReadonlyMeasureUnitList());
 		
-		colName.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
-		colPluralName.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
+		nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
+		pluralNameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
 		
 		// Remove the previous listener before adding one
 		measureUnitTableView.getSelectionModel().selectedItemProperty().removeListener(measureUnitChangeListener);
