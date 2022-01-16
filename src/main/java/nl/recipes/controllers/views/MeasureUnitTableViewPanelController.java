@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -35,8 +34,6 @@ public class MeasureUnitTableViewPanelController {
 
 	private final MeasureUnitService measureUnitService;
 
-	private RootController rootController;
-	
 	@FXML AnchorPane measureUnitTableViewPanel;
 	
 	@FXML TableView<MeasureUnit> measureUnitTableView;
@@ -54,22 +51,29 @@ public class MeasureUnitTableViewPanelController {
 	@FXML Button createButton;
 	@FXML Button updateButton;
 	@FXML Button removeButton;
-	@FXML Button closeButton;
 	
 	private MeasureUnit selectedMeasureUnit;
 	private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
-	private ChangeListener<MeasureUnit> measureUnitChangeListener;
+	ChangeListener<MeasureUnit> measureUnitChangeListener;
 	
 	public MeasureUnitTableViewPanelController(MeasureUnitService measureUnitService) {
 		this.measureUnitService = measureUnitService;
+		
+		measureUnitChangeListener = (observable, oldValue, newValue) -> {
+			selectedMeasureUnit = newValue;
+			modifiedProperty.set(false);
+			if (newValue != null) {
+				nameTextField.setText(selectedMeasureUnit.getName());
+				pluralNameTextField.setText(selectedMeasureUnit.getPluralName());
+			} else {
+				nameTextField.setText(null);
+				pluralNameTextField.setText(null);
+			}
+		};
 	}
 
 	public AnchorPane getMeasureUnitTableViewPanel() {
 		return measureUnitTableViewPanel;
-	}
-	
-	public void setRootController(RootController rootController) {
-		this.rootController = rootController;
 	}
 	
 	public void initialize() {
@@ -86,19 +90,9 @@ public class MeasureUnitTableViewPanelController {
 		
 		colName.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
 		colPluralName.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
-
-		measureUnitChangeListener = (observable, oldValue, newValue) -> {
-			selectedMeasureUnit = newValue;
-			modifiedProperty.set(false);
-			if (newValue != null) {
-				nameTextField.setText(selectedMeasureUnit.getName());
-				pluralNameTextField.setText(selectedMeasureUnit.getPluralName());
-			} else {
-				nameTextField.setText(null);
-				pluralNameTextField.setText(null);
-			}
-		};
-
+		
+		// Remove the previous listener before adding one
+		measureUnitTableView.getSelectionModel().selectedItemProperty().removeListener(measureUnitChangeListener);
 		measureUnitTableView.getSelectionModel().selectedItemProperty().addListener(measureUnitChangeListener);
 	}
 	
@@ -108,12 +102,6 @@ public class MeasureUnitTableViewPanelController {
 		.bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNull().or(modifiedProperty.not()).or(
 				nameTextField.textProperty().isEmpty()));
 		createButton.disableProperty().bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNotNull());
-	}
-	
-	@FXML
-	public void closeMeasureUnitTableViewPanel(ActionEvent actionEvent) {
-		measureUnitTableView.getSelectionModel().selectedItemProperty().removeListener(measureUnitChangeListener);
-		rootController.closeLeftSidePanel();
 	}
 	
 	@FXML

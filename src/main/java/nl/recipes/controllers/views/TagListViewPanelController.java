@@ -33,8 +33,6 @@ public class TagListViewPanelController {
 	
 	private final TagService tagService;
 	
-	private RootController rootController;
-	
 	@FXML AnchorPane tagListViewPanel;
 	
 	@FXML ListView<Tag> tagListView;
@@ -51,19 +49,26 @@ public class TagListViewPanelController {
 	
 	private Tag selectedTag;
 	private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
-	private ChangeListener<Tag> tagChangeListener;
+	ChangeListener<Tag> tagChangeListener;
 	
 	public TagListViewPanelController(TagService tagService) {
 		this.tagService = tagService;
+		
+		tagChangeListener = (observable, oldValue, newValue) -> {
+			selectedTag = newValue;
+			modifiedProperty.set(false);
+			if (newValue != null) {
+				nameTextField.setText(selectedTag.getName());
+			} else {
+				nameTextField.setText("");
+			}
+		};
 	}
 
 	public AnchorPane getTagListView() {
 		return tagListViewPanel;
 	}
-	
-	public void setRootController(RootController rootController) {
-		this.rootController = rootController;
-	}
+
 
 	public void initialize() {
 		AnchorPane.setTopAnchor(changeTagVBox, 0.0);
@@ -77,16 +82,8 @@ public class TagListViewPanelController {
 	private void initializeTagListView() {
 		tagListView.setItems(tagService.getReadonlyTagList());
 
-		tagChangeListener = (observable, oldValue, newValue) -> {
-			selectedTag = newValue;
-			modifiedProperty.set(false);
-			if (newValue != null) {
-				nameTextField.setText(selectedTag.getName());
-			} else {
-				nameTextField.setText("");
-			}
-		};
-
+		// Remove the previous listener before adding one
+		tagListView.getSelectionModel().selectedItemProperty().removeListener(tagChangeListener);
 		tagListView.getSelectionModel().selectedItemProperty().addListener(tagChangeListener);
 	}
 	
@@ -96,12 +93,6 @@ public class TagListViewPanelController {
 		.bind(tagListView.getSelectionModel().selectedItemProperty().isNull().or(modifiedProperty.not()).or(
 				nameTextField.textProperty().isEmpty()));
 		createButton.disableProperty().bind(tagListView.getSelectionModel().selectedItemProperty().isNotNull());
-	}
-
-	@FXML
-	public void closeTagListViewPanel(ActionEvent actionEvent) {
-		tagListView.getSelectionModel().selectedItemProperty().removeListener(tagChangeListener);
-		rootController.closeLeftSidePanel();
 	}
 	
 	@FXML
@@ -123,7 +114,6 @@ public class TagListViewPanelController {
 	
 	@FXML
 	private void updateTag(ActionEvent actionEvent) {
-//		Tag tag = selectedTag;
 		try {
 			tagService.update(selectedTag, nameTextField.getText());
 		} catch (NotFoundException | AlreadyExistsException e) {
@@ -134,7 +124,6 @@ public class TagListViewPanelController {
 	
 	@FXML
 	private void removeTag(ActionEvent actionEvent) {
-//		Tag tag = selectedTag;
 		try {
 			tagService.remove(selectedTag);
 		} catch (NotFoundException e) {

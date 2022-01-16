@@ -15,13 +15,11 @@ import org.mockito.MockitoAnnotations;
 
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
-import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.IngredientNameRepository;
-import nl.recipes.repositories.MeasureUnitRepository;
 import nl.recipes.util.TestData;
 
 class IngredientNameServiceTest {

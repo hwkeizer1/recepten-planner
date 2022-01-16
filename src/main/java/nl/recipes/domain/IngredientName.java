@@ -41,14 +41,18 @@ public class IngredientName {
 	private IngredientType ingredientType;
 	
 	public IngredientName(String name, String pluralName) {
-		this(name, pluralName, false);
+		this(name, pluralName, false, ShopType.OVERIG, IngredientType.OVERIG);
 	}
 	
 	public IngredientName(String name, String pluralName, boolean stock) {
+		this(name, pluralName, stock, ShopType.OVERIG, IngredientType.OVERIG);
+	}
+	
+	public IngredientName(String name, String pluralName, boolean stock, ShopType shopType, IngredientType ingredientType) {
 		this.name = name;
 		this.pluralName = pluralName;
 		this.stock = stock;
-		this.shopType = ShopType.OVERIG;
-		this.ingredientType = IngredientType.OVERIG;
+		this.shopType = shopType;
+		this.ingredientType = ingredientType;
 	}
 }

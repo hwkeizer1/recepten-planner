@@ -7,11 +7,9 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
-import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 
-@Slf4j
 @Controller
 @FxmlView("root.fxml")
 public class RootController {
@@ -19,24 +17,21 @@ public class RootController {
 	private final FxWeaver fxWeaver;
 	private final TagListViewPanelController tagListViewController;
 	private final MeasureUnitTableViewPanelController measureUnitTableViewPanelController;
+	private final IngredientNameTableViewPanelController ingredientNameTableViewPanelController;
 
 
 	public RootController(FxWeaver fxWeaver, 
 			TagListViewPanelController tagListViewController, 
-			MeasureUnitTableViewPanelController measureUnitTableViewPanelController) {
+			MeasureUnitTableViewPanelController measureUnitTableViewPanelController, IngredientNameTableViewPanelController ingredientNameTableViewPanelController) {
 		this.fxWeaver = fxWeaver;
 		this.tagListViewController = tagListViewController;
 		this.measureUnitTableViewPanelController = measureUnitTableViewPanelController;
+		this.ingredientNameTableViewPanelController = ingredientNameTableViewPanelController;
 	}
 
 
 	@FXML
 	private BorderPane rootWindow;
-	
-	public void initialize() {
-		tagListViewController.setRootController(this);
-		measureUnitTableViewPanelController.setRootController(this);
-	}
 	
 	@FXML
 	public void showCreateBackupDialog(ActionEvent actionEvent) {
@@ -54,20 +49,26 @@ public class RootController {
 	}
 	
 	@FXML
-	public void showTagListView(ActionEvent actionEvent) {
+	public void closeCenterPanel() {
+		rootWindow.setCenter(null);
+	}
+	
+	@FXML
+	public void showTagListViewPanel(ActionEvent actionEvent) {
 		fxWeaver.loadController(TagListViewPanelController.class);
-		rootWindow.setLeft(tagListViewController.getTagListView());
+		rootWindow.setCenter(tagListViewController.getTagListView());
 	}
 	
 	@FXML
 	public void showMeasureUnitTableViewPanel(ActionEvent actionEvent) {
 		fxWeaver.loadController(MeasureUnitTableViewPanelController.class);
-		rootWindow.setLeft(measureUnitTableViewPanelController.getMeasureUnitTableViewPanel());
+		rootWindow.setCenter(measureUnitTableViewPanelController.getMeasureUnitTableViewPanel());
 	}
 	
 	@FXML
-	public void showIngredientNameListView(ActionEvent actionEvent) {
-		log.debug("IngredientNameList");
+	public void showIngredientNameTableViewPanel(ActionEvent actionEvent) {
+		fxWeaver.loadController(IngredientNameTableViewPanelController.class);
+		rootWindow.setCenter(ingredientNameTableViewPanelController.getIngredientNameTableViewPanel());
 	}
 
 	

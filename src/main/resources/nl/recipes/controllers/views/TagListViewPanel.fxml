@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -18,26 +17,17 @@
    <children>
       <VBox fx:id="changeTagVBox" alignment="BOTTOM_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER_RIGHT">
+            <ListView fx:id="tagListView" VBox.vgrow="ALWAYS" />
+            <VBox alignment="BOTTOM_LEFT" fillWidth="false">
                <children>
-                  <Label contentDisplay="CENTER" text="Categorieën bewerken">
+                  <Label contentDisplay="CENTER" text="Categorie bewerken">
                      <font>
                         <Font name="System Bold" size="13.0" />
                      </font>
                      <padding>
-                        <Insets bottom="3.0" right="50.0" top="3.0" />
+                        <Insets bottom="20.0" left="20.0" />
                      </padding>
                   </Label>
-                  <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeTagListViewPanel" text="X" textFill="#f50606">
-                     <font>
-                        <Font name="System Bold" size="13.0" />
-                     </font>
-                  </Button>
-               </children>
-            </HBox>
-            <ListView fx:id="tagListView" VBox.vgrow="ALWAYS" />
-            <VBox alignment="BOTTOM_CENTER">
-               <children>
                   <GridPane alignment="TOP_CENTER">
                     <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" percentWidth="5.0" />
