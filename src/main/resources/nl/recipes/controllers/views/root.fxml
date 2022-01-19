@@ -22,6 +22,11 @@
               <MenuItem mnemonicParsing="false" onAction="#closeProgram" text="Afsluiten" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Recepten">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#showRecipeListPanel" text="Lijst" />
+              </items>
+            </Menu>
         </menus>
       </MenuBar>
    </top>

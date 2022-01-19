@@ -18,15 +18,17 @@ public class RootController {
 	private final TagPanelController tagPanelController;
 	private final MeasureUnitPanelController measureUnitPanelController;
 	private final IngredientNamePanelController ingredientNamePanelController;
+	private final RecipeListPanelController recipeListPanelController;
 
 
 	public RootController(FxWeaver fxWeaver, 
 			TagPanelController tagPanelController, 
-			MeasureUnitPanelController measureUnitPanelController, IngredientNamePanelController ingredientNamePanelController) {
+			MeasureUnitPanelController measureUnitPanelController, IngredientNamePanelController ingredientNamePanelController, RecipeListPanelController recipeListPanelController) {
 		this.fxWeaver = fxWeaver;
 		this.tagPanelController = tagPanelController;
 		this.measureUnitPanelController = measureUnitPanelController;
 		this.ingredientNamePanelController = ingredientNamePanelController;
+		this.recipeListPanelController = recipeListPanelController;
 	}
 
 
@@ -70,7 +72,12 @@ public class RootController {
 		fxWeaver.loadController(IngredientNamePanelController.class);
 		rootWindow.setCenter(ingredientNamePanelController.getIngredientNamePanel());
 	}
-
+	
+	@FXML
+	public void showRecipeListPanel(ActionEvent actionEvent) {
+		fxWeaver.loadController(RecipeListPanelController.class);
+		rootWindow.setCenter(recipeListPanelController.getRecipeListPanel());
+	}
 	
 	@FXML
 	public void closeProgram(ActionEvent actionEvent) {
