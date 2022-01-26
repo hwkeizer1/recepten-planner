@@ -8,6 +8,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -15,16 +16,20 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.RecipeService;
 
+@Slf4j
 @Controller
 @FxmlView("RecipeListPanel.fxml")
 public class RecipeListPanelController {
 
 	private final RecipeService recipeService;
+	
+	private RootController rootController;
 	
 	@FXML AnchorPane recipeListPanel;
 	
@@ -41,6 +46,10 @@ public class RecipeListPanelController {
 		this.recipeService = recipeService;
 	}
 
+	public void setRootController(RootController rootController) {
+		this.rootController = rootController;
+	}
+	
 	public AnchorPane getRecipeListPanel() {
 		return recipeListPanel;
 	}
@@ -56,6 +65,17 @@ public class RecipeListPanelController {
 	private void initializeRecipeListTableView() {
 		recipeListTableView.setItems(recipeService.getReadonlyRecipeList());
 		
+		recipeListTableView.setRowFactory(tv -> {
+			TableRow<Recipe> row = new TableRow<>();
+			row.setOnMouseClicked(e -> {
+				if (e.getClickCount() == 2 && (!row.isEmpty())) {
+					Recipe selectedRecipe = row.getItem();
+					showSingleRecipeView(selectedRecipe);
+				}
+			});
+			return row;
+		});
+		
 		nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
 		typeColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getRecipeType()));
 		tagColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTagString()));
@@ -65,5 +85,9 @@ public class RecipeListPanelController {
 //		 Remove the previous listener before adding one
 //		recipeListTableView.getSelectionModel().selectedItemProperty().removeListener(recipeChangeListener);
 //		recipeListTableView.getSelectionModel().selectedItemProperty().addListener(recipeChangeListener);
+	}
+	
+	private void showSingleRecipeView(Recipe recipe) {
+		rootController.showSingleViewRecipePanel(recipe);
 	}
 }

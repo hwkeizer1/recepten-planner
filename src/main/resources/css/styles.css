@@ -15,6 +15,74 @@
     -fx-shape: null;
 }
 
+/* Do not show ingredient table header */
+.ingredient_table .column-header-background{
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+/* Style ingredient table */
+.ingredient_table .table-row-cell: odd{
+    -fx-background-color: #b3f0ff;
+    -fx-border-color: #b3f0ff;
+}
+
+.ingredient_table .table-row-cell: even{
+    -fx-background-color: #b3f0ff;
+    -fx-border-color: #b3f0ff;
+}
+
+.ingredient_table .table-row-cell: hover {
+    -fx-background-color: #b3f0ff;
+    -fx-border-color: #b3f0ff;
+}
+
+.ingredient_table .table-row-cell:focused {
+    -fx-background-color: #b3f0ff;
+	-fx-border-color: #b3f0ff;
+	-fx-text-background-color: black;
+}
+
+.ingredient_table .table-cell {
+	-fx-border-color: #80e5ff;
+}
+
+.ingredient_table {
+	-fx-accent: transparent ;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+}
+
+.ingredient_table .check-box {
+    /* default properties */
+    selected-box-color: #00b8e6;
+    box-color: #00b8e6;
+    mark-color: white;
+}
+
+.ingredient_table .check-box:selected > .box {
+    /* background color for selected checkbox */
+    -fx-background-color: selected-box-color;
+}
+
+.ingredient_table .check-box > .box {
+    /* background color of unselected checkbox */
+    -fx-background-color: box-color;
+}
+
+.ingredient_table .check-box:selected > .box > .mark,
+.ingredient_table .check-box:indeterminate  > .box > .mark {
+    /* modify mark color */
+    -fx-background-color: mark-color;
+}
+
+/* Image view pane */
+.image-view-pane {
+	-fx-border-color: #80e5ff;
+	-fx-border-width: 2px;
+}
+
 .vbox {
     -fx-border-color: #b3b3cb;
     -fx-border-width: 1px;

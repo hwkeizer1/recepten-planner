@@ -46,7 +46,7 @@ public class Recipe {
 
 	private String notes;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe", orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "recipe", orphanRemoval = true)
 	private Set<Ingredient> ingredients = new HashSet<>();
 
 	private String image;
@@ -117,11 +117,9 @@ public class Recipe {
 	@Override
 	public String toString() {
 		return "Recipe [id=" + id + ", name=" + name + ", servingTips=" + servingTips + ", notes=" + notes
-				+ ", ingredients=" + ingredients + ", recipeType=" + recipeType + ", tags=" + tags
+				+ ", recipeType=" + recipeType + ", tags=" + tags
 				+ ", preparationTime=" + preparationTime + ", cookTime=" + cookTime + ", servings=" + servings
 				+ ", timesServed=" + timesServed + ", lastServed=" + lastServed + ", preparations=" + preparations
 				+ ", directions=" + directions + ", rating=" + rating + "]";
 	}
-
-
 }

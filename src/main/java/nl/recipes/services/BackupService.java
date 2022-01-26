@@ -174,6 +174,7 @@ public class BackupService {
 						ingredient.setIngredientName(optionalIngredientName.get());
 					}
 				}
+				recipe.setTimesServed(0);
 				createRecipe(recipe);
 			}
 		} catch (JsonProcessingException ex) {
