@@ -16,13 +16,11 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.RecipeService;
 
-@Slf4j
 @Controller
 @FxmlView("RecipeListPanel.fxml")
 public class RecipeListPanelController {
@@ -81,10 +79,6 @@ public class RecipeListPanelController {
 		tagColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTagString()));
 		lastServedColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getLastServed()));
 		timesServedColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTimesServed()));
-		
-//		 Remove the previous listener before adding one
-//		recipeListTableView.getSelectionModel().selectedItemProperty().removeListener(recipeChangeListener);
-//		recipeListTableView.getSelectionModel().selectedItemProperty().addListener(recipeChangeListener);
 	}
 	
 	private void showSingleRecipeView(Recipe recipe) {

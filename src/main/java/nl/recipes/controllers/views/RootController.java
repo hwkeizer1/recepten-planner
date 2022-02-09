@@ -10,12 +10,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
-import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import nl.recipes.domain.Recipe;
+import nl.recipes.views.recipe.SingelRecipeView;
 
-@Slf4j
 @Controller
 @FxmlView("root.fxml")
 public class RootController implements Initializable {
@@ -25,29 +24,28 @@ public class RootController implements Initializable {
 	private final MeasureUnitPanelController measureUnitPanelController;
 	private final IngredientNamePanelController ingredientNamePanelController;
 	private final RecipeListPanelController recipeListPanelController;
-	private final SingleRecipeViewController singleRecipeViewController;
+	private final SingelRecipeView singleRecipeView;
 
+	@FXML
+	private BorderPane rootWindow;
 
 	public RootController(FxWeaver fxWeaver, TagPanelController tagPanelController,
 			MeasureUnitPanelController measureUnitPanelController,
 			IngredientNamePanelController ingredientNamePanelController,
 			RecipeListPanelController recipeListPanelController,
-			SingleRecipeViewController singleRecipeViewController) {
+			SingelRecipeView singleRecipeView) {
 		this.fxWeaver = fxWeaver;
 		this.tagPanelController = tagPanelController;
 		this.measureUnitPanelController = measureUnitPanelController;
 		this.ingredientNamePanelController = ingredientNamePanelController;
 		this.recipeListPanelController = recipeListPanelController;
-		this.singleRecipeViewController = singleRecipeViewController;
+		this.singleRecipeView = singleRecipeView;
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		recipeListPanelController.setRootController(this);
 	}
-
-	@FXML
-	private BorderPane rootWindow;
 	
 	@FXML
 	public void showCreateBackupDialog(ActionEvent actionEvent) {
@@ -94,8 +92,7 @@ public class RootController implements Initializable {
 	}
 	
 	public void showSingleViewRecipePanel(Recipe recipe) {
-		fxWeaver.loadController(SingleRecipeViewController.class);
-		rootWindow.setCenter(singleRecipeViewController.getSingleRecipeViewPanel(recipe));
+		rootWindow.setCenter(singleRecipeView.getSingleRecipeViewPanel(recipe));
 	}
 	
 	@FXML

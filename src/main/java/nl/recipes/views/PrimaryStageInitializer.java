@@ -20,12 +20,11 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
 	@Override
 	public void onApplicationEvent(StageReadyEvent event) {
 		Stage stage = event.stage;
-		
 		Scene scene = new Scene(fxWeaver.loadView(RootController.class), 1600, 1200);
 		scene.getStylesheets().clear();
 		scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 		stage.setScene(scene);
-		stage.setTitle("Recepten-planner 0.1");
+		stage.setTitle("Recepten-planner 0.2-beta");
 		stage.show();
 	}
 }

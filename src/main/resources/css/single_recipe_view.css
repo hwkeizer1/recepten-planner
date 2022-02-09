@@ -1,0 +1,113 @@
+/*
+ * Title styling
+ */
+.recipe-title {
+    -fx-font-family: Ubuntu, Arial;
+    -fx-font-size: 3em;
+    -fx-font-weight: bold;
+    -fx-text-fill: rp-header-text;
+    -fx-wrap-text: true;
+}
+
+/*
+ * Widget styling
+ */
+.widget{
+    -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 15px 15px 15px;
+}
+
+.widget .title {
+	-fx-font-weight: bold;
+	-fx-text-fill: rp-header-text;
+	-fx-max-width: 100000;
+	-fx-alignment: center;
+}
+
+.widget .label {
+    -fx-font-size: 1.2em;
+}
+
+.widget .value {
+	-fx-font-weight: bold;
+	-fx-wrap-text: true;
+}
+
+/*
+ * Ingredient table styling
+ */
+.ingredient_table *.scroll-bar:vertical *.increment-button,
+.ingredient_table *.scroll-bar:vertical *.decrement-button {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.ingredient_table *.scroll-bar:vertical *.increment-arrow, 
+.ingredient_table *.scroll-bar:vertical *.decrement-arrow {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+.ingredient_table .column-header-background{
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+.ingredient_table .table-row-cell: odd{
+    -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-border-color: derive(rp-bg-contra-color, 20%);
+}
+
+.ingredient_table .table-row-cell: even{
+    -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-border-color: derive(rp-bg-contra-color, 20%);
+}
+
+.ingredient_table .table-row-cell: hover {
+    -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-border-color: derive(rp-bg-contra-color, 20%);
+}
+
+.ingredient_table .table-row-cell:focused {
+    -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-border-color: derive(rp-bg-contra-color, 20%);
+    -fx-text-background-color: black;
+}
+
+.ingredient_table {
+    -fx-accent: transparent ;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-border-color: derive(rp-bg-contra-color, 20%);
+}
+
+.ingredient_table .check-box {
+    /* default properties */
+    selected-box-color: rp-header-text;
+    box-color: rp-header-text;
+    mark-color: white;
+}
+
+.ingredient_table .check-box:selected > .box {
+    /* background color for selected checkbox */
+    -fx-background-color: selected-box-color;
+}
+
+.ingredient_table .check-box > .box {
+    /* background color of unselected checkbox */
+    -fx-background-color: box-color;
+}
+
+.ingredient_table .check-box:selected > .box > .mark,
+.ingredient_table .check-box:indeterminate  > .box > .mark {
+    /* modify mark color */
+    -fx-background-color: mark-color;
+}
+
+ 

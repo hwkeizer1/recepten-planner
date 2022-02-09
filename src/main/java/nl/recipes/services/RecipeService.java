@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
@@ -19,6 +20,7 @@ public class RecipeService {
 	private final RecipeRepository recipeRepository;
 	
 	private ObservableList<Recipe> observableRecipeList;
+	private ObservableList<Ingredient> observableIngredientList;
 
 	public RecipeService(RecipeRepository recipeRepository) {
 		this.recipeRepository = recipeRepository;
@@ -33,7 +35,7 @@ public class RecipeService {
 		Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeId);
 		if (optionalRecipe.isPresent()) {
 			List<Ingredient> ingredientList = new ArrayList<>(optionalRecipe.get().getIngredients());
-			ObservableList<Ingredient> observableIngredientList = FXCollections.observableList(ingredientList);
+			observableIngredientList = FXCollections.observableList(ingredientList);
 			return FXCollections.unmodifiableObservableList(observableIngredientList);
 		}
 		return FXCollections.emptyObservableList();
@@ -44,5 +46,21 @@ public class RecipeService {
 			throw new AlreadyExistsException("Recept " + recipe.getName() + " bestaat al");
 		}
 		return recipeRepository.save(recipe);
+	}
+	
+	public void addRecipeListListener(ListChangeListener<Recipe> listener) {
+		observableRecipeList.addListener(listener);
+	}
+	
+	public void removeRecipeListListener(ListChangeListener<Recipe> listener) {
+		observableRecipeList.removeListener(listener);
+	}
+	
+	public void addIngredientListListener(ListChangeListener<Ingredient> listener) {
+		observableIngredientList.addListener(listener);
+	}
+	
+	public void removeIngredientListListener(ListChangeListener<Ingredient> listener) {
+		observableIngredientList.removeListener(listener);
 	}
 }
