@@ -1,5 +1,6 @@
 .root {
-	rp-bg-color: rgb(255, 204, 153, 0.6); /* dark-yellow */
+	rp-bg-color: rgb(255, 217, 179); /* dark-yellow */
+	rp-bg-thin-color: rgb(255, 217, 179, 0.6); /* 20% dark-yellow */
 	rp-bg-contra-color: rgb(255, 242, 230);
 	rp-header-text: rgb(179, 77, 0); /* dark orange */
 	rp-shadow: rgb(50, 50, 50, 0.3)

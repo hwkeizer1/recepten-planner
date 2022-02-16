@@ -13,7 +13,8 @@ import javafx.scene.layout.BorderPane;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import nl.recipes.domain.Recipe;
-import nl.recipes.views.recipe.SingelRecipeView;
+import nl.recipes.views.recipes.RecipeListView;
+import nl.recipes.views.recipes.SingelRecipeView;
 
 @Controller
 @FxmlView("root.fxml")
@@ -23,7 +24,7 @@ public class RootController implements Initializable {
 	private final TagPanelController tagPanelController;
 	private final MeasureUnitPanelController measureUnitPanelController;
 	private final IngredientNamePanelController ingredientNamePanelController;
-	private final RecipeListPanelController recipeListPanelController;
+	private final RecipeListView recipeListView;
 	private final SingelRecipeView singleRecipeView;
 
 	@FXML
@@ -32,24 +33,25 @@ public class RootController implements Initializable {
 	public RootController(FxWeaver fxWeaver, TagPanelController tagPanelController,
 			MeasureUnitPanelController measureUnitPanelController,
 			IngredientNamePanelController ingredientNamePanelController,
-			RecipeListPanelController recipeListPanelController,
+			RecipeListView recipeListView,
 			SingelRecipeView singleRecipeView) {
 		this.fxWeaver = fxWeaver;
 		this.tagPanelController = tagPanelController;
 		this.measureUnitPanelController = measureUnitPanelController;
 		this.ingredientNamePanelController = ingredientNamePanelController;
-		this.recipeListPanelController = recipeListPanelController;
+		this.recipeListView = recipeListView;
 		this.singleRecipeView = singleRecipeView;
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		recipeListPanelController.setRootController(this);
+		rootWindow.getStyleClass().add("background");
+		recipeListView.setRootController(this);
+		rootWindow.setCenter(recipeListView.getRecipeListPanel());
 	}
 	
 	@FXML
 	public void showCreateBackupDialog(ActionEvent actionEvent) {
-		// TO be implemented
 	}
 	
 	@FXML
@@ -87,8 +89,8 @@ public class RootController implements Initializable {
 	
 	@FXML
 	public void showRecipeListPanel(ActionEvent actionEvent) {
-		fxWeaver.loadController(RecipeListPanelController.class);
-		rootWindow.setCenter(recipeListPanelController.getRecipeListPanel());
+//		fxWeaver.loadController(RecipeListPanelController.class);
+		rootWindow.setCenter(recipeListView.getRecipeListPanel());
 	}
 	
 	public void showSingleViewRecipePanel(Recipe recipe) {

@@ -1,0 +1,39 @@
+/*
+ * Recipe list styling
+ */
+
+.recipe-table .table-row-cell: odd{
+    -fx-background-color: rp-bg-thin-color;
+    -fx-border-color: rp-bg-thin-color;
+}
+
+.recipe-table .table-row-cell: even{
+    -fx-background-color: rp-bg-contra-color;
+    -fx-border-color: rp-bg-contra-color;
+}
+
+.recipe-table .table-row-cell: hover odd{
+    -fx-background-color: rp-bg-color;
+    -fx-border-color: rp-bg-color;
+}
+
+.recipe-table .table-row-cell: hover even{
+    -fx-background-color: rp-bg-contra-color;
+    -fx-border-color: rp-bg-contra-color;
+}
+
+.recipe-table .table-row-cell:focused {
+	-fx-background-color: rp-header-text;
+}
+
+
+.recipe-table {
+    -fx-accent: transparent ;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-border-color: rp-bg-contra-color;
+}
+
+
+
+ 

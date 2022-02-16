@@ -1,4 +1,4 @@
-package nl.recipes.views.recipe;
+package nl.recipes.views.recipes;
 
 
 import org.springframework.stereotype.Component;
@@ -71,7 +71,7 @@ public class SingelRecipeView {
 		this.recipeService = recipeService;
 		
 		BootstrapPane root = makeView();
-		root.getStylesheets().add(getClass().getResource("/css/single_recipe_view.css").toExternalForm());
+		root.getStylesheets().add(getClass().getResource("/css/single-recipe-view.css").toExternalForm());
 		
 		scrollPane = new ScrollPane(root);
         scrollPane.setFitToWidth(true);
