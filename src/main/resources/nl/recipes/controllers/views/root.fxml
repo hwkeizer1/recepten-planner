@@ -27,6 +27,10 @@
                 <MenuItem mnemonicParsing="false" onAction="#showRecipeListPanel" text="Lijst" />
               </items>
             </Menu>
+            <Menu mnemonicParsing="false" text="Instellingen">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#showConfigurationPanel" text="Wijzigen basis elementen" />
+               </items></Menu>
         </menus>
       </MenuBar>
    </top>

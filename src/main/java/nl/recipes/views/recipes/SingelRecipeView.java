@@ -72,6 +72,7 @@ public class SingelRecipeView {
 		
 		BootstrapPane root = makeView();
 		root.getStylesheets().add(getClass().getResource("/css/single-recipe-view.css").toExternalForm());
+		root.getStylesheets().add(getClass().getResource("/css/widget.css").toExternalForm());
 		
 		scrollPane = new ScrollPane(root);
         scrollPane.setFitToWidth(true);

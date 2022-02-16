@@ -3,7 +3,8 @@
 	rp-bg-thin-color: rgb(255, 217, 179, 0.6); /* 20% dark-yellow */
 	rp-bg-contra-color: rgb(255, 242, 230);
 	rp-header-text: rgb(179, 77, 0); /* dark orange */
-	rp-shadow: rgb(50, 50, 50, 0.3)
+	rp-shadow: rgb(50, 50, 50, 0.3);
+	rp-validation: rgb(255, 0, 0);
 }
 
 .drop-shadow {
@@ -15,21 +16,54 @@
 }
 
 /*
- * Do not show horizontal scrollbar in table views
+ * General styling of tables
  */
-.table-view *.scroll-bar:horizontal *.increment-button,
-.table-view *.scroll-bar:horizontal *.decrement-button {
+.rp-table *.scroll-bar:horizontal *.increment-button,
+.rp-table *.scroll-bar:horizontal *.decrement-button {
     -fx-background-color: null;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
 
-.table-view *.scroll-bar:horizontal *.increment-arrow, 
-.table-view *.scroll-bar:horizontal *.decrement-arrow {
+.rp-table *.scroll-bar:horizontal *.increment-arrow, 
+.rp-table *.scroll-bar:horizontal *.decrement-arrow {
     -fx-background-color: null;
     -fx-background-radius: 0;
     -fx-background-insets: 0;
     -fx-padding: 0;
     -fx-shape: null;
+}
+
+.rp-table .table-row-cell: odd{
+    -fx-background-color: rp-bg-thin-color;
+    -fx-border-color: rp-bg-thin-color;
+}
+
+.rp-table .table-row-cell: even{
+    -fx-background-color: rp-bg-contra-color;
+    -fx-border-color: rp-bg-contra-color;
+}
+
+.rp-table .table-row-cell: hover odd{
+    -fx-background-color: rp-bg-color;
+    -fx-border-color: rp-bg-color;
+}
+
+.rp-table .table-row-cell: hover even{
+    -fx-background-color: rp-bg-contra-color;
+    -fx-border-color: rp-bg-contra-color;
+}
+
+.rp-table .table-row-cell:focused {
+	-fx-background-color: rp-header-text;
+}
+
+
+.rp-table {
+    -fx-accent: transparent ;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-border-color: rp-bg-color;
+    -fx-border-width: 2px;
 }

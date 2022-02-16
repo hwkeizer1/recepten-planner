@@ -10,33 +10,25 @@
 }
 
 /*
- * Widget styling
- */
-.widget{
-    -fx-background-color: derive(rp-bg-contra-color, 20%);
-    -fx-background-radius: 5px;
-    -fx-padding: 5px 15px 15px 15px;
-}
-
-.widget .title {
-	-fx-font-weight: bold;
-	-fx-text-fill: rp-header-text;
-	-fx-max-width: 100000;
-	-fx-alignment: center;
-}
-
-.widget .label {
-    -fx-font-size: 1.2em;
-}
-
-.widget .value {
-	-fx-font-weight: bold;
-	-fx-wrap-text: true;
-}
-
-/*
  * Ingredient table styling
  */
+ 
+.ingredient_table *.scroll-bar:horizontal *.increment-button,
+.ingredient_table *.scroll-bar:horizontal *.decrement-button {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.ingredient_table *.scroll-bar:horizontal *.increment-arrow, 
+.ingredient_table *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
 .ingredient_table *.scroll-bar:vertical *.increment-button,
 .ingredient_table *.scroll-bar:vertical *.decrement-button {
     -fx-background-color: null;

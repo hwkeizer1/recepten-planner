@@ -28,6 +28,8 @@ import nl.recipes.services.RecipeService;
 @Component
 public class RecipeListView {
 
+	private static final String RP_TABLE = "rp-table";
+
 	private final RecipeService recipeService;
 	
 	// TODO: for now this is still a controller, will be a RootView component later
@@ -52,11 +54,8 @@ public class RecipeListView {
 		AnchorPane.setRightAnchor(recipeListVBox, 0.0);
 		AnchorPane.setLeftAnchor(recipeListVBox, 0.0);
 		
-		recipeListPanel.getStylesheets().add(getClass().getResource("/css/recipe-list-view.css").toExternalForm());
 		recipeListPanel.getChildren().add(recipeListVBox);
 		recipeListVBox.getChildren().add(recipeListTableView);
-		recipeListVBox.getStyleClass().add("background");
-//		recipeListVBox.setBackground(new Background(new BackgroundFill(Color.web("#ffffcc"), CornerRadii.EMPTY , Insets.EMPTY)));
 		
 		initializeRecipeListTableView();
 	}
@@ -78,7 +77,7 @@ public class RecipeListView {
 		recipeListTableView.getColumns().add(tagColumn);
 		recipeListTableView.getColumns().add(lastServedColumn);
 		recipeListTableView.getColumns().add(timesServedColumn);
-		recipeListTableView.getStyleClass().add("recipe-table");
+		recipeListTableView.getStyleClass().add(RP_TABLE);
 		
 		
 		nameColumn.prefWidthProperty().bind(recipeListTableView.widthProperty().multiply(0.3));

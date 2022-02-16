@@ -1,0 +1,30 @@
+/*
+ * Widget styling
+ */
+.widget{
+    -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 15px 15px 15px;
+}
+
+.widget .title {
+	-fx-font-weight: bold;
+	-fx-text-fill: rp-header-text;
+	-fx-max-width: 100000;
+	-fx-alignment: center;
+}
+
+.widget .label {
+    -fx-font-size: 1.2em;
+}
+
+.widget .value {
+	-fx-font-weight: bold;
+	-fx-wrap-text: true;
+}
+
+.widget .validation {
+	-fx-font-size: 0.9em;
+	-fx-text-fill: rp-validation
+}
+ 
