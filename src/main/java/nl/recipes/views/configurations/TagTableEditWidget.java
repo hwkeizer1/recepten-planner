@@ -43,7 +43,7 @@ public class TagTableEditWidget {
 	VBox tagEditBox = new VBox();
 	
 	TableView<Tag> tagTableView = new TableView<>();
-	TableColumn<Tag, String> nameColumn = new TableColumn<>("Categorieën");
+	TableColumn<Tag, String> nameColumn = new TableColumn<>("Categorie");
 	
 	TextField nameTextField = new TextField();
 	Label nameError = new Label();
@@ -88,6 +88,7 @@ public class TagTableEditWidget {
 		nameColumn.prefWidthProperty().bind(tagTableView.widthProperty());
 		tagTableView.getColumns().add(nameColumn);
 		tagTableView.getSelectionModel().selectedItemProperty().addListener(tagChangeListener);
+		
 		tagTableBox.getChildren().add(tagTableView);
 		tagTableBox.setPadding(new Insets(10));
 		tagTableView.getStyleClass().add(RP_TABLE);
@@ -95,6 +96,7 @@ public class TagTableEditWidget {
 	
 	private void initializeTagEditBox() {
 		initializeButtons();
+		
 		Label title = new Label("Categorie bewerken");
 		title.getStyleClass().add(TITLE);
 		title.setMaxWidth(Double.MAX_VALUE);

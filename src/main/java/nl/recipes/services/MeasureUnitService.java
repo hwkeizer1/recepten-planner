@@ -30,7 +30,7 @@ public class MeasureUnitService {
 	}
 	
 	public MeasureUnit create(MeasureUnit measureUnit) throws AlreadyExistsException, IllegalValueException {
-		if (measureUnit == null || measureUnit.getName().isEmpty()) {
+		if (measureUnit == null || measureUnit.getName() == null || measureUnit.getName().isEmpty()) {
 			throw new IllegalValueException("Maateenheid naam mag niet leeg zijn");
 		}
 		if (findByName(measureUnit.getName()).isPresent()) {	

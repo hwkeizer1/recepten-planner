@@ -13,13 +13,16 @@ import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 @Component
 public class ConfigurationView {
 	
-	private final TagTableEditWidget tagListEditWidget;
+	private final TagTableEditWidget tagTableEditWidget;
+	private final MeasureUnitTableEditWidget measureUnitTableEditWidget;
 
 	ScrollPane scrollPane;
 	
-	public ConfigurationView(TagTableEditWidget tagListEditWidget) {
+	public ConfigurationView(TagTableEditWidget tagListEditWidget, 
+			MeasureUnitTableEditWidget measureUnitTableEditWidget) {
 		
-		this.tagListEditWidget = tagListEditWidget;
+		this.tagTableEditWidget = tagListEditWidget;
+		this.measureUnitTableEditWidget = measureUnitTableEditWidget;
 		BootstrapPane root = makeView();
 		root.getStylesheets().add(getClass().getResource("/css/widget.css").toExternalForm());
 		
@@ -41,7 +44,8 @@ public class ConfigurationView {
         bootstrapPane.setHgap(25);
         
         BootstrapRow row = new BootstrapRow();
-        row.addColumn(createColumn(tagListEditWidget.getTagTableEditWidget()));
+        row.addColumn(createColumn(tagTableEditWidget.getTagTableEditWidget()));
+        row.addColumn(createColumn(measureUnitTableEditWidget.getMeasureUnitTableEditWidget()));
         
         bootstrapPane.addRow(row);
         
