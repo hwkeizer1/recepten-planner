@@ -9,7 +9,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -38,7 +37,7 @@ public class TagTableEditWidget {
 
 	private final TagService tagService;
 	
-	VBox widget = new VBox();
+	VBox rpWidget = new VBox();
 	VBox tagTableBox = new VBox();
 	VBox tagEditBox = new VBox();
 	
@@ -76,13 +75,13 @@ public class TagTableEditWidget {
 		Label title = new Label("Categorie bewerken");
 		title.getStyleClass().add(TITLE);
 		
-		widget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
-		widget.getChildren().addAll(title, tagTableBox,tagEditBox);
-		widget.setPadding(new Insets(20));
+		rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+		rpWidget.getChildren().addAll(title, tagTableBox,tagEditBox);
+		rpWidget.setPadding(new Insets(20));
 	}	
 	
 	public Node getTagTableEditWidget() {
-		return widget;
+		return rpWidget;
 	}
 	
 	private void initializeTagTableBox() {

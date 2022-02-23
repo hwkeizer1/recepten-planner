@@ -6,25 +6,17 @@ import org.springframework.stereotype.Component;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import lombok.extern.slf4j.Slf4j;
-import nl.recipes.controllers.views.RootController;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.RecipeService;
+import nl.recipes.views.root.RootView;
 
-@Slf4j
 @Component
 public class RecipeListView {
 
@@ -32,8 +24,7 @@ public class RecipeListView {
 
 	private final RecipeService recipeService;
 	
-	// TODO: for now this is still a controller, will be a RootView component later
-	private RootController rootController;
+	private RootView rootView;
 	
 	AnchorPane recipeListPanel = new AnchorPane();
 	
@@ -67,8 +58,8 @@ public class RecipeListView {
 		return recipeListPanel;
 	}
 	
-	public void setRootController(RootController rootController) {
-		this.rootController = rootController;
+	public void setRootView(RootView rootView) {
+		this.rootView = rootView;
 	}
 	
 	private void initializeRecipeListTableView() {
@@ -105,13 +96,11 @@ public class RecipeListView {
 		
 		
 		VBox.setVgrow(recipeListVBox, Priority.NEVER);
-//		recipeListVBox.setPadding(new Insets(20));
-//		recipeListPanel.getChildren().add(recipeListVBox);
 	}
 	
 	private void showSingleRecipeView(Recipe recipe) {
-		if (rootController != null) {
-			rootController.showSingleViewRecipePanel(recipe);
+		if (rootView != null) {
+			rootView.showSingleViewRecipePanel(recipe);
 		}
 	}
 }

@@ -7,10 +7,8 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -22,16 +20,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
-import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
@@ -49,15 +42,15 @@ public class IngredientNameTableEditWidget {
 	
 	private IngredientNameService ingredientNameService;
 	
-	VBox widget = new VBox();
+	VBox rpWidget = new VBox();
 	VBox ingredientNameTableBox = new VBox();
 	VBox ingredientNameEditBox = new VBox();
 	
 	TableView<IngredientName> ingredientNameTableView = new TableView<>();
 	TableColumn<IngredientName, String> nameColumn = new TableColumn<>("Naam");
 	TableColumn<IngredientName, String> pluralNameColumn = new TableColumn<>("Meervoud");
-	TableColumn<IngredientName, Boolean> stockColumn = new TableColumn<>("Voorraad");;
-	TableColumn<IngredientName, ShopType> shopTypeColumn = new TableColumn<>("Winkel");;
+	TableColumn<IngredientName, Boolean> stockColumn = new TableColumn<>("Voorraad");
+	TableColumn<IngredientName, ShopType> shopTypeColumn = new TableColumn<>("Winkel");
 	TableColumn<IngredientName, IngredientType> ingredientTypeColumn = new TableColumn<>("Type");
 	
 	TextField nameTextField = new TextField();
@@ -108,13 +101,13 @@ public class IngredientNameTableEditWidget {
 		Label title = new Label("Ingrediënt bewerken");
 		title.getStyleClass().add(TITLE);
 		
-		widget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
-		widget.getChildren().addAll(title, ingredientNameTableBox,ingredientNameEditBox);
-		widget.setPadding(new Insets(20));
+		rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+		rpWidget.getChildren().addAll(title, ingredientNameTableBox,ingredientNameEditBox);
+		rpWidget.setPadding(new Insets(20));
 	}
 	
 	public Node getIngredientNameTableEditWidget() {
-		return widget;
+		return rpWidget;
 	}
 	
 	private void initializeIngredientNameTableBox() {

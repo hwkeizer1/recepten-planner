@@ -5,22 +5,21 @@ import org.springframework.stereotype.Component;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import net.rgielen.fxweaver.core.FxWeaver;
-import nl.recipes.controllers.views.RootController;
+import nl.recipes.views.root.RootView;
 
 @Component
 public class PrimaryStageInitializer implements ApplicationListener<StageReadyEvent> {
 
-	private final FxWeaver fxWeaver;
+	private final RootView rootView;
 	
-	public PrimaryStageInitializer(FxWeaver fxWeaver) {
-		this.fxWeaver = fxWeaver;
+	public PrimaryStageInitializer(RootView rootView) {
+		this.rootView = rootView;
 	}
 
 	@Override
 	public void onApplicationEvent(StageReadyEvent event) {
 		Stage stage = event.stage;
-		Scene scene = new Scene(fxWeaver.loadView(RootController.class), 1600, 1200);
+		Scene scene = new Scene(rootView.asParent(), 1600, 1200);
 		scene.getStylesheets().clear();
 		scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 		stage.setScene(scene);

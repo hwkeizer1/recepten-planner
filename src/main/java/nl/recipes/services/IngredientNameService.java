@@ -16,6 +16,8 @@ import nl.recipes.repositories.IngredientNameRepository;
 @Service
 public class IngredientNameService {
 
+	private static final String INGREDIENT_NAAM = "Ingrediënt naam ";
+
 	private final IngredientNameRepository ingredientNameRepository;
 
 	private ObservableList<IngredientName> observableIngredientNameList;
@@ -34,7 +36,7 @@ public class IngredientNameService {
 			throw new IllegalValueException("Ingrediënt naam mag niet leeg zijn");
 		}
 		if (findByName(ingredientName.getName()).isPresent()) {	
-			throw new AlreadyExistsException("Ingrediënt naam " + ingredientName.getName() + " bestaat al");
+			throw new AlreadyExistsException(INGREDIENT_NAAM + ingredientName.getName() + " bestaat al");
 		}
 		IngredientName createdIngredientName = ingredientNameRepository.save(ingredientName);
 		observableIngredientNameList.add(createdIngredientName);
@@ -43,10 +45,10 @@ public class IngredientNameService {
 	
 	public IngredientName update(IngredientName ingredientName, IngredientName update) throws NotFoundException, AlreadyExistsException {
 		if (!findById(ingredientName.getId()).isPresent()) {
-			throw new NotFoundException("Ingrediënt naam " + ingredientName.getName() + " niet gevonden");
+			throw new NotFoundException(INGREDIENT_NAAM + ingredientName.getName() + " niet gevonden");
 		}
 		if (!ingredientName.getName().equals(update.getName()) && findByName(update.getName()).isPresent()) {
-			throw new AlreadyExistsException("Ingrediënt naam " + update.getName() + " bestaat al");
+			throw new AlreadyExistsException(INGREDIENT_NAAM + update.getName() + " bestaat al");
 		}
 		ingredientName.setName(update.getName());
 		ingredientName.setPluralName(update.getPluralName());
@@ -63,7 +65,7 @@ public class IngredientNameService {
 	public void remove(IngredientName ingredientName) throws NotFoundException {
 		// TODO add check for removing measureUnits that are in use
 		if (!findById(ingredientName.getId()).isPresent()) {
-			throw new NotFoundException("Ingrediënt naam " + ingredientName.getName() + " niet gevonden");
+			throw new NotFoundException(INGREDIENT_NAAM + ingredientName.getName() + " niet gevonden");
 		}
 		ingredientNameRepository.delete(ingredientName);
 		observableIngredientNameList.remove(ingredientName);

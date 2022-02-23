@@ -10,7 +10,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -19,13 +18,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
@@ -43,7 +38,7 @@ public class MeasureUnitTableEditWidget {
 	
 	private final MeasureUnitService measureUnitService;
 
-	VBox widget = new VBox();
+	VBox rpWidget = new VBox();
 	VBox measureUnitTableBox = new VBox();
 	VBox measureUnitEditBox = new VBox();
 	
@@ -87,13 +82,13 @@ public class MeasureUnitTableEditWidget {
 		Label title = new Label("Maateenheid bewerken");
 		title.getStyleClass().add(TITLE);
 		
-		widget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
-		widget.getChildren().addAll(title, measureUnitTableBox,measureUnitEditBox);
-		widget.setPadding(new Insets(20));
+		rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+		rpWidget.getChildren().addAll(title, measureUnitTableBox,measureUnitEditBox);
+		rpWidget.setPadding(new Insets(20));
 	}
 	
 	public Node getMeasureUnitTableEditWidget() {
-		return widget;
+		return rpWidget;
 	}
 	
 	private void initializeMeasureUnitTableBox() {

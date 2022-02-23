@@ -28,6 +28,8 @@ import nl.recipes.exceptions.IllegalValueException;
 @Service
 public class BackupService {
 
+	private static final String FOUT_BIJ_HET_TERUGZETTEN_VAN_DE_BACKUP_FILE = "Fout bij het terugzetten van de backup file ";
+	private static final String FOUT_BIJ_HET_LEZEN_VAN_DE_BACKUP_FILE = "Fout bij het lezen van de backup file ";
 	private static final String TAGS_PLAN = "tags.plan";
 	private static final String INGREDIENT_NAMES_PLAN = "ingredientnames.plan";
 	private static final String MEASURE_UNIT_PLAN = "measureunits.plan";
@@ -65,7 +67,7 @@ public class BackupService {
 		try (BufferedReader reader = new BufferedReader(new FileReader(tagFile))) {
 			return reader.readLine();
 		} catch (IOException ex) {
-			log.error("Fout bij het lezen van de backup file " + TAGS_PLAN);
+			log.error(FOUT_BIJ_HET_LEZEN_VAN_DE_BACKUP_FILE + TAGS_PLAN);
 		}
 		return null;
 	}
@@ -77,7 +79,7 @@ public class BackupService {
 				createTag(tag);
 			}
 		} catch (JsonProcessingException ex) {
-			log.error("Fout bij het terugzetten van de backup file " + TAGS_PLAN);
+			log.error(FOUT_BIJ_HET_TERUGZETTEN_VAN_DE_BACKUP_FILE + TAGS_PLAN);
 		}
 	}
 
@@ -95,7 +97,7 @@ public class BackupService {
 		try (BufferedReader reader = new BufferedReader(new FileReader(ingredientNameFile))) {
 			return reader.readLine();
 		} catch (IOException ex) {
-			log.error("Fout bij het lezen van de backup file " + INGREDIENT_NAMES_PLAN);
+			log.error(FOUT_BIJ_HET_LEZEN_VAN_DE_BACKUP_FILE + INGREDIENT_NAMES_PLAN);
 		}
 		return null;
 	}
@@ -107,7 +109,7 @@ public class BackupService {
 				createIngredientName(ingredientName);
 			}
 		} catch (JsonProcessingException ex) {
-			log.error("Fout bij het terugzetten van de backup file " + INGREDIENT_NAMES_PLAN);
+			log.error(FOUT_BIJ_HET_TERUGZETTEN_VAN_DE_BACKUP_FILE + INGREDIENT_NAMES_PLAN);
 		}
 	}
 
@@ -125,7 +127,7 @@ public class BackupService {
 		try (BufferedReader reader = new BufferedReader(new FileReader(measureUnitFile))) {
 			return reader.readLine();
 		} catch (IOException ex) {
-			log.error("Fout bij het lezen van de backup file " + MEASURE_UNIT_PLAN);
+			log.error(FOUT_BIJ_HET_LEZEN_VAN_DE_BACKUP_FILE + MEASURE_UNIT_PLAN);
 		}
 		return null;
 	}
@@ -137,7 +139,7 @@ public class BackupService {
 				createMeasureUnit(measureUnit);
 			}
 		} catch (JsonProcessingException ex) {
-			log.error("Fout bij het terugzetten van de backup file " + MEASURE_UNIT_PLAN);
+			log.error(FOUT_BIJ_HET_TERUGZETTEN_VAN_DE_BACKUP_FILE + MEASURE_UNIT_PLAN);
 		}
 	}
 
@@ -155,7 +157,7 @@ public class BackupService {
 		try (BufferedReader reader = new BufferedReader(new FileReader(recipeFile))) {
 			return reader.readLine();
 		} catch (IOException ex) {
-			log.error("Fout bij het lezen van de backup file " + RECIPES_PLAN);
+			log.error(FOUT_BIJ_HET_LEZEN_VAN_DE_BACKUP_FILE + RECIPES_PLAN);
 		}
 		return null;
 	}
@@ -179,7 +181,7 @@ public class BackupService {
 			}
 		} catch (JsonProcessingException ex) {
 			ex.printStackTrace();
-			log.error("Fout bij het terugzetten van de backup file " + RECIPES_PLAN);
+			log.error(FOUT_BIJ_HET_TERUGZETTEN_VAN_DE_BACKUP_FILE + RECIPES_PLAN);
 		}
 	}
 
