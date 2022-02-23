@@ -22,8 +22,6 @@ import nl.recipes.views.recipes.SingelRecipeView;
 public class RootController implements Initializable {
 
 	private final FxWeaver fxWeaver;
-	private final MeasureUnitPanelController measureUnitPanelController;
-	private final IngredientNamePanelController ingredientNamePanelController;
 	private final ConfigurationView configurationView;
 	private final RecipeListView recipeListView;
 	private final SingelRecipeView singleRecipeView;
@@ -32,14 +30,10 @@ public class RootController implements Initializable {
 	private BorderPane rootWindow;
 
 	public RootController(FxWeaver fxWeaver,
-			MeasureUnitPanelController measureUnitPanelController,
-			IngredientNamePanelController ingredientNamePanelController,
 			RecipeListView recipeListView,
 			SingelRecipeView singleRecipeView, 
 			ConfigurationView configurationView) {
 		this.fxWeaver = fxWeaver;
-		this.measureUnitPanelController = measureUnitPanelController;
-		this.ingredientNamePanelController = ingredientNamePanelController;
 		this.configurationView = configurationView;
 		this.recipeListView = recipeListView;
 		this.singleRecipeView = singleRecipeView;
@@ -77,14 +71,10 @@ public class RootController implements Initializable {
 	
 	@FXML
 	public void showMeasureUnitPanel(ActionEvent actionEvent) {
-		fxWeaver.loadController(MeasureUnitPanelController.class);
-		rootWindow.setCenter(measureUnitPanelController.getMeasureUnitPanel());
 	}
 	
 	@FXML
 	public void showIngredientNamePanel(ActionEvent actionEvent) {
-		fxWeaver.loadController(IngredientNamePanelController.class);
-		rootWindow.setCenter(ingredientNamePanelController.getIngredientNamePanel());
 	}
 	
 	@FXML

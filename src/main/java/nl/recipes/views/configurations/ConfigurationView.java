@@ -15,14 +15,17 @@ public class ConfigurationView {
 	
 	private final TagTableEditWidget tagTableEditWidget;
 	private final MeasureUnitTableEditWidget measureUnitTableEditWidget;
+	private final IngredientNameTableEditWidget ingredientNameTableEditWidget;
 
 	ScrollPane scrollPane;
 	
 	public ConfigurationView(TagTableEditWidget tagListEditWidget, 
-			MeasureUnitTableEditWidget measureUnitTableEditWidget) {
+			MeasureUnitTableEditWidget measureUnitTableEditWidget, 
+			IngredientNameTableEditWidget ingredientNameTableEditWidget) {
 		
 		this.tagTableEditWidget = tagListEditWidget;
 		this.measureUnitTableEditWidget = measureUnitTableEditWidget;
+		this.ingredientNameTableEditWidget = ingredientNameTableEditWidget;
 		BootstrapPane root = makeView();
 		root.getStylesheets().add(getClass().getResource("/css/widget.css").toExternalForm());
 		
@@ -46,6 +49,7 @@ public class ConfigurationView {
         BootstrapRow row = new BootstrapRow();
         row.addColumn(createColumn(tagTableEditWidget.getTagTableEditWidget()));
         row.addColumn(createColumn(measureUnitTableEditWidget.getMeasureUnitTableEditWidget()));
+        row.addColumn(createLargeColumn(ingredientNameTableEditWidget.getIngredientNameTableEditWidget()));
         
         bootstrapPane.addRow(row);
         

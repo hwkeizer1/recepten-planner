@@ -72,8 +72,12 @@ public class TagTableEditWidget {
 		
 		initializeTagTableBox();
 		initializeTagEditBox();
+		
+		Label title = new Label("Categorie bewerken");
+		title.getStyleClass().add(TITLE);
+		
 		widget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
-		widget.getChildren().addAll(tagTableBox,tagEditBox);
+		widget.getChildren().addAll(title, tagTableBox,tagEditBox);
 		widget.setPadding(new Insets(20));
 	}	
 	
@@ -86,28 +90,24 @@ public class TagTableEditWidget {
 		
 		nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
 		nameColumn.prefWidthProperty().bind(tagTableView.widthProperty());
+		tagTableView.setMinHeight(200); // prevent table from collapsing
+		
 		tagTableView.getColumns().add(nameColumn);
 		tagTableView.getSelectionModel().selectedItemProperty().addListener(tagChangeListener);
 		
 		tagTableBox.getChildren().add(tagTableView);
-		tagTableBox.setPadding(new Insets(10));
 		tagTableView.getStyleClass().add(RP_TABLE);
 	}
 	
 	private void initializeTagEditBox() {
 		initializeButtons();
 		
-		Label title = new Label("Categorie bewerken");
-		title.getStyleClass().add(TITLE);
-		title.setMaxWidth(Double.MAX_VALUE);
-		title.setAlignment(Pos.CENTER);
-		
 		ButtonBar buttonBar = new ButtonBar();
 		buttonBar.getButtons().addAll(removeButton, updateButton, createButton);
 		
 		tagEditBox.setPadding(new Insets(10));
-		tagEditBox.setSpacing(30);
-		tagEditBox.getChildren().addAll(title, createInputForm(), buttonBar);
+		tagEditBox.setSpacing(20);
+		tagEditBox.getChildren().addAll(createInputForm(), buttonBar);
 		
 	}
 	
@@ -125,9 +125,13 @@ public class TagTableEditWidget {
 	}
 	
 	private Node createInputForm() {
+		
 		GridPane inputForm = new GridPane();
+		inputForm.setPadding(new Insets(10, 0, 0, 0));
+		inputForm.setHgap(20);
+		
 		ColumnConstraints column1 = new ColumnConstraints();
-		column1.setPercentWidth(50);
+		column1.setPercentWidth(40);
 		column1.setHalignment(HPos.RIGHT);
 		ColumnConstraints column2 = new ColumnConstraints();
 		column2.setPercentWidth(50);
@@ -137,7 +141,6 @@ public class TagTableEditWidget {
 		Label nameLabel = new Label("Categorie:");
 		inputForm.add(nameLabel, 0, 0);
 		inputForm.add(nameTextField, 1, 0);
-		inputForm.setHgap(20);
 		inputForm.add(nameError,1 ,1 );
 		
 		nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);

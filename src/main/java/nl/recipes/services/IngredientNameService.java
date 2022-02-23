@@ -30,7 +30,7 @@ public class IngredientNameService {
 	}
 	
 	public IngredientName create(IngredientName ingredientName) throws AlreadyExistsException, IllegalValueException {
-		if (ingredientName == null || ingredientName.getName().isEmpty()) {
+		if (ingredientName == null || ingredientName.getName() == null || ingredientName.getName().isEmpty()) {
 			throw new IllegalValueException("Ingrediënt naam mag niet leeg zijn");
 		}
 		if (findByName(ingredientName.getName()).isPresent()) {	

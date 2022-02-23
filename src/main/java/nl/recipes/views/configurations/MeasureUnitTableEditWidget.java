@@ -2,6 +2,7 @@ package nl.recipes.views.configurations;
 
 import org.springframework.stereotype.Component;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -18,9 +19,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
@@ -79,8 +84,11 @@ public class MeasureUnitTableEditWidget {
 		initializeMeasureUnitTableBox();
 		initializeMeasureUnitEditBox();
 		
+		Label title = new Label("Maateenheid bewerken");
+		title.getStyleClass().add(TITLE);
+		
 		widget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
-		widget.getChildren().addAll(measureUnitTableBox,measureUnitEditBox);
+		widget.getChildren().addAll(title, measureUnitTableBox,measureUnitEditBox);
 		widget.setPadding(new Insets(20));
 	}
 	
@@ -90,6 +98,9 @@ public class MeasureUnitTableEditWidget {
 	
 	private void initializeMeasureUnitTableBox() {
 		measureUnitTableView.setItems(measureUnitService.getReadonlyMeasureUnitList());
+		measureUnitTableView.setFixedCellSize(25);
+		measureUnitTableView.prefHeightProperty().bind(Bindings.size(measureUnitTableView.getItems()).multiply(measureUnitTableView.getFixedCellSize()).add(4));
+		measureUnitTableView.setMinHeight(200); // prevent table from collapsing
 		
 		nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
 		nameColumn.prefWidthProperty().bind(measureUnitTableView.widthProperty().multiply(0.5));
@@ -101,24 +112,19 @@ public class MeasureUnitTableEditWidget {
 		measureUnitTableView.getSelectionModel().selectedItemProperty().addListener(measureUnitChangeListener);
 		
 		measureUnitTableBox.getChildren().add(measureUnitTableView);
-		measureUnitTableBox.setPadding(new Insets(10));
 		measureUnitTableBox.getStyleClass().add(RP_TABLE);
 	}
 	
 	private void initializeMeasureUnitEditBox() {
 		initializeButtons();
 		
-		Label title = new Label("Maateenheid bewerken");
-		title.getStyleClass().add(TITLE);
-		title.setMaxWidth(Double.MAX_VALUE);
-		title.setAlignment(Pos.CENTER);
-		
 		ButtonBar buttonBar = new ButtonBar();
+		buttonBar.setPadding(new Insets(0, 20, 0, 0));
 		buttonBar.getButtons().addAll(removeButton, updateButton, createButton);
 		
 		measureUnitEditBox.setPadding(new Insets(10));
-		measureUnitEditBox.setSpacing(30);
-		measureUnitEditBox.getChildren().addAll(title, createInputForm(), buttonBar);
+		measureUnitEditBox.setSpacing(20);
+		measureUnitEditBox.getChildren().addAll(createInputForm(), buttonBar);
 	}
 	
 	private void initializeButtons() {
@@ -135,25 +141,27 @@ public class MeasureUnitTableEditWidget {
 	}
 	
 	private Node createInputForm() {
+		
 		GridPane inputForm = new GridPane();
+		inputForm.setPadding(new Insets(10, 0, 0, 0));
+		inputForm.setHgap(20);
+		
+		ColumnConstraints column0 = new ColumnConstraints();
+		column0.setPercentWidth(40);
+		column0.setHalignment(HPos.RIGHT);
 		ColumnConstraints column1 = new ColumnConstraints();
 		column1.setPercentWidth(50);
-		column1.setHalignment(HPos.RIGHT);
-		ColumnConstraints column2 = new ColumnConstraints();
-		column2.setPercentWidth(50);
-		
-		inputForm.getColumnConstraints().addAll(column1, column2);
+
+		inputForm.getColumnConstraints().addAll(column0, column1);
 		
 		Label nameLabel = new Label("Maateenheid:");
 		inputForm.add(nameLabel, 0, 0);
 		inputForm.add(nameTextField, 1, 0);
-		inputForm.setHgap(20);
 		inputForm.add(nameError,1 ,1 );
 		
 		Label pluralNameLabel = new Label("Meervoud:");
 		inputForm.add(pluralNameLabel, 0, 2);
 		inputForm.add(pluralNameTextField, 1, 2);
-		inputForm.setHgap(20);
 		inputForm.add(pluralNameError,1 ,3 );
 		
 		nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
