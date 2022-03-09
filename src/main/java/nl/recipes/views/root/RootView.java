@@ -13,32 +13,38 @@ import javafx.scene.layout.BorderPane;
 import nl.recipes.domain.Recipe;
 import nl.recipes.views.backup.RestoreBackupDialog;
 import nl.recipes.views.configurations.ConfigurationView;
+import nl.recipes.views.recipes.RecipeEditView;
 import nl.recipes.views.recipes.RecipeListView;
-import nl.recipes.views.recipes.SingelRecipeView;
+import nl.recipes.views.recipes.RecipeSingleView;
 
 @Component
 public class RootView {
 	
 	private final ConfigurationView configurationView;
 	private final RecipeListView recipeListView;
-	private final SingelRecipeView singleRecipeView;
+	private final RecipeSingleView recipeSingleView;
+	private final RecipeEditView recipeEditView;
 	private final RestoreBackupDialog restoreBackupDialog;
 
 	private BorderPane rootWindow = new BorderPane();
 	
 	private MenuBar menuBar = new MenuBar();
 
-	public RootView(SingelRecipeView singleRecipeView, 
+	public RootView(RecipeSingleView recipeSingleView, 
 			RecipeListView recipeListView,
+			RecipeEditView recipeEditView,
 			ConfigurationView configurationView, 
 			RestoreBackupDialog restoreBackupDialog) {
 		
 		this.configurationView = configurationView;
 		this.recipeListView = recipeListView;
-		this.singleRecipeView = singleRecipeView;
+		this.recipeSingleView = recipeSingleView;
+		this.recipeEditView = recipeEditView;
 		this.restoreBackupDialog = restoreBackupDialog;
 		
 		recipeListView.setRootView(this);
+		recipeSingleView.setRootView(this);
+		recipeEditView.setRootView(this);
 		
 		initializeRootWindow();
 		initializeMenu();
@@ -98,9 +104,15 @@ public class RootView {
 		rootWindow.setCenter(configurationView.getConfigurationViewPanel());
 	}
 	
-	public void showSingleViewRecipePanel(Recipe recipe) {
-		rootWindow.setCenter(singleRecipeView.getSingleRecipeViewPanel(recipe));
+	public void showRecipeSingleViewPanel(Recipe recipe) {
+		rootWindow.setCenter(recipeSingleView.getRecipeSingleViewPanel(recipe));
 	}
 	
-
+	public void showRecipeEditViewPanel(Recipe recipe) {
+		rootWindow.setCenter(recipeEditView.getRecipeEditViewPanel(recipe));
+	}
+	
+	public void showNewRecipeEditViewPanel() {
+		rootWindow.setCenter(recipeEditView.getNewRecipeEditViewPanel());
+	}
 }

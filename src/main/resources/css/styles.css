@@ -15,6 +15,11 @@
     -fx-background-color: linear-gradient(to bottom left, rp-bg-color 10%, rp-bg-contra-color 50%, rp-bg-color 90%);
 }
 
+.validation {
+	-fx-font-size: 0.9em;
+	-fx-text-fill: rp-validation
+}
+
 /*
  * General styling of tables
  */

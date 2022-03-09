@@ -21,7 +21,11 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
 		Stage stage = event.stage;
 		Scene scene = new Scene(rootView.asParent(), 1600, 1200);
 		scene.getStylesheets().clear();
-		scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+		scene.getStylesheets().addAll(
+				getClass().getResource("/css/styles.css").toExternalForm(),
+				getClass().getResource("/css/widget.css").toExternalForm(),
+				getClass().getResource("/css/recipe-list-view.css").toExternalForm(),
+				getClass().getResource("/css/single-recipe-view.css").toExternalForm());
 		stage.setScene(scene);
 		stage.setTitle("Recepten-planner 0.2-beta");
 		stage.show();

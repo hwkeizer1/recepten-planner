@@ -62,7 +62,7 @@ public class Recipe {
 	private Integer preparationTime;
 	private Integer cookTime;
 	private Integer servings;
-	private Integer timesServed = 0;
+	private Integer timesServed;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate lastServed;

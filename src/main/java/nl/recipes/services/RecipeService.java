@@ -9,11 +9,15 @@ import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
+import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.Recipe;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.RecipeRepository;
 
+@Slf4j
 @Service
 public class RecipeService {
 
@@ -45,7 +49,36 @@ public class RecipeService {
 		if (recipeRepository.findByName(recipe.getName()).isPresent()) {	
 			throw new AlreadyExistsException("Recept " + recipe.getName() + " bestaat al");
 		}
-		return recipeRepository.save(recipe);
+		Recipe createdRecipe = recipeRepository.save(recipe);
+		observableRecipeList.add(createdRecipe);
+		return createdRecipe;
+	}
+	
+	public Recipe update(Recipe recipe)  throws AlreadyExistsException {
+		Recipe updatedRecipe = recipeRepository.save(recipe);
+		observableRecipeList.set(observableRecipeList.lastIndexOf(recipe), updatedRecipe);
+		return updatedRecipe;
+	}
+	
+	public void remove(Recipe recipe) throws NotFoundException {
+		// TODO add check for removing recipe that is in use (planning)
+		if (!findById(recipe.getId()).isPresent()) {
+			throw new NotFoundException("Recept " + recipe.getName() + " niet gevonden");
+		}
+		recipeRepository.delete(recipe);
+		observableRecipeList.remove(recipe);
+	}
+	
+	public Optional<Recipe> findByName(String name) {
+		return observableRecipeList.stream()
+				.filter(recipe -> name.equals(recipe.getName()))
+				.findAny();
+	}
+	
+	public Optional<Recipe> findById(Long id) {
+		return observableRecipeList.stream()
+				.filter(recipe -> id.equals(recipe.getId()))
+				.findAny();
 	}
 	
 	public void addRecipeListListener(ListChangeListener<Recipe> listener) {

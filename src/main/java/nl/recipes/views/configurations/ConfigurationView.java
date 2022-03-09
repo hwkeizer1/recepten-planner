@@ -27,7 +27,6 @@ public class ConfigurationView {
 		this.measureUnitTableEditWidget = measureUnitTableEditWidget;
 		this.ingredientNameTableEditWidget = ingredientNameTableEditWidget;
 		BootstrapPane root = makeView();
-		root.getStylesheets().add(getClass().getResource("/css/widget.css").toExternalForm());
 		
 		scrollPane = new ScrollPane(root);
         scrollPane.setFitToWidth(true);

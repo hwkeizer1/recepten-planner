@@ -6,10 +6,12 @@ import org.springframework.stereotype.Component;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
@@ -32,9 +34,10 @@ import nl.recipes.views.components.pane.bootstrap.BootstrapColumn;
 import nl.recipes.views.components.pane.bootstrap.BootstrapPane;
 import nl.recipes.views.components.pane.bootstrap.BootstrapRow;
 import nl.recipes.views.components.pane.bootstrap.Breakpoint;
+import nl.recipes.views.root.RootView;
 
 @Component
-public class SingelRecipeView {
+public class RecipeSingleView {
 	
 	private static final String INGREDIENT_TABLE = "ingredient_table";
 	private static final String TITLE = "title";
@@ -43,6 +46,10 @@ public class SingelRecipeView {
 	private static final String WIDGET = "widget";
 	
 	private final RecipeService recipeService;
+	
+	private RootView rootView;
+	
+	private Recipe selectedRecipe;
 	
 	ScrollPane scrollPane;
 	
@@ -67,12 +74,10 @@ public class SingelRecipeView {
 	Label preparations = new Label();
 	Label directions = new Label();
 	
-	public SingelRecipeView(RecipeService recipeService) {
+	public RecipeSingleView(RecipeService recipeService) {
 		this.recipeService = recipeService;
 		
 		BootstrapPane root = makeView();
-		root.getStylesheets().add(getClass().getResource("/css/single-recipe-view.css").toExternalForm());
-		root.getStylesheets().add(getClass().getResource("/css/widget.css").toExternalForm());
 		
 		scrollPane = new ScrollPane(root);
         scrollPane.setFitToWidth(true);
@@ -80,17 +85,21 @@ public class SingelRecipeView {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 	}
 	
-
-	public Node getSingleRecipeViewPanel(Recipe recipe) {
+	public void setRootView(RootView rootView) {
+		this.rootView = rootView;
+	}
+	
+	public Node getRecipeSingleViewPanel(Recipe recipe) {
+		selectedRecipe = recipe;
 		recipeName.setText(recipe.getName());
 		
 		tagString.setText(recipe.getTagString());
 		preparationTime.setText(recipe.getPreparationTime() == null ? "-" : recipe.getPreparationTime().toString());
 		cookTime.setText(recipe.getCookTime() == null ? "-" :recipe.getCookTime().toString());
-		servings.setText(recipe.getServings().toString());
-		timesServed.setText(recipe.getTimesServed().toString());
+		servings.setText(recipe.getServings() == null ? "-" : recipe.getServings().toString());
+		timesServed.setText(recipe.getTimesServed() == null ? "-" : recipe.getTimesServed().toString());
 		lastTimeServed.setText(recipe.getLastServed() == null ? "-" : recipe.getLastServed().toString());
-		rating.setText(recipe.getRating().toString());		
+		rating.setText(recipe.getRating() == null ? "-" : recipe.getRating().toString());		
 		// TODO: For now hard coded, image location will be part of recipe later on
 		imageView = setRoundedImage("/images/spaghetti brocolli spekjes.png");
 		
@@ -136,9 +145,25 @@ public class SingelRecipeView {
 		recipeName.setWrapText(true);
 		recipeName.getStyleClass().addAll(RECIPE_TITLE, DROP_SHADOW);
 		
+		VBox buttonPanel = new VBox();
+		buttonPanel.setSpacing(20);
+		Button edit = new Button("Recept wijzigen");
+		edit.setOnAction(this::showRecipeEditView);
+		edit.setMinWidth(150);
+		Button plan = new Button("Recept plannen");
+		plan.setMinWidth(150);
+		Button list = new Button("Terug naar lijst");
+		list.setOnAction(this::showRecipeListView);
+		list.setMinWidth(150);
+		buttonPanel.getChildren().addAll(edit, plan, list);
 		
+		Region buffer =  new Region();
+		HBox.setHgrow(buffer, Priority.ALWAYS);
+			
 		header.getChildren().add(imageView);
 		header.getChildren().add(recipeName);
+		header.getChildren().add(buffer);
+		header.getChildren().add(buttonPanel);
 		
 		BootstrapColumn titleColumn = new BootstrapColumn(header);
 		titleColumn.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
@@ -174,7 +199,7 @@ public class SingelRecipeView {
 		widget.getChildren().add(titleLabel);
 		
 		widget.getChildren().add(new Separator(Orientation.HORIZONTAL));
-		widget.getChildren().add(createFeatureItem("Trefwoorden:", tagString));
+		widget.getChildren().add(createFeatureItem("Categorieën:", tagString));
 		widget.getChildren().add(createFeatureItem("Voorbereidingstijd:", preparationTime));
 		widget.getChildren().add(createFeatureItem("Bereidingstijd:", cookTime));
 		widget.getChildren().add(createFeatureItem("Aantal personen:", servings));
@@ -284,5 +309,17 @@ public class SingelRecipeView {
 		imageView.setClip(null);
 		imageView.setImage(writeableImage);
 		return imageView;
+	}
+	
+	private void showRecipeListView(ActionEvent event) {
+		if (rootView != null) {
+			rootView.handleRecipeListPanel(event);
+		}
+	}
+	
+	private void showRecipeEditView(ActionEvent event) {
+		if (rootView != null) {
+			rootView.showRecipeEditViewPanel(selectedRecipe);
+		}
 	}
 }
