@@ -57,6 +57,7 @@ public class RecipeSingleView {
 	Label recipeName;
 	
 	Label tagString = new Label();
+	Label recipeType = new Label();
 	Label preparationTime = new Label();
 	Label cookTime = new Label();
 	Label servings = new Label();
@@ -94,6 +95,7 @@ public class RecipeSingleView {
 		recipeName.setText(recipe.getName());
 		
 		tagString.setText(recipe.getTagString());
+		recipeType.setText(recipe.getRecipeType().getDisplayName());
 		preparationTime.setText(recipe.getPreparationTime() == null ? "-" : recipe.getPreparationTime().toString());
 		cookTime.setText(recipe.getCookTime() == null ? "-" :recipe.getCookTime().toString());
 		servings.setText(recipe.getServings() == null ? "-" : recipe.getServings().toString());
@@ -200,6 +202,7 @@ public class RecipeSingleView {
 		
 		widget.getChildren().add(new Separator(Orientation.HORIZONTAL));
 		widget.getChildren().add(createFeatureItem("Categorieën:", tagString));
+		widget.getChildren().add(createFeatureItem("Recept type:", recipeType));
 		widget.getChildren().add(createFeatureItem("Voorbereidingstijd:", preparationTime));
 		widget.getChildren().add(createFeatureItem("Bereidingstijd:", cookTime));
 		widget.getChildren().add(createFeatureItem("Aantal personen:", servings));

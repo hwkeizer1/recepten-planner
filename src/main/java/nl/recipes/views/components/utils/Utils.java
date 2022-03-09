@@ -3,7 +3,7 @@ package nl.recipes.views.components.utils;
 /**
  * Based on https://edencoding.com/responsive-layouts/
  */
-public class MathUtils {
+public class Utils {
 
     /**
      * Return an integer between the stated max and min values

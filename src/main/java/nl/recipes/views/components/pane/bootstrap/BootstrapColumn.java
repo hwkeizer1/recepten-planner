@@ -1,7 +1,7 @@
 package nl.recipes.views.components.pane.bootstrap;
 
 import javafx.scene.Node;
-import nl.recipes.views.components.utils.MathUtils;
+import nl.recipes.views.components.utils.Utils;
 
 /**
  * Based on https://edencoding.com/responsive-layouts/
@@ -29,7 +29,7 @@ public class BootstrapColumn {
      * @param width      the requested width at this breakpoint (must be between 1 and 12);
      */
     public void setBreakpointColumnWidth(Breakpoint breakPoint, int width) {
-        columnWidths[breakPoint.getValue()] = MathUtils.clamp(width, 1, 12);
+        columnWidths[breakPoint.getValue()] = Utils.clamp(width, 1, 12);
     }
 
     /**
