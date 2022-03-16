@@ -2,7 +2,6 @@ package nl.recipes.views.recipes;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -25,28 +24,21 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.MeasureUnit;
-import nl.recipes.exceptions.AlreadyExistsException;
-import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.services.IngredientNameService;
 import nl.recipes.services.MeasureUnitService;
+
+import static nl.recipes.views.ViewConstants.*;
 
 @Slf4j
 @Component
 public class IngredientEditView {
-	
-	private static final String WIDGET = "widget";
-	private static final String DROP_SHADOW = "drop-shadow";
 	
 	private final MeasureUnitService measureUnitService;
 	private final IngredientNameService ingredientNameService;
@@ -101,7 +93,7 @@ public class IngredientEditView {
 		VBox ingredientTableViewPanel = new VBox();
 		
 		ingredientTable = new TableView<>();
-		ingredientTable.getStyleClass().addAll("rp-table", "ingredient-edit-table");
+		ingredientTable.getStyleClass().addAll(RP_TABLE, INGREDIENT_EDIT_TABLE);
 		TableColumn<Ingredient, Number> amountColumn = new TableColumn<>();
 		TableColumn<Ingredient, String> measureUnitColumn = new TableColumn<>();
 		TableColumn<Ingredient, String> ingredientNameColumn = new TableColumn<>();
@@ -225,10 +217,14 @@ public class IngredientEditView {
 		ingredient.setAmount((amountTextField.getText().isEmpty()) ? null : Float.valueOf(amountTextField.getText()));
 		ingredient.setIngredientName(ingredientNameComboBox.getValue());
 		ingredient.setMeasureUnit(measureUnitComboBox.getValue());
-		log.debug("ingredient: {}", ingredient);
-		log.debug("ingredientlist: {}", ingredientList);
 		ingredientList.add(ingredient);
-		log.debug("ingredientlist: {}", ingredientList);
+		
+		// TODO why is clearSelection not enough to trigger the change listener that selection is cleared?
+		// It does work correctly in updateIngredient...
+		ingredientTable.getSelectionModel().clearSelection();
+		amountTextField.setText(null);
+		measureUnitComboBox.setValue(null);
+		ingredientNameComboBox.setValue(null);	
 	}
 	
 	
@@ -238,6 +234,7 @@ public class IngredientEditView {
 		selectedIngredient.setIngredientName(ingredientNameComboBox.getValue());
 		selectedIngredient.setMeasureUnit(measureUnitComboBox.getValue());
 		ingredientList.set(index, selectedIngredient);
+		ingredientTable.getSelectionModel().clearSelection();
 	}
 	
 	private void removeIngredient(ActionEvent actionEvent) {

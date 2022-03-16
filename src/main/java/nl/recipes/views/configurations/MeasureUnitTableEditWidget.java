@@ -27,14 +27,10 @@ import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.MeasureUnitService;
 
+import static nl.recipes.views.ViewConstants.*;
+
 @Component
 public class MeasureUnitTableEditWidget {
-	
-	private static final String RP_TABLE = "rp-table";
-	private static final String VALIDATION = "validation";
-	private static final String DROP_SHADOW = "drop-shadow";
-	private static final String WIDGET = "widget";
-	private static final String TITLE = "title";
 	
 	private final MeasureUnitService measureUnitService;
 

@@ -27,7 +27,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.RecipeService;
@@ -37,15 +36,10 @@ import nl.recipes.views.components.pane.bootstrap.BootstrapRow;
 import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 import nl.recipes.views.root.RootView;
 
-@Slf4j
+import static nl.recipes.views.ViewConstants.*;
+
 @Component
 public class RecipeSingleView {
-	
-	private static final String INGREDIENT_TABLE = "ingredient-table";
-	private static final String TITLE = "title";
-	private static final String RECIPE_TITLE = "recipe-title";
-	private static final String DROP_SHADOW = "drop-shadow";
-	private static final String WIDGET = "widget";
 	
 	private final RecipeService recipeService;
 	

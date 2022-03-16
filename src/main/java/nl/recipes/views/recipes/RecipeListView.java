@@ -21,17 +21,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.root.RootView;
 
-@Slf4j
+import static nl.recipes.views.ViewConstants.*;
+
 @Component
 public class RecipeListView {
-
-	private static final String RP_TABLE = "rp-table";
 
 	private final RecipeService recipeService;
 	

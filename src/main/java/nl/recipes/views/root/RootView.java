@@ -17,6 +17,8 @@ import nl.recipes.views.recipes.RecipeEditView;
 import nl.recipes.views.recipes.RecipeListView;
 import nl.recipes.views.recipes.RecipeSingleView;
 
+import static nl.recipes.views.ViewConstants.*;
+
 @Component
 public class RootView {
 	
@@ -55,7 +57,7 @@ public class RootView {
     }
 	
 	private void initializeRootWindow() {
-		rootWindow.getStyleClass().add("background");
+		rootWindow.getStyleClass().add(BACKGROUND);
 		rootWindow.setCenter(recipeListView.getRecipeListPanel());
 		rootWindow.setTop(menuBar);
 	}

@@ -9,9 +9,6 @@ import java.util.function.UnaryOperator;
 
 import org.springframework.stereotype.Component;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -24,8 +21,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -45,11 +40,11 @@ import nl.recipes.services.RecipeService;
 import nl.recipes.services.TagService;
 import nl.recipes.views.root.RootView;
 
+import static nl.recipes.views.ViewConstants.*;
+
 @Slf4j
 @Component
 public class RecipeEditView {
-	
-	private static final String VALIDATION = "validation";
 	
 	private final RecipeService recipeService;
 	private final TagService tagService;
@@ -91,7 +86,7 @@ public class RecipeEditView {
 		initialiseFormControls(recipeForm);
 		
 		VBox panel = new VBox();
-		panel.getStyleClass().add("widget");
+		panel.getStyleClass().add(WIDGET);
 		panel.getChildren().addAll(recipeForm, initialiseButtons());
 		
 		scrollPanel = new ScrollPane(panel);
