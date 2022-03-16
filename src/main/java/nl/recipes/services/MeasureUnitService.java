@@ -1,5 +1,6 @@
 package nl.recipes.services;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class MeasureUnitService {
 
 	public MeasureUnitService(MeasureUnitRepository measureUnitRepository) {
 		this.measureUnitRepository = measureUnitRepository;
-		observableMeasureUnitList = FXCollections.observableList(measureUnitRepository.findAll());
+		observableMeasureUnitList = FXCollections.observableList(measureUnitRepository.findByOrderByNameAsc());
 	}
 	
 	public ObservableList<MeasureUnit> getReadonlyMeasureUnitList() {

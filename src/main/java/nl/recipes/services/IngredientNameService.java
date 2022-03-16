@@ -24,7 +24,7 @@ public class IngredientNameService {
 	
 	public IngredientNameService(IngredientNameRepository ingredientNameRepository) {
 		this.ingredientNameRepository = ingredientNameRepository;
-		observableIngredientNameList = FXCollections.observableList(ingredientNameRepository.findAll());
+		observableIngredientNameList = FXCollections.observableList(ingredientNameRepository.findByOrderByNameAsc());
 	}
 	
 	public ObservableList<IngredientName> getReadonlyIngredientNameList() {

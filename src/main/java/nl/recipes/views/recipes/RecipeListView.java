@@ -85,7 +85,7 @@ public class RecipeListView {
 	public AnchorPane getRecipeListPanel() {
 		recipeListTableView.setItems(recipeService.getReadonlyRecipeList());
 		recipeListTableView.setFixedCellSize(25);
-		recipeListTableView.prefHeightProperty().bind(recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())));
+		recipeListTableView.prefHeightProperty().bind(recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())).add(25));
 		return recipeListPanel;
 	}
 	

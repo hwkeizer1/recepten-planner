@@ -52,13 +52,21 @@ public class BackupService {
 
 	public void restore(String directoryPath) {
 		String tags = readTagsFromFile(directoryPath);
-		restoreTags(tags);
+		if (tags != null) {
+			restoreTags(tags);
+		}
 		String ingredientNames = readIngredientNamesFromFile(directoryPath);
-		restoreIngredientNames(ingredientNames);
+		if (ingredientNames != null) {
+			restoreIngredientNames(ingredientNames);
+		}
 		String measureUnits = readMeasureUnitsFromFile(directoryPath);
-		restoreMeasureUnits(measureUnits);
+		if (measureUnits != null) {
+			restoreMeasureUnits(measureUnits);
+		}
 		String recipes = readRecipesFromFile(directoryPath);
-		restoreRecipes(recipes);
+		if (recipes != null) {
+			restoreRecipes(recipes);
+		}
 	}
 
 	private String readTagsFromFile(String directoryPath) {
@@ -185,12 +193,17 @@ public class BackupService {
 		}
 	}
 
-	private void createRecipe(Recipe recipe) {
+	private Recipe createRecipe(Recipe recipe) {
 		try {
-			recipeService.create(recipe);
+			return recipeService.create(recipe);
 		} catch (AlreadyExistsException ex) {
 			log.error("Recipe {} already exists", recipe.getName());
+			return null;
 		}
+	}
+	
+	private Recipe updateRecipe(Recipe recipe) {
+			return recipeService.update(recipe);
 	}
 
 }

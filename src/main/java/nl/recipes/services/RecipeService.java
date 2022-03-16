@@ -36,11 +36,23 @@ public class RecipeService {
 	}
 	
 	public ObservableList<Ingredient> getReadonlyIngredientList(Long recipeId) {
+		return allIngredients(recipeId, true);
+	}
+	
+	public ObservableList<Ingredient> getEditableIngredientList(Long recipeId) {
+		return allIngredients(recipeId, false);
+	}
+	
+	private ObservableList<Ingredient> allIngredients(Long recipeId, boolean readonly) {
 		Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeId);
 		if (optionalRecipe.isPresent()) {
 			List<Ingredient> ingredientList = new ArrayList<>(optionalRecipe.get().getIngredients());
 			observableIngredientList = FXCollections.observableList(ingredientList);
-			return FXCollections.unmodifiableObservableList(observableIngredientList);
+			if (readonly) {
+				return FXCollections.unmodifiableObservableList(observableIngredientList);
+			} else {
+				return FXCollections.observableList(observableIngredientList);
+			}
 		}
 		return FXCollections.emptyObservableList();
 	}
@@ -54,7 +66,7 @@ public class RecipeService {
 		return createdRecipe;
 	}
 	
-	public Recipe update(Recipe recipe)  throws AlreadyExistsException {
+	public Recipe update(Recipe recipe) {
 		Recipe updatedRecipe = recipeRepository.save(recipe);
 		observableRecipeList.set(observableRecipeList.lastIndexOf(recipe), updatedRecipe);
 		return updatedRecipe;

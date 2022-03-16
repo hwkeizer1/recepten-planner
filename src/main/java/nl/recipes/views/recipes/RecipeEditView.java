@@ -9,6 +9,9 @@ import java.util.function.UnaryOperator;
 
 import org.springframework.stereotype.Component;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -21,6 +24,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -31,6 +36,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.IntegerStringConverter;
 import lombok.extern.slf4j.Slf4j;
+import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.domain.Tag;
@@ -47,6 +53,8 @@ public class RecipeEditView {
 	
 	private final RecipeService recipeService;
 	private final TagService tagService;
+	
+	private final IngredientEditView ingredientEditView;
 	
 	private RootView rootView;
 	
@@ -72,9 +80,12 @@ public class RecipeEditView {
 	TextField rating;
 	TextArea directions;
 	
-	public RecipeEditView(RecipeService recipeService, TagService tagService) {
+	public RecipeEditView(RecipeService recipeService, 
+			TagService tagService, 
+			IngredientEditView ingredientEditView) {
 		this.recipeService = recipeService;
 		this.tagService = tagService;
+		this.ingredientEditView = ingredientEditView;
 		
 		GridPane recipeForm = createRecipeForm();
 		initialiseFormControls(recipeForm);
@@ -185,11 +196,11 @@ public class RecipeEditView {
 		recipeForm.add(preparationsLabel, 0, 4);
 		recipeForm.add(preparations, 1, 4);
 		
-		Label notesLabel = new Label("Notities:");
-		GridPane.setValignment(notesLabel, VPos.TOP);
-		notes = new TextArea();
-		recipeForm.add(notesLabel, 0, 5);
-		recipeForm.add(notes, 1, 5);
+		Label directionsLabel = new Label("Bereiding:");
+		GridPane.setValignment(directionsLabel, VPos.TOP);
+		directions = new TextArea();
+		recipeForm.add(directionsLabel, 0, 5);
+		recipeForm.add(directions, 1, 5);
 		
 		// Column 2 and 3
 		Label tagsLabel = new Label("Categorieën:");
@@ -222,11 +233,16 @@ public class RecipeEditView {
 		recipeForm.add(ratingLabel, 2, 2);
 		recipeForm.add(rating, 3, 2);
 		
-		Label directionsLabel = new Label("Bereiding:");
-		GridPane.setValignment(directionsLabel, VPos.TOP);
-		directions = new TextArea();
-		recipeForm.add(directionsLabel, 2, 4);
-		recipeForm.add(directions, 3, 4);
+		Label notesLabel = new Label("Notities:");
+		GridPane.setValignment(notesLabel, VPos.TOP);
+		notes = new TextArea();
+		recipeForm.add(notesLabel, 2, 4);
+		recipeForm.add(notes, 3, 4);
+		
+		Label ingredientLabel = new Label("Ingrediënten:");
+		GridPane.setValignment(ingredientLabel, VPos.TOP);
+		recipeForm.add(ingredientLabel, 2, 5);
+		recipeForm.add(ingredientEditView.getIngredientPanel(), 3, 5);
 	}
 	
 	private Node initialiseButtons() {
@@ -283,13 +299,8 @@ public class RecipeEditView {
 	
 	private void updateRecipe(ActionEvent event) {
 		formFieldsToSelectedRecipe();
-		
-		try {
-			Recipe updatedRecipe = recipeService.update(selectedRecipe);
-			rootView.showRecipeSingleViewPanel(updatedRecipe);
-		} catch (AlreadyExistsException e) {
-			recipeNameError.setText(e.getMessage());
-		}
+		Recipe updatedRecipe = recipeService.update(selectedRecipe);
+		rootView.showRecipeSingleViewPanel(updatedRecipe);
 	}
 	
 	private void handleKeyReleasedAction(KeyEvent keyEvent) {
@@ -304,7 +315,12 @@ public class RecipeEditView {
 		selectedRecipe.setCookTime((cookTime.getText().isEmpty()) ? null : Integer.valueOf(cookTime.getText()));
 		selectedRecipe.setServings((servings.getText().isEmpty()) ? null : Integer.valueOf(servings.getText()));
 		selectedRecipe.setPreparations(preparations.getText());
-		selectedRecipe.setNotes(notes.getText());
+		selectedRecipe.setDirections(directions.getText());
+		
+		
+		Set<Ingredient> ingredientSet = new HashSet<>(ingredientEditView.getIngredientList());
+		selectedRecipe.setIngredients(ingredientSet);
+		log.debug("selectedRecipe: {}", selectedRecipe);
 		
 		// Column 3 and 4
 		Set<Tag> tags = new HashSet<>();
@@ -317,10 +333,9 @@ public class RecipeEditView {
 			}
 		}
 		selectedRecipe.setTags(tags);
-		
 		selectedRecipe.setRecipeType(recipeTypeComboBox.getValue());
 		selectedRecipe.setRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText()));
-		selectedRecipe.setDirections(directions.getText());
+		selectedRecipe.setNotes(notes.getText());
 	}
 	
 	private void selectedRecipeToFormFields() {
@@ -331,7 +346,8 @@ public class RecipeEditView {
 		cookTime.setText((selectedRecipe.getCookTime() == null) ? "" : selectedRecipe.getCookTime().toString());
 		servings.setText((selectedRecipe.getServings() == null) ? "" : selectedRecipe.getServings().toString());
 		preparations.setText(selectedRecipe.getPreparations());
-		notes.setText(selectedRecipe.getNotes());
+		directions.setText(selectedRecipe.getDirections());
+		ingredientEditView.setIngredientList((selectedRecipe.getId() == null) ? FXCollections.emptyObservableList() : recipeService.getEditableIngredientList(selectedRecipe.getId()));
 		
 		// column 3 and 4
 		for (CheckBox checkBox : tagCheckBoxes) {
@@ -346,6 +362,7 @@ public class RecipeEditView {
 		
 		recipeTypeComboBox.setValue(selectedRecipe.getRecipeType());
 		rating.setText((selectedRecipe.getRating() == null) ? "" : selectedRecipe.getRating().toString());
-		directions.setText(selectedRecipe.getDirections());
+		notes.setText(selectedRecipe.getNotes());
+		
 	}
 }

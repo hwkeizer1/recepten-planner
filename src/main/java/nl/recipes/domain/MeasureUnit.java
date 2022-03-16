@@ -31,4 +31,11 @@ public class MeasureUnit {
 		this.name = name;
 		this.pluralName = pluralName;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	
 }

@@ -55,4 +55,11 @@ public class IngredientName {
 		this.shopType = shopType;
 		this.ingredientType = ingredientType;
 	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+	
 }
