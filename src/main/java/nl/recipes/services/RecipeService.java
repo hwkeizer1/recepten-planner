@@ -44,6 +44,7 @@ public class RecipeService {
 	}
 	
 	private ObservableList<Ingredient> allIngredients(Long recipeId, boolean readonly) {
+		if (recipeId == null) return FXCollections.emptyObservableList();
 		Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeId);
 		if (optionalRecipe.isPresent()) {
 			List<Ingredient> ingredientList = new ArrayList<>(optionalRecipe.get().getIngredients());

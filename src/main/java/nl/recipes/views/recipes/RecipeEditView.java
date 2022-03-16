@@ -91,6 +91,7 @@ public class RecipeEditView {
 		initialiseFormControls(recipeForm);
 		
 		VBox panel = new VBox();
+		panel.getStyleClass().add("widget");
 		panel.getChildren().addAll(recipeForm, initialiseButtons());
 		
 		scrollPanel = new ScrollPane(panel);
@@ -250,10 +251,10 @@ public class RecipeEditView {
 		buttonBar.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
 		buttonBar.setPadding(new Insets(40, 40, 0, 0));
 		
-		updateButton = new Button("Wijzigen");
+		updateButton = new Button("Wijzigingen opslaan");
 		updateButton.setOnAction(this::updateRecipe);
 		
-		createButton = new Button("Opslaan");
+		createButton = new Button("Nieuw recept opslaan");
 		createButton.setOnAction(this::createRecipe);
 		
 		buttonBar.getButtons().addAll(createButton, updateButton);
@@ -347,7 +348,7 @@ public class RecipeEditView {
 		servings.setText((selectedRecipe.getServings() == null) ? "" : selectedRecipe.getServings().toString());
 		preparations.setText(selectedRecipe.getPreparations());
 		directions.setText(selectedRecipe.getDirections());
-		ingredientEditView.setIngredientList((selectedRecipe.getId() == null) ? FXCollections.emptyObservableList() : recipeService.getEditableIngredientList(selectedRecipe.getId()));
+		ingredientEditView.setIngredientList(recipeService.getEditableIngredientList(selectedRecipe.getId()));
 		
 		// column 3 and 4
 		for (CheckBox checkBox : tagCheckBoxes) {

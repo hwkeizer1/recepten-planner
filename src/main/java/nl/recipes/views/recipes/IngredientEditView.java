@@ -1,6 +1,9 @@
 package nl.recipes.views.recipes;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import javafx.beans.binding.Bindings;
@@ -8,6 +11,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -37,6 +41,7 @@ import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.services.IngredientNameService;
 import nl.recipes.services.MeasureUnitService;
 
+@Slf4j
 @Component
 public class IngredientEditView {
 	
@@ -74,8 +79,13 @@ public class IngredientEditView {
 		return ingredientPanel;
 	}
 	
-	public void setIngredientList(ObservableList<Ingredient> ingredientList) {
-		this.ingredientList = ingredientList;
+	public void setIngredientList(ObservableList<Ingredient> ingredients) {
+		if (ingredients.isEmpty()) {
+			ingredientList = FXCollections.observableList(new ArrayList<Ingredient>());
+		} else {
+			ingredientList = ingredients;
+		}
+
 		ingredientTable.setItems(ingredientList);
 		ingredientTable.setFixedCellSize(25);
 		ingredientTable.prefHeightProperty().bind(Bindings.size(ingredientTable.getItems()).multiply(ingredientTable.getFixedCellSize()));
@@ -215,7 +225,10 @@ public class IngredientEditView {
 		ingredient.setAmount((amountTextField.getText().isEmpty()) ? null : Float.valueOf(amountTextField.getText()));
 		ingredient.setIngredientName(ingredientNameComboBox.getValue());
 		ingredient.setMeasureUnit(measureUnitComboBox.getValue());
+		log.debug("ingredient: {}", ingredient);
+		log.debug("ingredientlist: {}", ingredientList);
 		ingredientList.add(ingredient);
+		log.debug("ingredientlist: {}", ingredientList);
 	}
 	
 	
