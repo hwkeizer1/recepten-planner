@@ -237,9 +237,15 @@ public class RecipeSingleView {
 						? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
 						: new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
 
-		measureUnitColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
-				(c.getValue().getAmount() == null || c.getValue().getAmount() <= 1) 
-				? c.getValue().getMeasureUnit().getName() : c.getValue().getMeasureUnit().getPluralName()));
+		measureUnitColumn.setCellValueFactory(c -> {
+			if (c.getValue().getMeasureUnit() == null) {
+				return new ReadOnlyObjectWrapper<>("");
+			} else {
+				return new ReadOnlyObjectWrapper<>((c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
+						? c.getValue().getMeasureUnit().getName()
+						: c.getValue().getMeasureUnit().getPluralName());
+			}
+		});
 				
 		ingredientNameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
 				(c.getValue().getAmount() == null || c.getValue().getAmount() <= 1) 

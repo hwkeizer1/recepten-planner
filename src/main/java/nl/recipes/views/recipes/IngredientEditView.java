@@ -125,9 +125,15 @@ public class IngredientEditView {
 						? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
 						: new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
 
-		measureUnitColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
-				(c.getValue().getAmount() == null || c.getValue().getAmount() <= 1) 
-				? c.getValue().getMeasureUnit().getName() : c.getValue().getMeasureUnit().getPluralName()));
+		measureUnitColumn.setCellValueFactory(c -> {
+			if (c.getValue().getMeasureUnit() == null) {
+				return new ReadOnlyObjectWrapper<>();
+			} else {
+				return new ReadOnlyObjectWrapper<>((c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
+						? c.getValue().getMeasureUnit().getName()
+						: c.getValue().getMeasureUnit().getPluralName());
+			}
+		});
 				
 		ingredientNameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
 				(c.getValue().getAmount() == null || c.getValue().getAmount() <= 1) 
@@ -212,23 +218,22 @@ public class IngredientEditView {
 	
 	private void createIngredient(ActionEvent actionEvent) {
 		Ingredient ingredient = new Ingredient();
-		ingredient.setAmount((amountTextField.getText().isEmpty()) ? null : Float.valueOf(amountTextField.getText()));
+		ingredient.setAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+				: Float.valueOf(amountTextField.getText()));
 		ingredient.setIngredientName(ingredientNameComboBox.getValue());
 		ingredient.setMeasureUnit(measureUnitComboBox.getValue());
 		ingredientList.add(ingredient);
-		
-		// TODO why is clearSelection not enough to trigger the change listener that selection is cleared?
-		// It does work correctly in updateIngredient...
 		ingredientTable.getSelectionModel().clearSelection();
 		amountTextField.setText(null);
 		measureUnitComboBox.setValue(null);
-		ingredientNameComboBox.setValue(null);	
+		ingredientNameComboBox.setValue(null);
 	}
 	
 	
 	private void updateIngredient(ActionEvent actionEvent) {
 		int index = ingredientList.indexOf(selectedIngredient);
-		selectedIngredient.setAmount((amountTextField.getText().isEmpty()) ? null : Float.valueOf(amountTextField.getText()));
+		selectedIngredient.setAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+				: Float.valueOf(amountTextField.getText()));
 		selectedIngredient.setIngredientName(ingredientNameComboBox.getValue());
 		selectedIngredient.setMeasureUnit(measureUnitComboBox.getValue());
 		ingredientList.set(index, selectedIngredient);

@@ -287,8 +287,6 @@ public class BackupService {
 			List<Recipe> recipeList = objectMapper.readValue(recipes, new TypeReference<List<Recipe>>() {});
 			int count = 0;
 			for (Recipe recipe : recipeList) {
-				recipe.setLastServed(null);
-				recipe.setTimesServed(null);
 				recipe.setId(null);
 				recipe.setTags(createNewTagSet(recipe));
 				recipe.setIngredients(createNewIngredientSet(recipe));
@@ -316,10 +314,15 @@ public class BackupService {
 		Set<Ingredient> ingredientList = new HashSet<>();
 
 		for (Ingredient ingredient : recipe.getIngredients()) {
-			Optional<MeasureUnit> optionalMeasureUnit = measureUnitService.findByName(ingredient.getMeasureUnit().getName());
+			if (ingredient.getMeasureUnit() != null) {
+				Optional<MeasureUnit> optionalMeasureUnit = measureUnitService.findByName(ingredient.getMeasureUnit().getName());
+				if (optionalMeasureUnit.isPresent()) {
+					ingredient.setMeasureUnit(optionalMeasureUnit.get());
+				}
+			}
+			
 			Optional<IngredientName> optionalIngredientName = ingredientNameService.findByName(ingredient.getIngredientName().getName());
-			if (optionalMeasureUnit.isPresent() && optionalIngredientName.isPresent()) {
-				ingredient.setMeasureUnit(optionalMeasureUnit.get());
+			if (optionalIngredientName.isPresent()) {
 				ingredient.setIngredientName(optionalIngredientName.get());
 			}
 			ingredient.setId(null);
