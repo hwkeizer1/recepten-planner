@@ -27,7 +27,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.MeasureUnit;
@@ -36,7 +35,6 @@ import nl.recipes.services.MeasureUnitService;
 
 import static nl.recipes.views.ViewConstants.*;
 
-@Slf4j
 @Component
 public class IngredientEditView {
 	
@@ -62,9 +60,9 @@ public class IngredientEditView {
 		ingredientPanel.getStyleClass().addAll(WIDGET, DROP_SHADOW);
 		amountTextField = new TextField();
 		measureUnitComboBox = new ComboBox<>();
-		measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
+		measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
 		ingredientNameComboBox = new ComboBox<>();
-		ingredientNameComboBox.getItems().setAll(ingredientNameService.getReadonlyIngredientNameList());
+		ingredientNameComboBox.getItems().setAll(this.ingredientNameService.getReadonlyIngredientNameList());
 		
 		ingredientPanel.getChildren().addAll(getIngredientTableViewPanel(), getIngredientEditPanel());
 	}

@@ -30,7 +30,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.IntegerStringConverter;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
@@ -42,7 +41,6 @@ import nl.recipes.views.root.RootView;
 
 import static nl.recipes.views.ViewConstants.*;
 
-@Slf4j
 @Component
 public class RecipeEditView {
 	
