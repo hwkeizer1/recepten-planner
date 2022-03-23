@@ -130,6 +130,7 @@ public class BackupService {
 		try {
 			List<Tag> tagList = objectMapper.readValue(tags, new TypeReference<List<Tag>>() {});
 			for (Tag tag : tagList) {
+				tag.setId(null);
 				createTag(tag);
 			}
 		} catch (JsonProcessingException ex) {
@@ -181,6 +182,7 @@ public class BackupService {
 		try {
 			List<IngredientName> ingredientNameList = objectMapper.readValue(ingredientNames, new TypeReference<List<IngredientName>>() {});
 			for (IngredientName ingredientName : ingredientNameList) {
+				ingredientName.setId(null);
 				createIngredientName(ingredientName);
 			}
 		} catch (JsonProcessingException ex) {
@@ -232,6 +234,7 @@ public class BackupService {
 		try {
 			List<MeasureUnit> measureUnitNameList = objectMapper.readValue(measureUnits, new TypeReference<List<MeasureUnit>>() {});
 			for (MeasureUnit measureUnit : measureUnitNameList) {
+				measureUnit.setId(null);
 				createMeasureUnit(measureUnit);
 			}
 		} catch (JsonProcessingException ex) {
@@ -282,7 +285,12 @@ public class BackupService {
 	private void restoreRecipes(String recipes) {
 		try {
 			List<Recipe> recipeList = objectMapper.readValue(recipes, new TypeReference<List<Recipe>>() {});
+			int count = 0;
 			for (Recipe recipe : recipeList) {
+				recipe.setLastServed(null);
+				recipe.setTimesServed(null);
+				recipe.setId(null);
+				recipe.setTags(createNewTagSet(recipe));
 				recipe.setIngredients(createNewIngredientSet(recipe));
 				createRecipe(recipe);
 			}
@@ -290,6 +298,18 @@ public class BackupService {
 			ex.printStackTrace();
 			log.error(FOUT_BIJ_HET_VERWERKEN_VAN_DE_BACKUP_FILE + RECIPES_PLAN);
 		}
+	}
+	
+	private Set<Tag> createNewTagSet(Recipe recipe) {
+		Set<Tag> tagList = new HashSet<>();
+		
+		for (Tag tag : recipe.getTags()) {
+			Optional<Tag> optionalTag = tagService.findByName(tag.getName());
+			if (optionalTag.isPresent()) {
+				tagList.add(optionalTag.get());
+			}
+		}
+		return tagList;
 	}
 	
 	private Set<Ingredient> createNewIngredientSet(Recipe recipe) {
