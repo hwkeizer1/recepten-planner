@@ -62,7 +62,9 @@ public class IngredientEditView {
 		ingredientPanel.getStyleClass().addAll(WIDGET, DROP_SHADOW);
 		amountTextField = new TextField();
 		measureUnitComboBox = new ComboBox<>();
+		measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
 		ingredientNameComboBox = new ComboBox<>();
+		ingredientNameComboBox.getItems().setAll(ingredientNameService.getReadonlyIngredientNameList());
 		
 		ingredientPanel.getChildren().addAll(getIngredientTableViewPanel(), getIngredientEditPanel());
 	}
@@ -191,13 +193,11 @@ public class IngredientEditView {
 		
 		Label measureUnitLabel = new Label("Maateenheid:");
 		inputForm.add(measureUnitLabel,0, 1);
-		measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
 		measureUnitComboBox.setMinWidth(150);
 		inputForm.add(measureUnitComboBox, 1, 1);
 		
 		Label ingredientNameLabel = new Label("Ingrediënt:");
 		inputForm.add(ingredientNameLabel,0, 2);
-		ingredientNameComboBox.getItems().setAll(ingredientNameService.getReadonlyIngredientNameList());
 		ingredientNameComboBox.setMinWidth(150);
 		inputForm.add(ingredientNameComboBox, 1, 2);
 		

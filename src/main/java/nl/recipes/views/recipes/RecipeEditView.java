@@ -316,7 +316,6 @@ public class RecipeEditView {
 		
 		Set<Ingredient> ingredientSet = new HashSet<>(ingredientEditView.getIngredientList());
 		selectedRecipe.setIngredients(ingredientSet);
-		log.debug("selectedRecipe: {}", selectedRecipe);
 		
 		// Column 3 and 4
 		Set<Tag> tags = new HashSet<>();

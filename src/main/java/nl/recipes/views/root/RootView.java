@@ -11,6 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.BorderPane;
 import nl.recipes.domain.Recipe;
+import nl.recipes.views.backup.CreateBackupDialog;
 import nl.recipes.views.backup.RestoreBackupDialog;
 import nl.recipes.views.configurations.ConfigurationView;
 import nl.recipes.views.recipes.RecipeEditView;
@@ -27,6 +28,7 @@ public class RootView {
 	private final RecipeSingleView recipeSingleView;
 	private final RecipeEditView recipeEditView;
 	private final RestoreBackupDialog restoreBackupDialog;
+	private final CreateBackupDialog createBackupDialog;
 
 	private BorderPane rootWindow = new BorderPane();
 	
@@ -36,13 +38,14 @@ public class RootView {
 			RecipeListView recipeListView,
 			RecipeEditView recipeEditView,
 			ConfigurationView configurationView, 
-			RestoreBackupDialog restoreBackupDialog) {
+			RestoreBackupDialog restoreBackupDialog, CreateBackupDialog createBackupDialog) {
 		
 		this.configurationView = configurationView;
 		this.recipeListView = recipeListView;
 		this.recipeSingleView = recipeSingleView;
 		this.recipeEditView = recipeEditView;
 		this.restoreBackupDialog = restoreBackupDialog;
+		this.createBackupDialog = createBackupDialog;
 		
 		recipeListView.setRootView(this);
 		recipeSingleView.setRootView(this);
@@ -92,6 +95,7 @@ public class RootView {
 	}
 	
 	public void handleBackupDialog(ActionEvent actionEvent) {
+		createBackupDialog.showCreateBackupDialog();
 	}
 	
 	public void handleRestoreBackupDialog(ActionEvent actionEvent) {

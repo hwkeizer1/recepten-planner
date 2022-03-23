@@ -24,21 +24,21 @@ import nl.recipes.services.BackupService;
 import nl.recipes.views.ViewConstants;
 
 @Component
-public class RestoreBackupDialog {
+public class CreateBackupDialog {
 
 	private final BackupService backupService;
 	
 	private Stage dialog;
 	
-	private TextField restoreFolderPathTextField = new TextField();
+	private TextField backupFolderPathTextField = new TextField();
 
-	public RestoreBackupDialog(BackupService backupService) {
+	public CreateBackupDialog(BackupService backupService) {
 		this.backupService = backupService;
 	}
 	
-	public void showRestoreBackupDialog() {
+	public void showCreateBackupDialog() {
 		dialog = new Stage();
-		dialog.setTitle("Backup terugzetten");
+		dialog.setTitle("Backup maken");
 		
 		Button ok = new Button("OK");
 		ok.setDefaultButton(true);
@@ -46,7 +46,7 @@ public class RestoreBackupDialog {
 		cancel.setCancelButton(true);
 		
 		// add action handlers for the dialog buttons.
-		ok.setOnAction(this::restore);
+		ok.setOnAction(this::create);
 		cancel.setOnAction(e -> dialog.close());
 		
 		// layout the dialog.
@@ -67,7 +67,7 @@ public class RestoreBackupDialog {
 	
 	private Node initializeForm() {
 		Button select = new Button("Selecteer de folder");
-		select.setOnAction(this::selectRestoreFolder);
+		select.setOnAction(this::selectBackupFolder);
 		
 		GridPane inputForm = new GridPane();
 		inputForm.setPadding(new Insets(20, 20, 20, 20));
@@ -86,27 +86,27 @@ public class RestoreBackupDialog {
 		
 		Label nameLabel = new Label("Folder:");
 		inputForm.add(nameLabel, 0, 0);
-		inputForm.add(restoreFolderPathTextField, 1, 0);
+		inputForm.add(backupFolderPathTextField, 1, 0);
 		inputForm.add(select, 2, 0);
 
 		GridPane.setHgrow(nameLabel, Priority.ALWAYS);
-		GridPane.setHgrow(restoreFolderPathTextField, Priority.ALWAYS);
+		GridPane.setHgrow(backupFolderPathTextField, Priority.ALWAYS);
 		
 		return inputForm;
 	}
 	
-	public void selectRestoreFolder(ActionEvent actionEvent) {
+	public void selectBackupFolder(ActionEvent actionEvent) {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
 		directoryChooser.setInitialDirectory(new File(ViewConstants.BACKUP_FOLDER));
 		File directory = directoryChooser.showDialog(dialog);
 		
 		if (directory != null) {
-			restoreFolderPathTextField.setText(directory.getAbsolutePath());
+			backupFolderPathTextField.setText(directory.getAbsolutePath());
 		}
 	}
 	
-	public void restore(ActionEvent actionEvent) {
-		backupService.restore(restoreFolderPathTextField.getText());
+	public void create(ActionEvent actionEvent) {
+		backupService.backup(backupFolderPathTextField.getText());
 		dialog.close();
 	}
 	

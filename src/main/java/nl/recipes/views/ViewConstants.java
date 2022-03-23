@@ -13,6 +13,8 @@ public final class ViewConstants {
 	public static final String WIDGET = "widget";
 	public static final String VALIDATION = "validation";
 	
+	public static final String BACKUP_FOLDER = "/home/henk/SpiderOak Hive/Henk/Backup/ReceptenPlanner";
+	
 	private ViewConstants() {
 		
 	}
