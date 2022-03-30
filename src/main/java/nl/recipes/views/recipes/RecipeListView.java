@@ -19,7 +19,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
@@ -36,44 +35,27 @@ public class RecipeListView {
 	private RootView rootView;
 	
 	private Recipe selectedRecipe;
-	ChangeListener<Recipe> recipeChangeListener;
 	
-	AnchorPane recipeListPanel = new AnchorPane();
+	AnchorPane recipeListPane;
+	VBox recipeListBox;
+	TableView<Recipe> recipeListTableView;
 	
 	Alert removeAlert;
-	
-	HBox buttonPanel = new HBox();
-	VBox recipeListVBox = new VBox();
-	
-	TableView<Recipe> recipeListTableView = new TableView<>();
-	TableColumn<Recipe, String> nameColumn = new TableColumn<>("Naam");
-	TableColumn<Recipe, RecipeType> typeColumn = new TableColumn<>("Type");
-	TableColumn<Recipe, String> tagColumn = new TableColumn<>("Trefwoorden");
-	TableColumn<Recipe, LocalDate> lastServedColumn = new TableColumn<>("Laatst gegegeten");
-	TableColumn<Recipe, Integer> timesServedColumn = new TableColumn<>("Aantal keren gegeten");
 
 	public RecipeListView(RecipeService recipeService) {
 		this.recipeService = recipeService;
 		
-		recipeChangeListener = (observable, oldValue, newValue) -> {
-			selectedRecipe = newValue;
-		};
+		recipeListPane = new AnchorPane();
+		recipeListBox = new VBox();
+		AnchorPane.setTopAnchor(recipeListBox, 0.0);
+		AnchorPane.setBottomAnchor(recipeListBox, 0.0);
+		AnchorPane.setRightAnchor(recipeListBox, 0.0);
+		AnchorPane.setLeftAnchor(recipeListBox, 0.0);
 		
-		AnchorPane.setTopAnchor(recipeListVBox, 0.0);
-		AnchorPane.setBottomAnchor(recipeListVBox, 0.0);
-		AnchorPane.setRightAnchor(recipeListVBox, 0.0);
-		AnchorPane.setLeftAnchor(recipeListVBox, 0.0);
+		recipeListBox.getChildren().add(createButtonBox());
+		recipeListBox.getChildren().add(createRecipeListTable());
 		
-		recipeListPanel.getChildren().add(recipeListVBox);
-		
-		buttonPanel.setPadding(new Insets(10));
-		buttonPanel.setSpacing(30);
-		
-		recipeListVBox.getChildren().add(buttonPanel);
-		recipeListVBox.getChildren().add(recipeListTableView);
-		
-		initializeRecipeListTable();
-		initializeButtonPanel();
+		recipeListPane.getChildren().add(recipeListBox);
 	}
 	
 	public void setRootView(RootView rootView) {
@@ -84,10 +66,17 @@ public class RecipeListView {
 		recipeListTableView.setItems(recipeService.getReadonlyRecipeList());
 		recipeListTableView.setFixedCellSize(25);
 		recipeListTableView.prefHeightProperty().bind(recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())).add(25));
-		return recipeListPanel;
+		return recipeListPane;
 	}
 	
-	private void initializeRecipeListTable() {
+	private TableView<Recipe> createRecipeListTable() {
+		recipeListTableView = new TableView<>();
+		TableColumn<Recipe, String> nameColumn = new TableColumn<>("Naam");
+		TableColumn<Recipe, RecipeType> typeColumn = new TableColumn<>("Type");
+		TableColumn<Recipe, String> tagColumn = new TableColumn<>("Trefwoorden");
+		TableColumn<Recipe, LocalDate> lastServedColumn = new TableColumn<>("Laatst gegegeten");
+		TableColumn<Recipe, Integer> timesServedColumn = new TableColumn<>("Aantal keren gegeten");
+		
 		recipeListTableView.getColumns().add(nameColumn);
 		recipeListTableView.getColumns().add(typeColumn);
 		recipeListTableView.getColumns().add(tagColumn);
@@ -95,6 +84,7 @@ public class RecipeListView {
 		recipeListTableView.getColumns().add(timesServedColumn);
 		recipeListTableView.getStyleClass().add(RP_TABLE);
 		
+		ChangeListener<Recipe> recipeChangeListener = (observable, oldValue, newValue) -> selectedRecipe = newValue;
 		recipeListTableView.getSelectionModel().selectedItemProperty().addListener(recipeChangeListener);
 		
 		nameColumn.prefWidthProperty().bind(recipeListTableView.widthProperty().multiply(0.35));
@@ -119,20 +109,25 @@ public class RecipeListView {
 		tagColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTagString()));
 		lastServedColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getLastServed()));
 		timesServedColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTimesServed()));
-		
-		
-		VBox.setVgrow(recipeListVBox, Priority.NEVER);
+
+		return recipeListTableView;
 	}
 	
-	private void initializeButtonPanel() {
+	private HBox createButtonBox() {
+		HBox buttonBox = new HBox();
+		buttonBox.setPadding(new Insets(10));
+		buttonBox.setSpacing(30);
+		
 		Button newRecipe = new Button("Nieuw recept toevoegen");
 		newRecipe.setOnAction(this::showNewRecipeEditView);
-		buttonPanel.getChildren().add(newRecipe);
-		
+		buttonBox.getChildren().add(newRecipe);
+
 		Button removeRecipeButton = new Button("Recept verwijderen");
 		removeRecipeButton.setOnAction(this::showRemoveRecipeAlert);
-		buttonPanel.getChildren().add(removeRecipeButton);
-		}
+		buttonBox.getChildren().add(removeRecipeButton);
+		
+		return buttonBox;
+	}
 	
 	private void showRecipeSingleView(Recipe recipe) {
 		if (rootView != null) {
