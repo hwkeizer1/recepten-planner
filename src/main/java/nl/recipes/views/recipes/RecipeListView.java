@@ -107,8 +107,8 @@ public class RecipeListView {
 			TableRow<Recipe> row = new TableRow<>();
 			row.setOnMouseClicked(e -> {
 				if (e.getClickCount() == 2 && (!row.isEmpty())) {
-					Recipe selectedRecipe = row.getItem();
-					showRecipeSingleView(selectedRecipe);
+					Recipe selection = row.getItem();
+					showRecipeSingleView(selection);
 				}
 			});
 			return row;

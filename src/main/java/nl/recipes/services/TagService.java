@@ -22,7 +22,7 @@ public class TagService {
 
 	public TagService(TagRepository tagRepository) {
 		this.tagRepository = tagRepository;
-		observableTagList = FXCollections.observableList(tagRepository.findAll());
+		observableTagList = FXCollections.observableList(tagRepository.findByOrderByNameAsc());
 	}
 
 	public ObservableList<Tag> getReadonlyTagList() {
