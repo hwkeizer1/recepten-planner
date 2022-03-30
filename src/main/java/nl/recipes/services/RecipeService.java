@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.exceptions.AlreadyExistsException;
@@ -28,8 +29,8 @@ public class RecipeService {
 		observableRecipeList = FXCollections.observableList(recipeRepository.findByOrderByNameAsc());
 	}
 	
-	public ObservableList<Recipe> getReadonlyRecipeList() {
-		return FXCollections.unmodifiableObservableList(observableRecipeList);
+	public FilteredList<Recipe> getReadonlyRecipeList() {
+		return new FilteredList<>(FXCollections.unmodifiableObservableList(observableRecipeList));
 	}
 	
 	public ObservableList<Ingredient> getReadonlyIngredientList(Long recipeId) {

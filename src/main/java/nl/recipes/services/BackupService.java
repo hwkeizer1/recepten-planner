@@ -285,7 +285,6 @@ public class BackupService {
 	private void restoreRecipes(String recipes) {
 		try {
 			List<Recipe> recipeList = objectMapper.readValue(recipes, new TypeReference<List<Recipe>>() {});
-			int count = 0;
 			for (Recipe recipe : recipeList) {
 				recipe.setId(null);
 				recipe.setTags(createNewTagSet(recipe));

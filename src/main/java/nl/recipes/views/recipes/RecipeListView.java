@@ -2,23 +2,29 @@ package nl.recipes.views.recipes;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.springframework.stereotype.Component;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
@@ -36,9 +42,11 @@ public class RecipeListView {
 	
 	private Recipe selectedRecipe;
 	
+	FilteredList<Recipe> recipeList;
 	AnchorPane recipeListPane;
 	VBox recipeListBox;
 	TableView<Recipe> recipeListTableView;
+	TextField searchFilter;
 	
 	Alert removeAlert;
 
@@ -52,7 +60,7 @@ public class RecipeListView {
 		AnchorPane.setRightAnchor(recipeListBox, 0.0);
 		AnchorPane.setLeftAnchor(recipeListBox, 0.0);
 		
-		recipeListBox.getChildren().add(createButtonBox());
+		recipeListBox.getChildren().add(createButtonAndSearchBar());
 		recipeListBox.getChildren().add(createRecipeListTable());
 		
 		recipeListPane.getChildren().add(recipeListBox);
@@ -63,9 +71,10 @@ public class RecipeListView {
 	}
 	
 	public AnchorPane getRecipeListPanel() {
-		recipeListTableView.setItems(recipeService.getReadonlyRecipeList());
+		recipeList = recipeService.getReadonlyRecipeList();
+		recipeListTableView.setItems(recipeList);
 		recipeListTableView.setFixedCellSize(25);
-		recipeListTableView.prefHeightProperty().bind(recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())).add(25));
+		recipeListTableView.prefHeightProperty().bind(recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())).add(30));
 		return recipeListPane;
 	}
 	
@@ -113,7 +122,7 @@ public class RecipeListView {
 		return recipeListTableView;
 	}
 	
-	private HBox createButtonBox() {
+	private HBox createButtonAndSearchBar() {
 		HBox buttonBox = new HBox();
 		buttonBox.setPadding(new Insets(10));
 		buttonBox.setSpacing(30);
@@ -126,7 +135,50 @@ public class RecipeListView {
 		removeRecipeButton.setOnAction(this::showRemoveRecipeAlert);
 		buttonBox.getChildren().add(removeRecipeButton);
 		
+		buttonBox.getChildren().add(createSearchFilter());
+		
 		return buttonBox;
+	}
+	
+	private HBox createSearchFilter() {
+		HBox searchFilterBox = new HBox();
+		searchFilterBox.setMaxHeight(25);
+		searchFilterBox.setSpacing(2);
+
+		StackPane imagePane = new StackPane();
+		imagePane.setPadding(new Insets(0, 2, 0, 0));
+		Image searchIcon = new Image("/icons/search.png", 15, 15, true, false);
+		ImageView searchIconView = new ImageView(searchIcon);
+		imagePane.getChildren().add(searchIconView);
+		searchFilterBox.getChildren().add(imagePane);
+
+		searchFilter = new TextField();
+		searchFilterBox.getChildren().add(searchFilter);
+		searchFilter.textProperty()
+				.addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createPredicate(newValue)));
+
+		Image clearIcon = new Image("/icons/clear.png", 21, 21, true, false);
+		ImageView clearIconView = new ImageView(clearIcon);
+		Button clear = new Button();
+		clear.setPadding(new Insets(1));
+		clear.setGraphic(clearIconView);
+		clear.setOnAction(this::clearSearch);
+		searchFilterBox.getChildren().add(clear);
+
+		return searchFilterBox;
+	}
+	
+	private boolean searchFindRecipe(Recipe recipe, String searchText) {
+	    return (recipe.getName().toLowerCase().contains(searchText.toLowerCase())) ||
+	            (recipe.getRecipeType().getDisplayName().toLowerCase().contains(searchText.toLowerCase())) ||
+	            (recipe.getTagString().toLowerCase().contains(searchText.toLowerCase()));
+	}
+	
+	private Predicate<Recipe> createPredicate(String searchText) {
+		return recipe -> {
+			if (searchText == null || searchText.isEmpty()) return true;
+			return searchFindRecipe(recipe, searchText);
+		};
 	}
 	
 	private void showRecipeSingleView(Recipe recipe) {
@@ -139,6 +191,10 @@ public class RecipeListView {
 		if (rootView != null) {
 			rootView.showNewRecipeEditViewPanel();
 		}
+	}
+	
+	private void clearSearch(ActionEvent event) {
+		searchFilter.clear();
 	}
 	
 	private void showRemoveRecipeAlert(ActionEvent event) {
