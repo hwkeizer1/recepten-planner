@@ -29,6 +29,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
+import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.root.RootView;
 
@@ -38,6 +39,7 @@ import static nl.recipes.views.ViewConstants.*;
 public class RecipeListView {
 
 	private final RecipeService recipeService;
+	private final PlanningService planningService;
 	
 	private RootView rootView;
 	
@@ -51,8 +53,10 @@ public class RecipeListView {
 	
 	Alert removeAlert;
 
-	public RecipeListView(RecipeService recipeService) {
+	public RecipeListView(RecipeService recipeService, 
+			PlanningService planningService) {
 		this.recipeService = recipeService;
+		this.planningService = planningService;
 		
 		recipeListPane = new AnchorPane();
 		recipeListBox = new VBox();
@@ -138,6 +142,10 @@ public class RecipeListView {
 		
 		buttonBox.getChildren().add(createSearchFilter());
 		
+		Button planRecipeButton = new Button("Recept inplannen");
+		planRecipeButton.setOnAction(this::planRecipe);
+		buttonBox.getChildren().add(planRecipeButton);
+		
 		return buttonBox;
 	}
 	
@@ -214,6 +222,9 @@ public class RecipeListView {
 		if (optionalRecipe.isPresent()) {
 			recipeService.remove(optionalRecipe.get());
 		}
-
+	}
+	
+	private void planRecipe(ActionEvent event) {
+		planningService.addRecipeToPlanning(selectedRecipe);
 	}
 }

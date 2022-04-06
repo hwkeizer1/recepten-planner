@@ -72,3 +72,12 @@
     -fx-border-color: rp-bg-color;
     -fx-border-width: 2px;
 }
+
+.header {
+	-fx-font-size: 2.0em;
+	-fx-font-weight: bold;
+	-fx-text-fill: rp-header-text;
+	-fx-max-width: 100000;
+	-fx-alignment: center;
+	-fx-padding: 0px 10px 10px 10px;
+}

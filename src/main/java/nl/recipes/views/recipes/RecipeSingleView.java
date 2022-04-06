@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
+import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.components.pane.bootstrap.BootstrapColumn;
 import nl.recipes.views.components.pane.bootstrap.BootstrapPane;
@@ -42,6 +43,7 @@ import static nl.recipes.views.ViewConstants.*;
 public class RecipeSingleView {
 	
 	private final RecipeService recipeService;
+	private final PlanningService planningService;
 	
 	private RootView rootView;
 	
@@ -71,8 +73,10 @@ public class RecipeSingleView {
 	Label preparations = new Label();
 	Label directions = new Label();
 	
-	public RecipeSingleView(RecipeService recipeService) {
+	public RecipeSingleView(RecipeService recipeService, 
+			PlanningService planningService) {
 		this.recipeService = recipeService;
+		this.planningService = planningService;
 		
 		BootstrapPane root = makeView();
 		
@@ -149,6 +153,7 @@ public class RecipeSingleView {
 		edit.setOnAction(this::showRecipeEditView);
 		edit.setMinWidth(150);
 		Button plan = new Button("Recept plannen");
+		plan.setOnAction(this::planRecipe);
 		plan.setMinWidth(150);
 		Button list = new Button("Terug naar lijst");
 		list.setOnAction(this::showRecipeListView);
@@ -326,5 +331,9 @@ public class RecipeSingleView {
 		if (rootView != null) {
 			rootView.showRecipeEditViewPanel(selectedRecipe);
 		}
+	}
+	
+	private void planRecipe(ActionEvent event) {
+		planningService.addRecipeToPlanning(selectedRecipe);
 	}
 }

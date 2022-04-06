@@ -15,6 +15,7 @@ import nl.recipes.views.backup.CreateBackupDialog;
 import nl.recipes.views.backup.RestoreBackupDialog;
 import nl.recipes.views.configurations.ConfigurationView;
 import nl.recipes.views.configurations.SettingsDialog;
+import nl.recipes.views.planning.PlanningView;
 import nl.recipes.views.recipes.RecipeEditView;
 import nl.recipes.views.recipes.RecipeListView;
 import nl.recipes.views.recipes.RecipeSingleView;
@@ -31,6 +32,7 @@ public class RootView {
 	private final RestoreBackupDialog restoreBackupDialog;
 	private final CreateBackupDialog createBackupDialog;
 	private final SettingsDialog settingsDialog;
+	private final PlanningView planningView;
 
 	private BorderPane rootWindow = new BorderPane();
 	
@@ -42,7 +44,8 @@ public class RootView {
 			ConfigurationView configurationView, 
 			RestoreBackupDialog restoreBackupDialog, 
 			CreateBackupDialog createBackupDialog, 
-			SettingsDialog settingsDialog) {
+			SettingsDialog settingsDialog, 
+			PlanningView planningView) {
 		
 		this.configurationView = configurationView;
 		this.recipeListView = recipeListView;
@@ -51,6 +54,7 @@ public class RootView {
 		this.restoreBackupDialog = restoreBackupDialog;
 		this.createBackupDialog = createBackupDialog;
 		this.settingsDialog = settingsDialog;
+		this.planningView = planningView;
 		
 		recipeListView.setRootView(this);
 		recipeSingleView.setRootView(this);
@@ -93,13 +97,19 @@ public class RootView {
 		MenuItem editSettings = new MenuItem("Wijzig instellingen");
 		editSettings.setOnAction(this::handleSettingsDialog);
 		
+		MenuItem planningOverview = new MenuItem("Planning overzicht");
+		planningOverview.setOnAction(this::handlePlanningPanel);
+		
 		Menu recipePlanner = new Menu("Recepten-planner");
 		recipePlanner.getItems().addAll(recipeList, firstSeparator, createBackup, restoreBackup, secondSeparator, exit);
 		
 		Menu configuration = new Menu("Instellingen");
 		configuration.getItems().addAll(editBasicElements, editSettings);
 		
-		menuBar.getMenus().addAll(recipePlanner, configuration);
+		Menu planning = new Menu("Planning");
+		planning.getItems().addAll(planningOverview);
+		
+		menuBar.getMenus().addAll(recipePlanner, configuration, planning);
 	}
 	
 	public void handleBackupDialog(ActionEvent actionEvent) {
@@ -132,5 +142,9 @@ public class RootView {
 	
 	public void showNewRecipeEditViewPanel() {
 		rootWindow.setCenter(recipeEditView.getNewRecipeEditViewPanel());
+	}
+	
+	public void handlePlanningPanel(ActionEvent actionEvent) {
+		rootWindow.setCenter(planningView.getPlanningPanel());
 	}
 }
