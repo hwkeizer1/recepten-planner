@@ -1,6 +1,6 @@
-package nl.recipes.views.backup;
+package nl.recipes.views.configurations;
 
-import static nl.recipes.views.ViewConstants.BACKUP_FOLDER;
+import static nl.recipes.views.ViewConstants.*;
 
 import java.io.File;
 
@@ -22,27 +22,27 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import nl.recipes.services.BackupService;
 import nl.recipes.services.ConfigService;
 
-@Component
-public class RestoreBackupDialog {
 
-	private final BackupService backupService;
+@Component
+public class SettingsDialog {
+
 	private final ConfigService configService;
 	
 	private Stage dialog;
 	
-	private TextField restoreFolderPathTextField = new TextField();
+	private TextField backupFolderTextField = new TextField();
+	private TextField backupsToKeepTextField = new TextField();
 
-	public RestoreBackupDialog(BackupService backupService, ConfigService configService) {
-		this.backupService = backupService;
+	public SettingsDialog(ConfigService configService) {
 		this.configService = configService;
 	}
 	
-	public void showRestoreBackupDialog() {
+	public void showSettingsDialog() {
+		
 		dialog = new Stage();
-		dialog.setTitle("Backup terugzetten");
+		dialog.setTitle("Instellingen wijzigen");
 		
 		Button ok = new Button("OK");
 		ok.setDefaultButton(true);
@@ -50,7 +50,7 @@ public class RestoreBackupDialog {
 		cancel.setCancelButton(true);
 		
 		// add action handlers for the dialog buttons.
-		ok.setOnAction(this::restore);
+		ok.setOnAction(this::save);
 		cancel.setOnAction(e -> dialog.close());
 		
 		// layout the dialog.
@@ -64,14 +64,14 @@ public class RestoreBackupDialog {
 		layout.getChildren().addAll(initializeForm(), buttons);
 		layout.setPadding(new Insets(5));
 		
-		dialog.setScene(new Scene(layout, 600, 150));
+		dialog.setScene(new Scene(layout, 900, 200));
 		dialog.centerOnScreen();
 		dialog.showAndWait();
 	}
 	
 	private Node initializeForm() {
 		Button select = new Button("Selecteer de folder");
-		select.setOnAction(this::selectRestoreFolder);
+		select.setOnAction(this::selectBackupFolder);
 		
 		GridPane inputForm = new GridPane();
 		inputForm.setPadding(new Insets(20, 20, 20, 20));
@@ -82,36 +82,49 @@ public class RestoreBackupDialog {
 		column0.setPercentWidth(15);
 		column0.setHalignment(HPos.RIGHT);
 		ColumnConstraints column1 = new ColumnConstraints();
-		column1.setPercentWidth(50);
+		column1.setPercentWidth(65);
 		ColumnConstraints column2 = new ColumnConstraints();
-		column2.setPercentWidth(35);
+		column2.setPercentWidth(20);
 		
 		inputForm.getColumnConstraints().addAll(column0, column1, column2);
 		
-		Label nameLabel = new Label("Folder:");
-		inputForm.add(nameLabel, 0, 0);
-		inputForm.add(restoreFolderPathTextField, 1, 0);
+		Label backupFolderLabel = new Label("Backup folder:");
+		inputForm.add(backupFolderLabel, 0, 0);
+		backupFolderTextField.setText(configService.getConfigProperty(BACKUP_FOLDER));
+		inputForm.add(backupFolderTextField, 1, 0);
 		inputForm.add(select, 2, 0);
+		
+		Label backupsToKeepLabel = new Label("Aantal backups:");
+		inputForm.add(backupsToKeepLabel, 0, 1);
+		backupsToKeepTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+		    if (newValue.matches("\\d*")) return;
+		    backupsToKeepTextField.setText(newValue.replaceAll("[^\\d]", ""));
+		});
+		backupsToKeepTextField.setMaxWidth(50);
+		backupsToKeepTextField.setText(configService.getConfigProperty(BACKUPS_TO_KEEP));
+		inputForm.add(backupsToKeepTextField, 1, 1);
 
-		GridPane.setHgrow(nameLabel, Priority.ALWAYS);
-		GridPane.setHgrow(restoreFolderPathTextField, Priority.ALWAYS);
+		GridPane.setHgrow(backupFolderLabel, Priority.ALWAYS);
+		GridPane.setHgrow(backupFolderTextField, Priority.ALWAYS);
 		
 		return inputForm;
 	}
 	
-	public void selectRestoreFolder(ActionEvent actionEvent) {
+	public void selectBackupFolder(ActionEvent actionEvent) {
 		DirectoryChooser directoryChooser = new DirectoryChooser();
-		directoryChooser.setInitialDirectory(new File(configService.getConfigProperty(BACKUP_FOLDER)));
+		if (configService.getConfigProperty(BACKUP_FOLDER) != null && !configService.getConfigProperty(BACKUP_FOLDER).isBlank()) {
+			directoryChooser.setInitialDirectory(new File(configService.getConfigProperty(BACKUP_FOLDER)));
+		}
 		File directory = directoryChooser.showDialog(dialog);
 		
 		if (directory != null) {
-			restoreFolderPathTextField.setText(directory.getAbsolutePath());
+			backupFolderTextField.setText(directory.getAbsolutePath());
 		}
 	}
 	
-	public void restore(ActionEvent actionEvent) {
-		backupService.restore(restoreFolderPathTextField.getText());
+	public void save(ActionEvent actionEvent) {
+		configService.setConfigProperty(BACKUP_FOLDER, backupFolderTextField.getText());
+		configService.setConfigProperty(BACKUPS_TO_KEEP, backupsToKeepTextField.getText());
 		dialog.close();
 	}
-	
 }

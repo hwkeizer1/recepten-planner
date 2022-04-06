@@ -1,16 +1,26 @@
 package nl.recipes.services;
 
+import static nl.recipes.views.ViewConstants.*;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,15 +54,21 @@ public class BackupService {
 	private final IngredientNameService ingredientNameService;
 	private final MeasureUnitService measureUnitService;
 	private final RecipeService recipeService;
+	private final ConfigService configService;
 	private final ObjectMapper objectMapper;
 
-	public BackupService(TagService tagService, IngredientNameService ingredientNameService, MeasureUnitService measureUnitService, RecipeService recipeService) {
+	public BackupService(TagService tagService, 
+			IngredientNameService ingredientNameService, 
+			MeasureUnitService measureUnitService, 
+			RecipeService recipeService, 
+			ConfigService configService) {
 		objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new JavaTimeModule());
 		this.tagService = tagService;
 		this.ingredientNameService = ingredientNameService;
 		this.measureUnitService = measureUnitService;
 		this.recipeService = recipeService;
+		this.configService = configService;
 	}
 
 	public void restore(String directoryPath) {
@@ -75,22 +91,32 @@ public class BackupService {
 	}
 	
 	public void backup(String directoryPath) {
+		Path backupDirectory = Path.of(directoryPath, LocalDate.now().toString());
+		if (!Files.exists(backupDirectory) || !Files.isDirectory(backupDirectory)) {
+			try {
+				Files.createDirectory(backupDirectory);
+			} catch (IOException e) {
+				log.error("Could not create backup directory: {}", e.getMessage());
+			}
+		}
+		
+		removeOldBackups(directoryPath);
 		
 		String tags = backupTags();
 		if (tags != null) {
-			writeTagsToFile(directoryPath, tags);
+			writeTagsToFile(backupDirectory.toString(), tags);
 		}
 		String ingredientNames = backupIngredientNames();
 		if (ingredientNames != null) {
-			writeIngredientNamesToFile(directoryPath, ingredientNames);
+			writeIngredientNamesToFile(backupDirectory.toString(), ingredientNames);
 		}
 		String measureUnits = backupMeasureUnits();
 		if (measureUnits != null) {
-			writeMeasureUnitsToFile(directoryPath, measureUnits);
+			writeMeasureUnitsToFile(backupDirectory.toString(), measureUnits);
 		}
 		String recipes = backupRecipes();
 		if (recipes != null) {
-			writeRecipesToFile(directoryPath, recipes);
+			writeRecipesToFile(backupDirectory.toString(), recipes);
 		}
 	}
 	
@@ -336,6 +362,29 @@ public class BackupService {
 		} catch (AlreadyExistsException ex) {
 			log.error("Recipe {} already exists", recipe.getName());
 			return null;
+		}
+	}
+
+	private void removeOldBackups(String directoryPath) {
+		Integer backupsToKeep = Integer.valueOf(configService.getConfigProperty(BACKUPS_TO_KEEP));
+		try (Stream<Path> folders = Files.walk(Path.of(directoryPath))) {folders
+			.filter(Files::isDirectory)
+			.filter(p -> p.toString().length() != directoryPath.length())
+			.sorted(Comparator.reverseOrder())
+			.skip(backupsToKeep)
+			.forEach(this::deleteFolder);
+
+		} catch (IOException ex) {
+			log.error("Error during removal of expired backups{}", ex.getMessage());
+		}
+	}
+	
+	private void deleteFolder(Path path) {
+		File directory = new File(path.toString());
+		try {
+			FileUtils.deleteDirectory(directory);
+		} catch (IOException ex) {
+			log.error("Error while deleting expired backups{}", ex.getMessage());
 		}
 	}
 }

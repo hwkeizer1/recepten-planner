@@ -26,6 +26,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.RecipeService;
@@ -201,6 +202,7 @@ public class RecipeListView {
 		if (selectedRecipe != null) {
 			removeAlert = new Alert(AlertType.CONFIRMATION, "Weet u zeker dat u het geselecteerde recept '"
 					+ selectedRecipe.getName() + "'  wilt verwijderen?");
+			removeAlert.initModality(Modality.WINDOW_MODAL);
 			removeAlert.showAndWait()
 		      .filter(response -> response == ButtonType.OK)
 		      .ifPresent(response -> removeRecipe());

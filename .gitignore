@@ -35,3 +35,5 @@ build/
 
 ### Project specific ###
 recepten-planner.db
+recepten-planner.config
+Backup/

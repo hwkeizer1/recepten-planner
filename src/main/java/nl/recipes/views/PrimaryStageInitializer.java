@@ -19,7 +19,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
 	@Override
 	public void onApplicationEvent(StageReadyEvent event) {
 		Stage stage = event.stage;
-		Scene scene = new Scene(rootView.asParent(), 1600, 1200);
+		Scene scene = new Scene(rootView.asParent());
 		scene.getStylesheets().clear();
 		scene.getStylesheets().addAll(
 				getClass().getResource("/css/styles.css").toExternalForm(),
@@ -29,5 +29,6 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
 		stage.setScene(scene);
 		stage.setTitle("Recepten-planner 0.2-beta");
 		stage.show();
+		stage.setMaximized(true);
 	}
 }

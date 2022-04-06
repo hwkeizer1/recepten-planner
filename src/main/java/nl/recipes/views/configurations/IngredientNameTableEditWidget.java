@@ -111,13 +111,13 @@ public class IngredientNameTableEditWidget {
 		ingredientNameTableView.setMinHeight(200); // prevent table from collapsing
 		
 		nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
-		nameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.3));
+		nameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.25));
 		pluralNameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
-		pluralNameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.3));
+		pluralNameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.25));
 		
 		stockColumn.setCellValueFactory(c -> new SimpleBooleanProperty(c.getValue().isStock()));
 		stockColumn.setCellFactory(c -> new CheckBoxTableCell<>());
-		stockColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.1));
+		stockColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.2));
 		
 		shopTypeColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
 		shopTypeColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.15));
