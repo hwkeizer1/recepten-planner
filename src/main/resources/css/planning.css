@@ -1,0 +1,12 @@
+/*
+ * Planning styling
+ */
+.planning-date {
+	-fx-font-weight: bold;
+	-fx-text-fill: rp-header-text;
+}
+
+.planning-recipe-link {
+	-fx-text-fill: #1a75ff;
+}
+ 

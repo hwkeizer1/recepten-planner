@@ -16,9 +16,12 @@ import javafx.scene.layout.VBox;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.PlanningService;
+import nl.recipes.views.root.RootView;
 
 @Component
 public class PlanningListView {
+	
+	private RootView rootView;
 	
 	private final PlanningService planningService;
 	private final PlanningView planningView;
@@ -39,6 +42,12 @@ public class PlanningListView {
 		this.planningService = planningService;
 		this.planningView = planningView;
 		this.recipeView = recipeView;
+		
+	}
+	
+	public void setRootView(RootView rootView) {
+		this.rootView = rootView;
+		planningView.setRootView(this.rootView);
 	}
 
 	public SplitPane getPlanningPanel() {

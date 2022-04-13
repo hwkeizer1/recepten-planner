@@ -12,6 +12,8 @@ public final class ViewConstants {
 	public static final String DROP_SHADOW = "drop-shadow";
 	public static final String WIDGET = "widget";
 	public static final String VALIDATION = "validation";
+	public static final String PLANNING_DATE = "planning-date";
+	public static final String PLANNING_RECIPE_LINK = "planning-recipe-link";
 	
 	public static final String BACKUP_FOLDER = "backup-folder";
 	public static final String BACKUPS_TO_KEEP = "backups-to-keep";

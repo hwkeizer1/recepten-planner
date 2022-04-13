@@ -158,7 +158,10 @@ public class RecipeSingleView {
 		Button list = new Button("Terug naar lijst");
 		list.setOnAction(this::showRecipeListView);
 		list.setMinWidth(150);
-		buttonPanel.getChildren().addAll(edit, plan, list);
+		Button planning = new Button("Terug naar planning");
+		planning.setOnAction(this::showPlanning);
+		planning.setMinWidth(150);
+		buttonPanel.getChildren().addAll(edit, plan, list, planning);
 		
 		Region buffer =  new Region();
 		HBox.setHgrow(buffer, Priority.ALWAYS);
@@ -330,6 +333,12 @@ public class RecipeSingleView {
 	private void showRecipeEditView(ActionEvent event) {
 		if (rootView != null) {
 			rootView.showRecipeEditViewPanel(selectedRecipe);
+		}
+	}
+	
+	private void showPlanning(ActionEvent event) {
+		if (rootView != null) {
+			rootView.handlePlanningPanel(event);;
 		}
 	}
 	

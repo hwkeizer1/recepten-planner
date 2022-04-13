@@ -45,7 +45,7 @@ public class RootView {
 			RestoreBackupDialog restoreBackupDialog, 
 			CreateBackupDialog createBackupDialog, 
 			SettingsDialog settingsDialog, 
-			PlanningListView planningView) {
+			PlanningListView planningListView) {
 		
 		this.configurationView = configurationView;
 		this.recipeListView = recipeListView;
@@ -54,11 +54,12 @@ public class RootView {
 		this.restoreBackupDialog = restoreBackupDialog;
 		this.createBackupDialog = createBackupDialog;
 		this.settingsDialog = settingsDialog;
-		this.planningView = planningView;
+		this.planningView = planningListView;
 		
 		recipeListView.setRootView(this);
 		recipeSingleView.setRootView(this);
 		recipeEditView.setRootView(this);
+		planningListView.setRootView(this);
 		
 		initializeRootWindow();
 		initializeMenu();
