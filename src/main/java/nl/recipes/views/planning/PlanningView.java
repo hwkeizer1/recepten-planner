@@ -6,14 +6,20 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Component;
 
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
+import nl.recipes.services.PlanningService;
 import nl.recipes.views.root.RootView;
 
 @Slf4j
@@ -22,21 +28,36 @@ public class PlanningView {
 	
 	private RootView rootView;
 	
+	private final PlanningService planningService;
+	
 	VBox planningBox;
 	
+	public PlanningView(PlanningService planningService) {
+		this.planningService = planningService;
+	}
+
 	public void setRootView(RootView rootView) {
 		this.rootView = rootView;
 	}
 	
 	public VBox getPlanningView(Planning planning) {
-		planningBox = new VBox();
-		planningBox.getStyleClass().addAll(DROP_SHADOW, WIDGET);
-//		planningBox.setPadding(new Insets(10));
-		
 		DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("cccc dd MMMM yyyy");
 		Label dateLabel = new Label(customFormatter.format(planning.getDate()));
 		dateLabel.getStyleClass().add(PLANNING_DATE);
-		planningBox.getChildren().add(dateLabel);
+		
+		Region region = new Region();
+		HBox.setHgrow(region, Priority.ALWAYS);
+		
+		Button clear = new Button("Leeg maken");
+		clear.setOnAction(e -> clearPlanning(planning));
+		clear.setMinWidth(100);
+		
+		HBox headerBox = new HBox();
+		headerBox.getChildren().addAll(dateLabel, region, clear);
+		
+		planningBox = new VBox();
+		planningBox.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+		planningBox.getChildren().add(headerBox);
 		
 		GridPane recipeList = new GridPane();
 		
@@ -65,6 +86,13 @@ public class PlanningView {
 	private void showRecipeSingleView(Recipe recipe) {
 		if (rootView != null) {
 			rootView.showRecipeSingleViewPanel(recipe);
+		}
+	}
+	
+	private void clearPlanning(Planning planning) {
+		planningService.clearPlanning(planning);
+		if (rootView != null) {
+			rootView.handlePlanningPanel(null);
 		}
 	}
 }

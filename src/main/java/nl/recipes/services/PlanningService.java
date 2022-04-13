@@ -56,7 +56,15 @@ public class PlanningService {
 			planningRepository.saveAll(observablePlanningList);
 			observableRecipesList.remove(optionalRecipe.get());
 		}
-		
+	}
+	
+	public void clearPlanning(Planning planning) {
+		for (Recipe recipe : planning.getRecipes()) {
+			observableRecipesList.add(recipe);
+		}
+		planning.setRecipes(null);
+		observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
+		planningRepository.saveAll(observablePlanningList);
 	}
 	
 	private void preparePlanningList() {

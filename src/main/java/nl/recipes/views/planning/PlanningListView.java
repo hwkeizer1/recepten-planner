@@ -127,7 +127,7 @@ public class PlanningListView {
 			planningListItem.setOnDragDropped(event -> {
 				Dragboard db = event.getDragboard();
 				planningService.moveRecipeToPlanning(planning, db.getString());
-				refreshPanningPanel();
+				refreshPlanningPanel();
 			});
 			planningListPanel.getChildren().add(planningListItem);
 		}
@@ -135,7 +135,7 @@ public class PlanningListView {
 		return planningListPanel;
 	}
 	
-	private void refreshPanningPanel() {
+	private void refreshPlanningPanel() {
 		planningPanel.getItems().clear();
 		planningPanel.getItems().addAll(createRecipeListPanel(), createPlanningListPanel());
 	}
