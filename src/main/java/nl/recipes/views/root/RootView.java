@@ -15,7 +15,7 @@ import nl.recipes.views.backup.CreateBackupDialog;
 import nl.recipes.views.backup.RestoreBackupDialog;
 import nl.recipes.views.configurations.ConfigurationView;
 import nl.recipes.views.configurations.SettingsDialog;
-import nl.recipes.views.planning.PlanningView;
+import nl.recipes.views.planning.PlanningListView;
 import nl.recipes.views.recipes.RecipeEditView;
 import nl.recipes.views.recipes.RecipeListView;
 import nl.recipes.views.recipes.RecipeSingleView;
@@ -32,7 +32,7 @@ public class RootView {
 	private final RestoreBackupDialog restoreBackupDialog;
 	private final CreateBackupDialog createBackupDialog;
 	private final SettingsDialog settingsDialog;
-	private final PlanningView planningView;
+	private final PlanningListView planningView;
 
 	private BorderPane rootWindow = new BorderPane();
 	
@@ -45,7 +45,7 @@ public class RootView {
 			RestoreBackupDialog restoreBackupDialog, 
 			CreateBackupDialog createBackupDialog, 
 			SettingsDialog settingsDialog, 
-			PlanningView planningView) {
+			PlanningListView planningView) {
 		
 		this.configurationView = configurationView;
 		this.recipeListView = recipeListView;
