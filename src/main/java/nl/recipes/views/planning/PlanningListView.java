@@ -6,6 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
 import javafx.scene.input.ClipboardContent;
@@ -104,12 +106,17 @@ public class PlanningListView {
 		planningListBox.setPadding(new Insets(30));
 		planningListBox.getChildren().addAll(rightPanelTitle, createPlanningList());
 		
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+		planningListBox.prefWidthProperty().bind(scrollPane.widthProperty());
+		scrollPane.setContent(planningListBox);
+		
 		rightPanel = new AnchorPane();
-		AnchorPane.setTopAnchor(planningListBox, 0.0);
-		AnchorPane.setBottomAnchor(planningListBox, 0.0);
-		AnchorPane.setRightAnchor(planningListBox, 0.0);
-		AnchorPane.setLeftAnchor(planningListBox, 0.0);
-		rightPanel.getChildren().add(planningListBox);
+		AnchorPane.setTopAnchor(scrollPane, 0.0);
+		AnchorPane.setBottomAnchor(scrollPane, 0.0);
+		AnchorPane.setRightAnchor(scrollPane, 0.0);
+		AnchorPane.setLeftAnchor(scrollPane, 0.0);
+		rightPanel.getChildren().add(scrollPane);
 		
 		return rightPanel;
 	}

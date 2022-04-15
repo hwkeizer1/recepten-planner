@@ -1,28 +1,26 @@
 package nl.recipes.views.planning;
 
-import static nl.recipes.views.ViewConstants.*;
+import static nl.recipes.views.ViewConstants.DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.PLANNING_DATE;
+import static nl.recipes.views.ViewConstants.PLANNING_RECIPE_LINK;
+import static nl.recipes.views.ViewConstants.WIDGET;
 
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Component;
 
-import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.PlanningService;
 import nl.recipes.views.root.RootView;
 
-@Slf4j
 @Component
 public class PlanningView {
 	
@@ -56,21 +54,16 @@ public class PlanningView {
 		headerBox.getChildren().addAll(dateLabel, region, clear);
 		
 		planningBox = new VBox();
+		
 		planningBox.getStyleClass().addAll(DROP_SHADOW, WIDGET);
 		planningBox.getChildren().add(headerBox);
 		
 		GridPane recipeList = new GridPane();
 		
-		ColumnConstraints column0 = new ColumnConstraints();
-		column0.setPercentWidth(15);
-		ColumnConstraints column1 = new ColumnConstraints();
-		column1.setPercentWidth(85);
-		
-		recipeList.getColumnConstraints().addAll(column0, column1);
-		
 		int row = 0;
 		for (Recipe recipe : planning.getRecipesOrderedByType()) {
 			Label recipeTypeLabel = new Label(recipe.getRecipeType().getDisplayName() + ":");
+			recipeTypeLabel.setMinWidth(120);
 			recipeList.add(recipeTypeLabel, 0, row);
 			Label recipeNameLabel = new Label(recipe.getName());
 			recipeNameLabel.getStyleClass().add(PLANNING_RECIPE_LINK);
