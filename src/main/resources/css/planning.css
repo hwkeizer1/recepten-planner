@@ -4,6 +4,7 @@
 .planning-date {
 	-fx-font-weight: bold;
 	-fx-text-fill: rp-header-text;
+	-fx-padding: 0px 0px 5px 0px;
 }
 
 .planning-recipe-link {

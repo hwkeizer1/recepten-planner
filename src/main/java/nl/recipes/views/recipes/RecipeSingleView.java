@@ -326,7 +326,7 @@ public class RecipeSingleView {
 	
 	private void showRecipeListView(ActionEvent event) {
 		if (rootView != null) {
-			rootView.handleRecipeListPanel(event);
+			rootView.showRecipeListPanel(event);
 		}
 	}
 	
@@ -338,7 +338,7 @@ public class RecipeSingleView {
 	
 	private void showPlanning(ActionEvent event) {
 		if (rootView != null) {
-			rootView.handlePlanningPanel(event);;
+			rootView.showPlanningPanel(event);;
 		}
 	}
 	

@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -43,24 +44,37 @@ public class PlanningView {
 		Label dateLabel = new Label(customFormatter.format(planning.getDate()));
 		dateLabel.getStyleClass().add(PLANNING_DATE);
 		
-		Region region = new Region();
-		HBox.setHgrow(region, Priority.ALWAYS);
+		Region regionHeader = new Region();
+		HBox.setHgrow(regionHeader, Priority.ALWAYS);
 		
 		Button clear = new Button("Leeg maken");
 		clear.setOnAction(e -> clearPlanning(planning));
 		clear.setMinWidth(100);
 		
 		HBox headerBox = new HBox();
-		headerBox.getChildren().addAll(dateLabel, region, clear);
+		headerBox.getChildren().addAll(dateLabel, regionHeader, clear);
 		
 		planningBox = new VBox();
 		
 		planningBox.getStyleClass().addAll(DROP_SHADOW, WIDGET);
 		planningBox.getChildren().add(headerBox);
 		
+		Region regionFooter = new Region();
+		HBox.setHgrow(regionFooter, Priority.ALWAYS);
+		
+		CheckBox shoppingCheckBox = new CheckBox("Op boodschappenlijst");
+		shoppingCheckBox.setSelected(planning.isOnShoppingList());
+		shoppingCheckBox.setOnAction(e -> setOnShoppingList(planning, shoppingCheckBox.isSelected()));
+		
+		HBox footerBox = new HBox();
+		footerBox.getChildren().addAll(regionFooter, shoppingCheckBox);
+		
 		GridPane recipeList = new GridPane();
 		
 		int row = 0;
+		if (planning.getRecipes().isEmpty()) {
+			shoppingCheckBox.setVisible(false);
+		}
 		for (Recipe recipe : planning.getRecipesOrderedByType()) {
 			Label recipeTypeLabel = new Label(recipe.getRecipeType().getDisplayName() + ":");
 			recipeTypeLabel.setMinWidth(120);
@@ -72,7 +86,7 @@ public class PlanningView {
 			row++;
 		}
 		
-		planningBox.getChildren().add(recipeList);
+		planningBox.getChildren().addAll(recipeList, footerBox);
 		return planningBox;
 	}
 	
@@ -85,7 +99,12 @@ public class PlanningView {
 	private void clearPlanning(Planning planning) {
 		planningService.clearPlanning(planning);
 		if (rootView != null) {
-			rootView.handlePlanningPanel(null);
+			rootView.showPlanningPanel(null);
 		}
+	}
+	
+	private void setOnShoppingList(Planning planning, boolean onShoppingList) {
+		planning.setOnShoppingList(onShoppingList);
+		planningService.updatePlanning(planning);
 	}
 }

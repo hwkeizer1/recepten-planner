@@ -3,8 +3,10 @@ package nl.recipes.views.planning;
 import org.springframework.stereotype.Component;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -99,12 +101,15 @@ public class PlanningListView {
 	}
 	
 	private AnchorPane createPlanningListPanel() {
+		Button shoppingList = new Button("Naar boodschappenlijst");
+		shoppingList.setOnAction(this::showShoppingPanel);
+		
 		Label rightPanelTitle = new Label("Dag planning");
 		rightPanelTitle.getStyleClass().add("header");
 		
 		VBox planningListBox = new VBox();
 		planningListBox.setPadding(new Insets(30));
-		planningListBox.getChildren().addAll(rightPanelTitle, createPlanningList());
+		planningListBox.getChildren().addAll(shoppingList, rightPanelTitle, createPlanningList());
 		
 		ScrollPane scrollPane = new ScrollPane();
 		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
@@ -145,5 +150,9 @@ public class PlanningListView {
 	private void refreshPlanningPanel() {
 		planningPanel.getItems().clear();
 		planningPanel.getItems().addAll(createRecipeListPanel(), createPlanningListPanel());
+	}
+	
+	private void showShoppingPanel(ActionEvent event) {
+		rootView.showShoppingPanel(event);
 	}
 }

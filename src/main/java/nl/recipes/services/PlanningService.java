@@ -2,8 +2,10 @@ package nl.recipes.services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
+import nl.recipes.domain.ShoppingItem;
 import nl.recipes.repositories.PlanningRepository;
 
 @Service
@@ -65,6 +68,56 @@ public class PlanningService {
 		planning.setRecipes(null);
 		observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
 		planningRepository.saveAll(observablePlanningList);
+	}
+	
+	public void updatePlanning(Planning planning) {
+		observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
+		planningRepository.saveAll(observablePlanningList);
+	}
+
+	public List<ShoppingItem> getShoppingList() {
+		List<ShoppingItem> shoppingItems = getShoppingListItems();
+		List<ShoppingItem> result = new ArrayList<>();
+		for (ShoppingItem shoppingItem : shoppingItems) {
+			boolean exists = false;
+			for (ShoppingItem resultIngredient : result) {
+				if (shoppingItem.getName().equals(resultIngredient.getName())) {
+					exists = true;
+					if (shoppingItem.getAmount() != null && resultIngredient.getAmount() != null) {
+						resultIngredient.setAmount(shoppingItem.getAmount() + resultIngredient.getAmount());	
+					}
+				}
+			}
+			if (!exists) {
+				result.add(shoppingItem);
+			}
+		}
+		return result;
+	}
+	
+	public List<ShoppingItem> getStandardShoppings() {
+		return Collections.emptyList();
+	}
+	
+	private List<ShoppingItem> getShoppingListItems() {
+		return observablePlanningList.stream()
+				.filter(Planning::isOnShoppingList)
+				.map(Planning::getRecipes)
+				.flatMap(List::stream)
+				.map(Recipe::getIngredients)
+				.flatMap(Set::stream)
+				.map(i -> {
+					ShoppingItem shoppingItem = new ShoppingItem();
+					shoppingItem.setAmount(i.getAmount());
+					shoppingItem.setMeasureUnit(i.getMeasureUnit());
+					shoppingItem.setName(i.getIngredientName());
+					shoppingItem.setIngredientType(i.getIngredientName().getIngredientType());
+					shoppingItem.setShopType(i.getIngredientName().getShopType());
+					shoppingItem.setStandard(false);
+					shoppingItem.setOnList(!i.getIngredientName().isStock());
+					return shoppingItem;
+				})
+				.collect(Collectors.toList());
 	}
 	
 	private void preparePlanningList() {

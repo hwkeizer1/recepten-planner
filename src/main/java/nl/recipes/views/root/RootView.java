@@ -16,6 +16,7 @@ import nl.recipes.views.backup.RestoreBackupDialog;
 import nl.recipes.views.configurations.ConfigurationView;
 import nl.recipes.views.configurations.SettingsDialog;
 import nl.recipes.views.planning.PlanningListView;
+import nl.recipes.views.planning.ShoppingListView;
 import nl.recipes.views.recipes.RecipeEditView;
 import nl.recipes.views.recipes.RecipeListView;
 import nl.recipes.views.recipes.RecipeSingleView;
@@ -33,6 +34,7 @@ public class RootView {
 	private final CreateBackupDialog createBackupDialog;
 	private final SettingsDialog settingsDialog;
 	private final PlanningListView planningView;
+	private final ShoppingListView shoppingListView;
 
 	private BorderPane rootWindow = new BorderPane();
 	
@@ -45,7 +47,8 @@ public class RootView {
 			RestoreBackupDialog restoreBackupDialog, 
 			CreateBackupDialog createBackupDialog, 
 			SettingsDialog settingsDialog, 
-			PlanningListView planningListView) {
+			PlanningListView planningListView, 
+			ShoppingListView shoppingListView) {
 		
 		this.configurationView = configurationView;
 		this.recipeListView = recipeListView;
@@ -55,6 +58,7 @@ public class RootView {
 		this.createBackupDialog = createBackupDialog;
 		this.settingsDialog = settingsDialog;
 		this.planningView = planningListView;
+		this.shoppingListView = shoppingListView;
 		
 		recipeListView.setRootView(this);
 		recipeSingleView.setRootView(this);
@@ -81,25 +85,25 @@ public class RootView {
 		SeparatorMenuItem secondSeparator = new SeparatorMenuItem();
 		
 		MenuItem recipeList = new MenuItem("Recepten lijst");
-		recipeList.setOnAction(this::handleRecipeListPanel);
+		recipeList.setOnAction(this::showRecipeListPanel);
 		
 		MenuItem createBackup = new MenuItem("Backup maken");
-		createBackup.setOnAction(this::handleBackupDialog);
+		createBackup.setOnAction(this::showBackupDialog);
 		
 		MenuItem restoreBackup = new MenuItem("Backup terugzetten");
-		restoreBackup.setOnAction(this::handleRestoreBackupDialog);
+		restoreBackup.setOnAction(this::showRestoreBackupDialog);
 		
 		MenuItem exit = new MenuItem("Programma afsluiten");
 		exit.setOnAction(e -> Platform.exit());
 		
 		MenuItem editBasicElements = new MenuItem("Wijzig basis elementen");
-		editBasicElements.setOnAction(this::handleConfigurationPanel);
+		editBasicElements.setOnAction(this::showConfigurationPanel);
 		
 		MenuItem editSettings = new MenuItem("Wijzig instellingen");
-		editSettings.setOnAction(this::handleSettingsDialog);
+		editSettings.setOnAction(this::showSettingsDialog);
 		
 		MenuItem planningOverview = new MenuItem("Planning overzicht");
-		planningOverview.setOnAction(this::handlePlanningPanel);
+		planningOverview.setOnAction(this::showPlanningPanel);
 		
 		Menu recipePlanner = new Menu("Recepten-planner");
 		recipePlanner.getItems().addAll(recipeList, firstSeparator, createBackup, restoreBackup, secondSeparator, exit);
@@ -113,23 +117,23 @@ public class RootView {
 		menuBar.getMenus().addAll(recipePlanner, configuration, planning);
 	}
 	
-	public void handleBackupDialog(ActionEvent actionEvent) {
+	public void showBackupDialog(ActionEvent actionEvent) {
 		createBackupDialog.createBackup();
 	}
 	
-	public void handleRestoreBackupDialog(ActionEvent actionEvent) {
+	public void showRestoreBackupDialog(ActionEvent actionEvent) {
 		restoreBackupDialog.showRestoreBackupDialog();
 	}
 	
-	public void handleRecipeListPanel(ActionEvent actionEvent) {
+	public void showRecipeListPanel(ActionEvent actionEvent) {
 		rootWindow.setCenter(recipeListView.getRecipeListPanel());
 	}
 	
-	public void handleConfigurationPanel(ActionEvent actionEvent) {
+	public void showConfigurationPanel(ActionEvent actionEvent) {
 		rootWindow.setCenter(configurationView.getConfigurationViewPanel());
 	}
 	
-	public void handleSettingsDialog(ActionEvent actionEvent) {
+	public void showSettingsDialog(ActionEvent actionEvent) {
 		settingsDialog.showSettingsDialog();
 	}
 	
@@ -145,7 +149,11 @@ public class RootView {
 		rootWindow.setCenter(recipeEditView.getNewRecipeEditViewPanel());
 	}
 	
-	public void handlePlanningPanel(ActionEvent actionEvent) {
+	public void showPlanningPanel(ActionEvent actionEvent) {
 		rootWindow.setCenter(planningView.getPlanningPanel());
+	}
+	
+	public void showShoppingPanel(ActionEvent actionEvent) {
+		rootWindow.setCenter(shoppingListView.getShoppingView());
 	}
 }
