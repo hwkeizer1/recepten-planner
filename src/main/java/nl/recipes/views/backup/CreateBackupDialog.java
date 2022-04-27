@@ -14,32 +14,34 @@ import nl.recipes.services.ConfigService;
 @Component
 public class CreateBackupDialog {
 
-	private final BackupService backupService;
-	private final ConfigService configService;
+  private final BackupService backupService;
 
-	public CreateBackupDialog(BackupService backupService, ConfigService configService) {
-		this.backupService = backupService;
-		this.configService = configService;
-	}
-	
-	public void createBackup() {
-		if (configService.getConfigProperty(BACKUP_FOLDER) != null) {
-			backupService.backup(configService.getConfigProperty(BACKUP_FOLDER));
-		} else {
-			showNoBackupLocationError();
-		}
-	}
-	
-	private void showNoBackupLocationError() {
-		
-			Alert noBackupLocationError = new Alert(AlertType.ERROR);
-			noBackupLocationError.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-			noBackupLocationError.initModality(Modality.WINDOW_MODAL);
-			noBackupLocationError.setTitle("Kan geen backup maken!");
-			noBackupLocationError.setHeaderText("Backup lokatie is niet ingesteld");
-			noBackupLocationError.setContentText("Er is nog geen backup lokatie ingesteld. Stel deze eerst in via 'Instellingen  wijzigen'");
-			noBackupLocationError.show();
-		
-	}
-	
+  private final ConfigService configService;
+
+  public CreateBackupDialog(BackupService backupService, ConfigService configService) {
+    this.backupService = backupService;
+    this.configService = configService;
+  }
+
+  public void createBackup() {
+    if (configService.getConfigProperty(BACKUP_FOLDER) != null) {
+      backupService.backup(configService.getConfigProperty(BACKUP_FOLDER));
+    } else {
+      showNoBackupLocationError();
+    }
+  }
+
+  private void showNoBackupLocationError() {
+
+    Alert noBackupLocationError = new Alert(AlertType.ERROR);
+    noBackupLocationError.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    noBackupLocationError.initModality(Modality.WINDOW_MODAL);
+    noBackupLocationError.setTitle("Kan geen backup maken!");
+    noBackupLocationError.setHeaderText("Backup lokatie is niet ingesteld");
+    noBackupLocationError.setContentText(
+        "Er is nog geen backup lokatie ingesteld. Stel deze eerst in via 'Instellingen  wijzigen'");
+    noBackupLocationError.show();
+
+  }
+
 }

@@ -11,7 +11,8 @@ import nl.recipes.domain.Recipe;
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-	public Optional<Recipe> findByName(String name);
-	
-	public List<Recipe> findByOrderByNameAsc();
+  public Optional<Recipe> findByName(String name);
+
+  public List<Recipe> findByOrderByNameAsc();
+
 }

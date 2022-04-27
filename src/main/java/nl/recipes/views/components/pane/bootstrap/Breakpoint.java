@@ -4,19 +4,17 @@ package nl.recipes.views.components.pane.bootstrap;
  * Based on https://edencoding.com/responsive-layouts/
  */
 public enum Breakpoint {
-    XSMALL(0),
-    SMALL(1),
-    MEDIUM(2),
-    LARGE(3),
-    XLARGE(4);
 
-    private int value;
+  XSMALL(0), SMALL(1), MEDIUM(2), LARGE(3), XLARGE(4);
 
-    Breakpoint(int value) {
-        this.value = value;
-    }
+  private int value;
 
-    public int getValue() {
-        return value;
-    }
+  Breakpoint(int value) {
+    this.value = value;
+  }
+
+  public int getValue() {
+    return value;
+  }
+
 }

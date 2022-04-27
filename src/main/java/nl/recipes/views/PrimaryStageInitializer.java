@@ -10,26 +10,26 @@ import nl.recipes.views.root.RootView;
 @Component
 public class PrimaryStageInitializer implements ApplicationListener<StageReadyEvent> {
 
-	private final RootView rootView;
-	
-	public PrimaryStageInitializer(RootView rootView) {
-		this.rootView = rootView;
-	}
+  private final RootView rootView;
 
-	@Override
-	public void onApplicationEvent(StageReadyEvent event) {
-		Stage stage = event.stage;
-		Scene scene = new Scene(rootView.asParent());
-		scene.getStylesheets().clear();
-		scene.getStylesheets().addAll(
-				getClass().getResource("/css/styles.css").toExternalForm(),
-				getClass().getResource("/css/widget.css").toExternalForm(),
-				getClass().getResource("/css/recipe-list-view.css").toExternalForm(),
-				getClass().getResource("/css/single-recipe-view.css").toExternalForm(),
-				getClass().getResource("/css/planning.css").toExternalForm());
-		stage.setScene(scene);
-		stage.setTitle("Recepten-planner 0.2-beta");
-		stage.show();
-		stage.setMaximized(true);
-	}
+  public PrimaryStageInitializer(RootView rootView) {
+    this.rootView = rootView;
+  }
+
+  @Override
+  public void onApplicationEvent(StageReadyEvent event) {
+    Stage stage = event.stage;
+    Scene scene = new Scene(rootView.asParent());
+    scene.getStylesheets().clear();
+    scene.getStylesheets().addAll(getClass().getResource("/css/styles.css").toExternalForm(),
+        getClass().getResource("/css/widget.css").toExternalForm(),
+        getClass().getResource("/css/recipe-list-view.css").toExternalForm(),
+        getClass().getResource("/css/single-recipe-view.css").toExternalForm(),
+        getClass().getResource("/css/planning.css").toExternalForm());
+    stage.setScene(scene);
+    stage.setTitle("Recepten-planner 0.2-beta");
+    stage.show();
+    stage.setMaximized(true);
+  }
+
 }

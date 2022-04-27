@@ -24,35 +24,36 @@ import lombok.ToString;
 @JsonIgnoreProperties("recipe")
 public class Ingredient {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@ManyToOne
-	@ToString.Exclude
-	@EqualsAndHashCode.Exclude
-	@JsonIgnore
-	private Recipe recipe;
-	
-	private Float amount;
-	
-	@OneToOne(fetch = FetchType.EAGER)
-	private MeasureUnit measureUnit;
-	
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@OneToOne(fetch = FetchType.EAGER)
-	private IngredientName ingredientName;
-	
-	public Ingredient(Float amount, MeasureUnit measureUnit, IngredientName ingredientName) {
-		this.amount = amount;
-		this.measureUnit = measureUnit;
-		this.ingredientName = ingredientName;
-	}	
-	
-	public Ingredient(Recipe recipe, Float amount, MeasureUnit measureUnit, IngredientName ingredientName) {
-		this.recipe = recipe;
-		this.amount = amount;
-		this.measureUnit = measureUnit;
-		this.ingredientName = ingredientName;
-	}
+  @ManyToOne
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  @JsonIgnore
+  private Recipe recipe;
+
+  private Float amount;
+
+  @OneToOne(fetch = FetchType.EAGER)
+  private MeasureUnit measureUnit;
+
+  @OneToOne(fetch = FetchType.EAGER)
+  private IngredientName ingredientName;
+
+  public Ingredient(Float amount, MeasureUnit measureUnit, IngredientName ingredientName) {
+    this.amount = amount;
+    this.measureUnit = measureUnit;
+    this.ingredientName = ingredientName;
+  }
+
+  public Ingredient(Recipe recipe, Float amount, MeasureUnit measureUnit,
+      IngredientName ingredientName) {
+    this.recipe = recipe;
+    this.amount = amount;
+    this.measureUnit = measureUnit;
+    this.ingredientName = ingredientName;
+  }
+
 }

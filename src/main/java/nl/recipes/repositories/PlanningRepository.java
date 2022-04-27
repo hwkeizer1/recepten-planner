@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import nl.recipes.domain.Planning;
 
 @Repository
-public interface PlanningRepository extends JpaRepository<Planning, Long>{
+public interface PlanningRepository extends JpaRepository<Planning, Long> {
 
-	public Optional<Planning> findByOrderByDateAsc();
-	
+  public Optional<Planning> findByOrderByDateAsc();
+
 }

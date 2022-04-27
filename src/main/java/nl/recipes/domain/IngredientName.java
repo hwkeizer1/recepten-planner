@@ -19,47 +19,47 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class IngredientName {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@NotNull
-	@Column(unique=true, length = 50)
-	private String name;
-	
-	@Column(length = 50)
-	private String pluralName;
-	
-	private boolean stock = false;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(length = 20)
-	private ShopType shopType;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(length = 20)
-	private IngredientType ingredientType;
-	
-	public IngredientName(String name, String pluralName) {
-		this(name, pluralName, false, ShopType.OVERIG, IngredientType.OVERIG);
-	}
-	
-	public IngredientName(String name, String pluralName, boolean stock) {
-		this(name, pluralName, stock, ShopType.OVERIG, IngredientType.OVERIG);
-	}
-	
-	public IngredientName(String name, String pluralName, boolean stock, ShopType shopType, IngredientType ingredientType) {
-		this.name = name;
-		this.pluralName = pluralName;
-		this.stock = stock;
-		this.shopType = shopType;
-		this.ingredientType = ingredientType;
-	}
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Override
-	public String toString() {
-		return name;
-	}
-	
-	
+  @NotNull
+  @Column(unique = true, length = 50)
+  private String name;
+
+  @Column(length = 50)
+  private String pluralName;
+
+  private boolean stock = false;
+
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20)
+  private ShopType shopType;
+
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20)
+  private IngredientType ingredientType;
+
+  public IngredientName(String name, String pluralName) {
+    this(name, pluralName, false, ShopType.OVERIG, IngredientType.OVERIG);
+  }
+
+  public IngredientName(String name, String pluralName, boolean stock) {
+    this(name, pluralName, stock, ShopType.OVERIG, IngredientType.OVERIG);
+  }
+
+  public IngredientName(String name, String pluralName, boolean stock, ShopType shopType,
+      IngredientType ingredientType) {
+    this.name = name;
+    this.pluralName = pluralName;
+    this.stock = stock;
+    this.shopType = shopType;
+    this.ingredientType = ingredientType;
+  }
+
+  @Override
+  public String toString() {
+    return name;
+  }
+
 }

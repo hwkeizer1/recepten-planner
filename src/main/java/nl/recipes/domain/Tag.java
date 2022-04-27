@@ -18,22 +18,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Tag {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@NonNull
-	@Column(unique = true, length = 30)
-	private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	public Tag(String name) {
-		this.name = name;
-	}
+  @NonNull
+  @Column(unique = true, length = 30)
+  private String name;
 
-	@Override
-	public String toString() {
-		return name;
-	}
-	
-	
+  public Tag(String name) {
+    this.name = name;
+  }
+
+  @Override
+  public String toString() {
+    return name;
+  }
+
 }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import nl.recipes.domain.Ingredient;
 
 @Repository
-public interface IngredientRepository extends JpaRepository<Ingredient, Long>{
+public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
 }

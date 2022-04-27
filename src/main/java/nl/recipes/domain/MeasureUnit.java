@@ -17,25 +17,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MeasureUnit {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@NotNull
-	@Column(unique=true)
-	private String name;
-	
-	private String pluralName;
-	
-	public MeasureUnit(String name, String pluralName) {
-		this.name = name;
-		this.pluralName = pluralName;
-	}
+  @NotNull
+  @Column(unique = true)
+  private String name;
 
-	@Override
-	public String toString() {
-		return name;
-	}
-	
-	
+  private String pluralName;
+
+  public MeasureUnit(String name, String pluralName) {
+    this.name = name;
+    this.pluralName = pluralName;
+  }
+
+  @Override
+  public String toString() {
+    return name;
+  }
+
 }

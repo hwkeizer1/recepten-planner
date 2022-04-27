@@ -19,28 +19,29 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ShoppingItem {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@OneToOne(fetch = FetchType.EAGER)
-	private IngredientName name;
-	
-	private Float amount;
-	
-	@OneToOne(fetch = FetchType.EAGER)
-	private MeasureUnit measureUnit;
-	
-	boolean isStandard;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable = false)
-	ShopType shopType = ShopType.OVERIG;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable = false)
-	IngredientType ingredientType = IngredientType.OVERIG;
-	
-	boolean onList;
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @OneToOne(fetch = FetchType.EAGER)
+  private IngredientName ingredientName;
+
+  private Float amount;
+
+  @OneToOne(fetch = FetchType.EAGER)
+  private MeasureUnit measureUnit;
+
+  boolean isStandard;
+
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20, nullable = false)
+  ShopType shopType = ShopType.OVERIG;
+
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20, nullable = false)
+  IngredientType ingredientType = IngredientType.OVERIG;
+
+  boolean onList;
+
 }

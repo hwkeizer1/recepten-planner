@@ -10,9 +10,9 @@ import nl.recipes.domain.Tag;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
-	
-	public Optional<Tag> findByName(String name);
-	
-	public List<Tag> findByOrderByNameAsc();
-	
+
+  public Optional<Tag> findByName(String name);
+
+  public List<Tag> findByOrderByNameAsc();
+
 }
