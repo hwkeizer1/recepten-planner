@@ -94,14 +94,24 @@ public class ShoppingItemTableEditWidget {
     amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.25));
 
     TableColumn<ShoppingItem, String> measureUnitColumn = new TableColumn<>("Maateenheid");
-    measureUnitColumn.setCellValueFactory(
-        c -> new ReadOnlyObjectWrapper<>(c.getValue().getMeasureUnit().getName()));
+    measureUnitColumn.setCellValueFactory(c -> {
+      if (c.getValue().getMeasureUnit() == null) {
+        return new ReadOnlyObjectWrapper<>();
+      } else {
+        return new ReadOnlyObjectWrapper<>(
+            (c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
+                ? c.getValue().getMeasureUnit().getName()
+                : c.getValue().getMeasureUnit().getPluralName());
+      }
+    });
     measureUnitColumn.prefWidthProperty()
         .bind(shoppingItemTableView.widthProperty().multiply(0.35));
 
     TableColumn<ShoppingItem, String> nameColumn = new TableColumn<>("Naam");
-    nameColumn.setCellValueFactory(
-        c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientName().getName()));
+    nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
+        (c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
+            ? c.getValue().getIngredientName().getName()
+            : c.getValue().getIngredientName().getPluralName()));
     nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.40));
 
     shoppingItemTableView.getColumns().add(amountColumn);
@@ -234,11 +244,11 @@ public class ShoppingItemTableEditWidget {
   }
 
   private void removeShoppingItem(ActionEvent actionEvent) {
-     try {
-     shoppingItemService.remove(selectedShoppingItem);
-     } catch (NotFoundException e) {
-     ingredientNameError.setText(e.getMessage());
-     }
+    try {
+      shoppingItemService.remove(selectedShoppingItem);
+    } catch (NotFoundException e) {
+      ingredientNameError.setText(e.getMessage());
+    }
   }
 
 }

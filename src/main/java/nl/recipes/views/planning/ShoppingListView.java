@@ -17,11 +17,13 @@ import javafx.scene.layout.VBox;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.PlanningService;
+import nl.recipes.services.ShoppingItemService;
 
 @Component
 public class ShoppingListView {
 
   private final PlanningService planningService;
+  private final ShoppingItemService shoppingItemService;
 
   AnchorPane shoppingView;
 
@@ -29,12 +31,18 @@ public class ShoppingListView {
 
   ObservableList<ShoppingItem> shoppingItems;
 
-  public ShoppingListView(PlanningService planningService) {
+  public ShoppingListView(PlanningService planningService,
+      ShoppingItemService shoppingItemService) {
     this.planningService = planningService;
+    this.shoppingItemService = shoppingItemService;
   }
 
   public AnchorPane getShoppingView() {
     shoppingItems = FXCollections.observableList(planningService.getShoppingList());
+    shoppingItems
+        .addAll(FXCollections.observableList(shoppingItemService.getReadonlyShoppingItemList()));
+
+
     shoppingView = new AnchorPane();
     shoppingView.getChildren().add(getShoppingPanel());
     return shoppingView;
@@ -139,7 +147,29 @@ public class ShoppingListView {
 
     Label header = new Label("Standaard boodschappen");
     header.getStyleClass().add(PLANNING_DATE);
-    standardList.add(header, 1, 0, 3, 1);
+    standardList.add(header, 1, 0, 4, 1);
+
+    int row = 1;
+    for (ShoppingItem shoppingItem : shoppingItems.stream().filter(ShoppingItem::isStandard).toList()) {
+      Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
+          : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
+      Label measureUnitLabel = new Label(
+          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
+      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
+          : shoppingItem.getIngredientName().getName());
+      CheckBox onShoppingList = new CheckBox();
+      onShoppingList.selectedProperty().addListener(
+          (ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
+            shoppingItem.setOnList(new_val);
+          });
+      onShoppingList.setSelected(shoppingItem.isOnList());
+
+      standardList.add(amountLabel, 1, row);
+      standardList.add(measureUnitLabel, 2, row);
+      standardList.add(ingredientName, 3, row);
+      standardList.add(onShoppingList, 4, row);
+      row++;
+    }
     return standardList;
   }
 
