@@ -85,6 +85,7 @@ public class ShoppingListView {
 
     int row = 1;
     for (ShoppingItem shoppingItem : shoppingItems.stream()
+        .filter(s -> !s.isStandard())
         .filter(s -> !s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
@@ -118,6 +119,7 @@ public class ShoppingListView {
 
     int row = 1;
     for (ShoppingItem shoppingItem : shoppingItems.stream()
+        .filter(s -> !s.isStandard())
         .filter(s -> s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
