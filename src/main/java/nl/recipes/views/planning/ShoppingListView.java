@@ -42,7 +42,6 @@ public class ShoppingListView {
     shoppingItems
         .addAll(FXCollections.observableList(shoppingItemService.getReadonlyShoppingItemList()));
 
-
     shoppingView = new AnchorPane();
     shoppingView.getChildren().add(getShoppingPanel());
     return shoppingView;
@@ -84,15 +83,13 @@ public class ShoppingListView {
     noStockList.add(header, 1, 0, 4, 1);
 
     int row = 1;
-    for (ShoppingItem shoppingItem : shoppingItems.stream()
-        .filter(s -> !s.isStandard())
+    for (ShoppingItem shoppingItem : shoppingItems.stream().filter(s -> !s.isStandard())
         .filter(s -> !s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
-      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
-          : shoppingItem.getIngredientName().getName());
+          shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label ingredientName = new Label(getIngredientNameLabel(shoppingItem));
       CheckBox onShoppingList = new CheckBox();
       onShoppingList.selectedProperty().addListener(
           (ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
@@ -118,15 +115,13 @@ public class ShoppingListView {
     stockList.add(header, 1, 0, 4, 1);
 
     int row = 1;
-    for (ShoppingItem shoppingItem : shoppingItems.stream()
-        .filter(s -> !s.isStandard())
+    for (ShoppingItem shoppingItem : shoppingItems.stream().filter(s -> !s.isStandard())
         .filter(s -> s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
-      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
-          : shoppingItem.getIngredientName().getName());
+          shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label ingredientName = new Label(getIngredientNameLabel(shoppingItem));
       CheckBox onShoppingList = new CheckBox();
       onShoppingList.selectedProperty().addListener(
           (ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
@@ -152,13 +147,13 @@ public class ShoppingListView {
     standardList.add(header, 1, 0, 4, 1);
 
     int row = 1;
-    for (ShoppingItem shoppingItem : shoppingItems.stream().filter(ShoppingItem::isStandard).toList()) {
+    for (ShoppingItem shoppingItem : shoppingItems.stream().filter(ShoppingItem::isStandard)
+        .toList()) {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
-      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
-          : shoppingItem.getIngredientName().getName());
+          shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label ingredientName = new Label(getIngredientNameLabel(shoppingItem));
       CheckBox onShoppingList = new CheckBox();
       onShoppingList.selectedProperty().addListener(
           (ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
@@ -196,9 +191,8 @@ public class ShoppingListView {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
-      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
-          : shoppingItem.getIngredientName().getName());
+          shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label ingredientName = new Label(getIngredientNameLabel(shoppingItem));
 
       ekoShoppingList.add(amountLabel, 1, row);
       ekoShoppingList.add(measureUnitLabel, 2, row);
@@ -222,9 +216,8 @@ public class ShoppingListView {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
-      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
-          : shoppingItem.getIngredientName().getName());
+          shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label ingredientName = new Label(getIngredientNameLabel(shoppingItem));
 
       dekaShoppingList.add(amountLabel, 1, row);
       dekaShoppingList.add(measureUnitLabel, 2, row);
@@ -248,9 +241,8 @@ public class ShoppingListView {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
-      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
-          : shoppingItem.getIngredientName().getName());
+          shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label ingredientName = new Label(getIngredientNameLabel(shoppingItem));
 
       marktShoppingList.add(amountLabel, 1, row);
       marktShoppingList.add(measureUnitLabel, 2, row);
@@ -274,9 +266,8 @@ public class ShoppingListView {
       Label amountLabel = new Label(shoppingItem.getAmount() == null ? ""
           : shoppingItem.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName());
-      Label ingredientName = new Label(shoppingItem.getIngredientName() == null ? ""
-          : shoppingItem.getIngredientName().getName());
+          shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label ingredientName = new Label(getIngredientNameLabel(shoppingItem));
 
       otherShoppingList.add(amountLabel, 1, row);
       otherShoppingList.add(measureUnitLabel, 2, row);
@@ -286,4 +277,15 @@ public class ShoppingListView {
     return otherShoppingList;
   }
 
+  private String getMeasureUnitLabel(ShoppingItem shoppingItem) {
+    return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
+        ? shoppingItem.getMeasureUnit().getName()
+        : shoppingItem.getMeasureUnit().getPluralName();
+  }
+
+  private String getIngredientNameLabel(ShoppingItem shoppingItem) {
+    return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
+        ? shoppingItem.getIngredientName().getName()
+        : shoppingItem.getIngredientName().getPluralName();
+  }
 }
