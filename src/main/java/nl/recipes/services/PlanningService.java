@@ -12,11 +12,14 @@ import org.springframework.stereotype.Service;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
+import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.repositories.PlanningRepository;
 
+@Slf4j
 @Service
 public class PlanningService {
 
@@ -77,44 +80,48 @@ public class PlanningService {
     planningRepository.saveAll(observablePlanningList);
   }
 
-  public List<ShoppingItem> getShoppingList() {
-    List<ShoppingItem> shoppingItems = getShoppingListItems();
-    List<ShoppingItem> result = new ArrayList<>();
-    for (ShoppingItem shoppingItem : shoppingItems) {
-      boolean exists = false;
-      for (ShoppingItem resultIngredient : result) {
-        if (shoppingItem.getIngredientName().equals(resultIngredient.getIngredientName())) {
-          exists = true;
-          if (shoppingItem.getAmount() != null && resultIngredient.getAmount() != null) {
-            resultIngredient.setAmount(shoppingItem.getAmount() + resultIngredient.getAmount());
-          }
-        }
-      }
-      if (!exists) {
-        result.add(shoppingItem);
-      }
-    }
-    return result;
+  public List<Ingredient> getIngredientList() {
+    List<Ingredient> ingredients = getIngredientsFromPlanning();
+    return consolidateIngredients(ingredients);
   }
 
   public List<ShoppingItem> getStandardShoppings() {
     return Collections.emptyList();
   }
 
-  private List<ShoppingItem> getShoppingListItems() {
+  List<Ingredient> consolidateIngredients(List<Ingredient> ingredients) {
+    List<Ingredient> ingredientList = new ArrayList<>();
+    for (Ingredient ingredient : ingredients) {
+      boolean exists = false;
+      for (Ingredient resultIngredient : ingredientList) {
+        if (canConsolidate(ingredient, resultIngredient)) {
+          exists = true;
+          if (ingredient.getAmount() != null && resultIngredient.getAmount() != null) {
+            resultIngredient.setAmount(ingredient.getAmount() + resultIngredient.getAmount());
+          }
+        }
+      }
+      if (!exists) {
+        ingredientList.add(ingredient);
+      }
+    }
+    return ingredientList;
+  }
+
+  boolean canConsolidate(Ingredient x, Ingredient y) {
+    if (!x.getIngredientName().equals(y.getIngredientName()))
+      return false;
+    if (x.getMeasureUnit() == null ^ y.getMeasureUnit() == null)
+      return false;
+    if (x.getMeasureUnit() == null)
+      return true;
+    return (x.getMeasureUnit().equals(y.getMeasureUnit()));
+  }
+
+  private List<Ingredient> getIngredientsFromPlanning() {
     return observablePlanningList.stream().filter(Planning::isOnShoppingList)
         .map(Planning::getRecipes).flatMap(List::stream).map(Recipe::getIngredients)
-        .flatMap(Set::stream).map(i -> {
-          ShoppingItem shoppingItem = new ShoppingItem();
-          shoppingItem.setAmount(i.getAmount());
-          shoppingItem.setMeasureUnit(i.getMeasureUnit());
-          shoppingItem.setIngredientName(i.getIngredientName());
-          shoppingItem.setIngredientType(i.getIngredientName().getIngredientType());
-          shoppingItem.setShopType(i.getIngredientName().getShopType());
-          shoppingItem.setStandard(false);
-          shoppingItem.setOnList(!i.getIngredientName().isStock());
-          return shoppingItem;
-        }).collect(Collectors.toList());
+        .flatMap(Set::stream).collect(Collectors.toList());
   }
 
   private void preparePlanningList() {
