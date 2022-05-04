@@ -24,8 +24,8 @@ public class ShoppingItemService {
     observableShoppingItemList = FXCollections.observableList(shoppingItemRepository.findAll());
   }
 
-  public ObservableList<ShoppingItem> getReadonlyShoppingItemList() {
-    return FXCollections.unmodifiableObservableList(observableShoppingItemList);
+  public ObservableList<ShoppingItem> getShoppingItemList() {
+    return FXCollections.observableList(observableShoppingItemList);
   }
 
   public ShoppingItem create(ShoppingItem shoppingItem)
@@ -56,8 +56,6 @@ public class ShoppingItemService {
       throw new AlreadyExistsException(
           "Artikel " + update.getIngredientName().getName() + " bestaat al");
     }
-    shoppingItem.setAmount(update.getAmount());
-    shoppingItem.setMeasureUnit(update.getMeasureUnit());
     shoppingItem.setIngredientName(update.getIngredientName());
 
     ShoppingItem updatedShoppingItem = shoppingItemRepository.save(shoppingItem);

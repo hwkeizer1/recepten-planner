@@ -27,11 +27,6 @@ public class ShoppingItem {
   @OneToOne(fetch = FetchType.EAGER)
   private IngredientName ingredientName;
 
-  private Float amount;
-
-  @OneToOne(fetch = FetchType.EAGER)
-  private MeasureUnit measureUnit;
-
   boolean isStandard;
 
   @Enumerated(EnumType.STRING)

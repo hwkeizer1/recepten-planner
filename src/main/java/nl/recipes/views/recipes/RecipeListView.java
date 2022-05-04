@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.PlanningService;
@@ -35,6 +36,7 @@ import nl.recipes.views.root.RootView;
 
 import static nl.recipes.views.ViewConstants.*;
 
+@Slf4j
 @Component
 public class RecipeListView {
 
@@ -236,7 +238,9 @@ public class RecipeListView {
   }
 
   private void planRecipe(ActionEvent event) {
-    planningService.addRecipeToPlanning(selectedRecipe);
+    if (selectedRecipe != null) {
+      planningService.addRecipeToPlanning(selectedRecipe);
+    }
   }
 
 }
