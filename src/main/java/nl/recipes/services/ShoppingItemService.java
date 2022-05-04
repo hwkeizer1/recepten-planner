@@ -25,7 +25,7 @@ public class ShoppingItemService {
   }
 
   public ObservableList<ShoppingItem> getShoppingItemList() {
-    return FXCollections.observableList(observableShoppingItemList);
+    return FXCollections.unmodifiableObservableList(observableShoppingItemList);
   }
 
   public ShoppingItem create(ShoppingItem shoppingItem)
