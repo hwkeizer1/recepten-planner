@@ -87,7 +87,7 @@ public class TestData {
 
   public IngredientName getIngredientName(Long id, String name, String pluralName, boolean stock,
       ShopType shopType, IngredientType ingredientType) {
-    return new IngredientName(id, name, pluralName, stock, shopType, ingredientType);
+    return new IngredientName(id, null, name, pluralName, stock, shopType, ingredientType);
   }
   
   public Tag getTag(Long id, String name) {

@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.IngredientNameRepository;
 
+@Slf4j
 @Service
 public class IngredientNameService {
 
@@ -60,6 +62,7 @@ public class IngredientNameService {
     ingredientName.setStock(update.isStock());
     ingredientName.setShopType(update.getShopType());
     ingredientName.setIngredientType(update.getIngredientType());
+    ingredientName.setMeasureUnit(update.getMeasureUnit());
 
     IngredientName updatedIngredientName = ingredientNameRepository.save(ingredientName);
 

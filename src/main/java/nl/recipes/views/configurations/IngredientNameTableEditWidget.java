@@ -25,18 +25,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
+import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.IngredientNameService;
-
+import nl.recipes.services.MeasureUnitService;
 import static nl.recipes.views.ViewConstants.*;
 
 @Component
 public class IngredientNameTableEditWidget {
 
   private IngredientNameService ingredientNameService;
+
+  private final MeasureUnitService measureUnitService;
 
   VBox rpWidget = new VBox();
 
@@ -51,6 +54,8 @@ public class IngredientNameTableEditWidget {
   TableColumn<IngredientName, String> pluralNameColumn = new TableColumn<>("Meervoud");
 
   TableColumn<IngredientName, Boolean> stockColumn = new TableColumn<>("Voorraad");
+  
+  TableColumn<IngredientName, MeasureUnit> measureUnitColumn = new TableColumn<>("Maateenheid");
 
   TableColumn<IngredientName, ShopType> shopTypeColumn = new TableColumn<>("Winkel");
 
@@ -65,6 +70,8 @@ public class IngredientNameTableEditWidget {
   Label pluralNameError = new Label();
 
   CheckBox stockCheckBox = new CheckBox();
+
+  ComboBox<MeasureUnit> measureUnitComboBox;
 
   ComboBox<ShopType> shopTypeComboBox = new ComboBox<>();
 
@@ -82,8 +89,13 @@ public class IngredientNameTableEditWidget {
 
   ChangeListener<IngredientName> ingredientNameChangeListener;
 
-  public IngredientNameTableEditWidget(IngredientNameService ingredientNameService) {
+  public IngredientNameTableEditWidget(IngredientNameService ingredientNameService,
+      MeasureUnitService measureUnitService) {
     this.ingredientNameService = ingredientNameService;
+    this.measureUnitService = measureUnitService;
+    
+    measureUnitComboBox = new ComboBox<>();
+    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
 
     ingredientNameChangeListener = (observable, oldValue, newValue) -> {
       selectedIngredientName = newValue;
@@ -93,12 +105,14 @@ public class IngredientNameTableEditWidget {
         pluralNameTextField.setText(selectedIngredientName.getPluralName());
         pluralNameError.setText("");
         stockCheckBox.setSelected(selectedIngredientName.isStock());
+        measureUnitComboBox.setValue(selectedIngredientName.getMeasureUnit());
         shopTypeComboBox.setValue(selectedIngredientName.getShopType());
         ingredientTypeComboBox.setValue(selectedIngredientName.getIngredientType());
       } else {
         nameTextField.setText(null);
         pluralNameTextField.setText(null);
         stockCheckBox.setSelected(false);
+        measureUnitComboBox.setValue(null);
         shopTypeComboBox.setValue(null);
         ingredientTypeComboBox.setValue(null);
       }
@@ -125,18 +139,21 @@ public class IngredientNameTableEditWidget {
     ingredientNameTableView.setMinHeight(200); // prevent table from collapsing
 
     nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
-    nameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.25));
+    nameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.20));
     pluralNameColumn
         .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
     pluralNameColumn.prefWidthProperty()
-        .bind(ingredientNameTableView.widthProperty().multiply(0.25));
+        .bind(ingredientNameTableView.widthProperty().multiply(0.20));
 
     stockColumn.setCellValueFactory(c -> new SimpleBooleanProperty(c.getValue().isStock()));
     stockColumn.setCellFactory(c -> new CheckBoxTableCell<>());
-    stockColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.2));
+    stockColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.15));
 
+    measureUnitColumn
+    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getMeasureUnit()));
+    measureUnitColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.15));
     shopTypeColumn
-        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
+    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
     shopTypeColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.15));
     ingredientTypeColumn
         .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientType()));
@@ -146,6 +163,7 @@ public class IngredientNameTableEditWidget {
     ingredientNameTableView.getColumns().add(nameColumn);
     ingredientNameTableView.getColumns().add(pluralNameColumn);
     ingredientNameTableView.getColumns().add(stockColumn);
+    ingredientNameTableView.getColumns().add(measureUnitColumn);
     ingredientNameTableView.getColumns().add(shopTypeColumn);
     ingredientNameTableView.getColumns().add(ingredientTypeColumn);
     ingredientNameTableView.getSelectionModel().selectedItemProperty()
@@ -214,22 +232,28 @@ public class IngredientNameTableEditWidget {
     inputForm.add(stockLabel, 0, 4);
     inputForm.add(stockCheckBox, 1, 4);
 
+    Label measureUnitLabel = new Label("Maateenheid:");
+    inputForm.add(measureUnitLabel, 2, 0);
+    measureUnitComboBox.setMinWidth(150);
+    inputForm.add(measureUnitComboBox, 3, 0);
+    
     Label shopTypeLabel = new Label("Winkel:");
-    inputForm.add(shopTypeLabel, 2, 0);
+    inputForm.add(shopTypeLabel, 2, 2);
     shopTypeComboBox.getItems().setAll(ShopType.values());
     shopTypeComboBox.setMinWidth(150);
-    inputForm.add(shopTypeComboBox, 3, 0);
+    inputForm.add(shopTypeComboBox, 3, 2);
 
     Label ingredientTypeLabel = new Label("Ingrediënt type:");
-    inputForm.add(ingredientTypeLabel, 2, 2);
+    inputForm.add(ingredientTypeLabel, 2, 4);
     ingredientTypeComboBox.getItems().setAll(IngredientType.values());
     ingredientTypeComboBox.setMinWidth(150);
-    inputForm.add(ingredientTypeComboBox, 3, 2);
+    inputForm.add(ingredientTypeComboBox, 3, 4);
 
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
     nameError.getStyleClass().add(VALIDATION);
     pluralNameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
     pluralNameError.getStyleClass().add(VALIDATION);
+    measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     shopTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
     ingredientTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
     stockCheckBox.setOnAction(e -> modifiedProperty.set(true));
@@ -247,6 +271,7 @@ public class IngredientNameTableEditWidget {
     ingredientName.setName(nameTextField.getText());
     ingredientName.setPluralName(pluralNameTextField.getText());
     ingredientName.setStock(stockCheckBox.isSelected());
+    ingredientName.setMeasureUnit(measureUnitComboBox.getValue());
     ingredientName.setShopType(shopTypeComboBox.getValue());
     ingredientName.setIngredientType(ingredientTypeComboBox.getValue());
     try {
@@ -263,6 +288,7 @@ public class IngredientNameTableEditWidget {
     update.setName(nameTextField.getText());
     update.setPluralName(pluralNameTextField.getText());
     update.setStock(stockCheckBox.isSelected());
+    update.setMeasureUnit(measureUnitComboBox.getValue());
     update.setShopType(shopTypeComboBox.getValue());
     update.setIngredientType(ingredientTypeComboBox.getValue());
     try {
