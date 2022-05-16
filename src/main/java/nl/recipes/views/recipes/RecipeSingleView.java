@@ -263,13 +263,13 @@ public class RecipeSingleView {
             : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
 
     measureUnitColumn.setCellValueFactory(c -> {
-      if (c.getValue().getMeasureUnit() == null) {
+      if (c.getValue().getIngredientName().getMeasureUnit() == null) {
         return new ReadOnlyObjectWrapper<>("");
       } else {
         return new ReadOnlyObjectWrapper<>(
             (c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
-                ? c.getValue().getMeasureUnit().getName()
-                : c.getValue().getMeasureUnit().getPluralName());
+                ? c.getValue().getIngredientName().getMeasureUnit().getName()
+                : c.getValue().getIngredientName().getMeasureUnit().getPluralName());
       }
     });
 
