@@ -62,9 +62,8 @@ public class IngredientName {
     this.ingredientType = ingredientType;
   }
 
-  @Override
-  public String toString() {
-    return name;
+  public String getListLabel() {
+    return name + (measureUnit == null ? "" : " (" + measureUnit.getName() + ")");
+//    return name + " (" + (measureUnit == null ? " - " : measureUnit.getName()) + ")";
   }
-
 }

@@ -19,6 +19,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -26,6 +28,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.MeasureUnit;
@@ -37,8 +40,6 @@ import static nl.recipes.views.ViewConstants.*;
 @Component
 public class IngredientEditView {
 
-  private final MeasureUnitService measureUnitService;
-
   private final IngredientNameService ingredientNameService;
 
   ObservableList<Ingredient> ingredientList;
@@ -49,27 +50,38 @@ public class IngredientEditView {
 
   TextField amountTextField;
 
-  ComboBox<MeasureUnit> measureUnitComboBox;
-
   ComboBox<IngredientName> ingredientNameComboBox;
 
   private Ingredient selectedIngredient;
 
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
+  
+  Callback<ListView<IngredientName>, ListCell<IngredientName>> ingredientNameCellFactory =
+      input -> new ListCell<IngredientName>() {
 
-  public IngredientEditView(MeasureUnitService measureUnitService,
-      IngredientNameService ingredientNameService) {
-    this.measureUnitService = measureUnitService;
+        @Override
+        protected void updateItem(IngredientName item, boolean empty) {
+          super.updateItem(item, empty);
+          if (item == null || empty) {
+            setText(null);
+          } else {
+            setText(item.getListLabel());
+          }
+        }
+      };
+
+  public IngredientEditView(IngredientNameService ingredientNameService) {
     this.ingredientNameService = ingredientNameService;
 
     ingredientPanel = new VBox();
+    ingredientPanel.setPadding(new Insets(10, 0, 0, 0));
     ingredientPanel.getStyleClass().addAll(WIDGET, DROP_SHADOW);
     amountTextField = new TextField();
-    measureUnitComboBox = new ComboBox<>();
-    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
     ingredientNameComboBox = new ComboBox<>();
     ingredientNameComboBox.getItems()
         .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
+    ingredientNameComboBox.setButtonCell(ingredientNameCellFactory.call(null));
+    ingredientNameComboBox.setCellFactory(ingredientNameCellFactory);
 
     ingredientPanel.getChildren().addAll(getIngredientTableViewPanel(), getIngredientEditPanel());
   }
@@ -86,10 +98,14 @@ public class IngredientEditView {
     }
 
     ingredientTable.setItems(ingredientList);
+    Label ingredientTableEmpty = new Label("Nog geen ingredienten beschikbaar");
+    ingredientTableEmpty.getStyleClass().add(EMPTY_INGREDIENT_TABLE);
+    ingredientTable.setPlaceholder(ingredientTableEmpty);
     ingredientTable.setFixedCellSize(25);
+    
     ingredientTable.prefHeightProperty().bind(
         Bindings.size(ingredientTable.getItems()).multiply(ingredientTable.getFixedCellSize()));
-    ingredientTable.minHeightProperty().bind(ingredientTable.prefHeightProperty());
+    ingredientTable.setMinHeight(25);
     ingredientTable.maxHeightProperty().bind(ingredientTable.prefHeightProperty());
   }
 
@@ -101,7 +117,7 @@ public class IngredientEditView {
     VBox ingredientTableViewPanel = new VBox();
 
     ingredientTable = new TableView<>();
-    ingredientTable.getStyleClass().addAll(RP_TABLE, INGREDIENT_EDIT_TABLE);
+    ingredientTable.getStyleClass().addAll(RP_TABLE,  INGREDIENT_EDIT_TABLE);
     TableColumn<Ingredient, Number> amountColumn = new TableColumn<>();
     TableColumn<Ingredient, String> measureUnitColumn = new TableColumn<>();
     TableColumn<Ingredient, String> ingredientNameColumn = new TableColumn<>();
@@ -115,11 +131,9 @@ public class IngredientEditView {
       if (newValue != null) {
         amountTextField.setText(selectedIngredient.getAmount() == null ? null
             : selectedIngredient.getAmount().toString());
-        measureUnitComboBox.setValue(selectedIngredient.getMeasureUnit());
         ingredientNameComboBox.setValue(selectedIngredient.getIngredientName());
       } else {
         amountTextField.setText(null);
-        measureUnitComboBox.setValue(null);
         ingredientNameComboBox.setValue(null);
       }
       modifiedProperty.set(false);
@@ -135,13 +149,13 @@ public class IngredientEditView {
             : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
 
     measureUnitColumn.setCellValueFactory(c -> {
-      if (c.getValue().getMeasureUnit() == null) {
+      if (c.getValue().getIngredientName().getMeasureUnit() == null) {
         return new ReadOnlyObjectWrapper<>();
       } else {
         return new ReadOnlyObjectWrapper<>(
             (c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
-                ? c.getValue().getMeasureUnit().getName()
-                : c.getValue().getMeasureUnit().getPluralName());
+                ? c.getValue().getIngredientName().getMeasureUnit().getName()
+                : c.getValue().getIngredientName().getMeasureUnit().getPluralName());
       }
     });
 
@@ -199,28 +213,23 @@ public class IngredientEditView {
     inputForm.setVgap(10);
 
     ColumnConstraints column0 = new ColumnConstraints();
-    column0.setPercentWidth(30);
+    column0.setPercentWidth(35);
     column0.setHalignment(HPos.RIGHT);
     ColumnConstraints column1 = new ColumnConstraints();
-    column1.setPercentWidth(40);
+    column1.setPercentWidth(65);
     inputForm.getColumnConstraints().addAll(column0, column1);
 
-    Label amountLabel = new Label("Hoeveelheid:");
-    inputForm.add(amountLabel, 0, 0);
-    inputForm.add(amountTextField, 1, 0);
-
-    Label measureUnitLabel = new Label("Maateenheid:");
-    inputForm.add(measureUnitLabel, 0, 1);
-    measureUnitComboBox.setMinWidth(150);
-    inputForm.add(measureUnitComboBox, 1, 1);
-
     Label ingredientNameLabel = new Label("Ingrediënt:");
-    inputForm.add(ingredientNameLabel, 0, 2);
-    ingredientNameComboBox.setMinWidth(150);
-    inputForm.add(ingredientNameComboBox, 1, 2);
+    inputForm.add(ingredientNameLabel, 0, 0);
+    ingredientNameComboBox.setMinWidth(250);
+    inputForm.add(ingredientNameComboBox, 1, 0);
+    
+    Label amountLabel = new Label("Hoeveelheid:");
+    inputForm.add(amountLabel, 0, 1);
+    amountTextField.setMaxWidth(80);
+    inputForm.add(amountTextField, 1, 1);
 
     amountTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     ingredientNameComboBox.setOnAction(e -> modifiedProperty.set(true));
 
     return inputForm;
@@ -236,11 +245,9 @@ public class IngredientEditView {
         .setAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
             : Float.valueOf(amountTextField.getText()));
     ingredient.setIngredientName(ingredientNameComboBox.getValue());
-    ingredient.setMeasureUnit(measureUnitComboBox.getValue());
     ingredientList.add(ingredient);
     ingredientTable.getSelectionModel().clearSelection();
     amountTextField.setText(null);
-    measureUnitComboBox.setValue(null);
     ingredientNameComboBox.setValue(null);
   }
 
@@ -250,7 +257,6 @@ public class IngredientEditView {
         .setAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
             : Float.valueOf(amountTextField.getText()));
     selectedIngredient.setIngredientName(ingredientNameComboBox.getValue());
-    selectedIngredient.setMeasureUnit(measureUnitComboBox.getValue());
     ingredientList.set(index, selectedIngredient);
     ingredientTable.getSelectionModel().clearSelection();
   }
@@ -258,5 +264,5 @@ public class IngredientEditView {
   private void removeIngredient(ActionEvent actionEvent) {
     ingredientList.remove(selectedIngredient);
   }
-
 }
+

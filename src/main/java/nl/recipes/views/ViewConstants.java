@@ -10,6 +10,8 @@ public final class ViewConstants {
   public static final String INGREDIENT_TABLE = "ingredient-table";
 
   public static final String INGREDIENT_EDIT_TABLE = "ingredient-edit-table";
+  
+  public static final String EMPTY_INGREDIENT_TABLE = "empty-ingredient-table";
 
   public static final String TITLE = "title";
 

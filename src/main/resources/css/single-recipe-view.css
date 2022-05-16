@@ -140,3 +140,7 @@
     -fx-pref-height: 0;
     -fx-min-height: 0;
 }
+
+.ingredient-edit-table .empty-ingredient-table{
+	-fx-font-size: 0.9em;
+}
