@@ -29,6 +29,8 @@ import nl.recipes.services.ShoppingItemService;
 @Component
 public class ShoppingListView {
 
+  private static final String REGEXP_NO_SINGLE_ZERO_DIGIT = "\\.0*$";
+  
   private final PlanningService planningService;
   private final ShoppingItemService shoppingItemService;
 
@@ -110,17 +112,15 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream()
         .filter(s -> !s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
+          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
       ingredient.setOnList(true);
       CheckBox onShoppingList = new CheckBox();
-      onShoppingList.selectedProperty().addListener(
-          (ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
-            ingredient.setOnList(new_val);
-          });
+      onShoppingList.selectedProperty().addListener((ObservableValue<? extends Boolean> ov,
+          Boolean oldValue, Boolean newValue) -> ingredient.setOnList(newValue));
       onShoppingList.setSelected(ingredient.isOnList());
 
       noStockList.add(amountLabel, 1, row);
@@ -144,7 +144,7 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream()
         .filter(s -> s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
+          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
@@ -172,10 +172,8 @@ public class ShoppingListView {
       Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
       ingredientName.setTextFill(Color.GREEN);
       CheckBox onShoppingList = new CheckBox();
-      onShoppingList.selectedProperty().addListener(
-          (ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
-            shoppingItem.setOnList(new_val);
-          });
+      onShoppingList.selectedProperty().addListener((ObservableValue<? extends Boolean> ov,
+          Boolean oldValue, Boolean newValue) -> shoppingItem.setOnList(newValue));
       onShoppingList.setSelected(shoppingItem.isOnList());
 
       if (col % 2 != 0) {
@@ -188,7 +186,7 @@ public class ShoppingListView {
         col++;
         row++;
       }
-      
+
     }
     return standardList;
   }
@@ -212,9 +210,10 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream().filter(Ingredient::isOnList)
         .filter(s -> s.getIngredientName().getShopType().equals(ShopType.EKO)).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+      Label measureUnitLabel =
+          new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
+              : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       ekoShoppingList.add(amountLabel, 1, row);
@@ -227,7 +226,7 @@ public class ShoppingListView {
         .filter(s -> s.getShopType().equals(ShopType.EKO)).toList()) {
       Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
       ingredientName.setTextFill(Color.GREEN);
-      
+
       ekoShoppingList.add(ingredientName, 3, row);
       row++;
     }
@@ -246,9 +245,10 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream().filter(Ingredient::isOnList)
         .filter(s -> s.getIngredientName().getShopType().equals(ShopType.DEKA)).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+      Label measureUnitLabel =
+          new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
+              : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       dekaShoppingList.add(amountLabel, 1, row);
@@ -261,7 +261,7 @@ public class ShoppingListView {
         .filter(s -> s.getShopType().equals(ShopType.DEKA)).toList()) {
       Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
       ingredientName.setTextFill(Color.GREEN);
-      
+
       dekaShoppingList.add(ingredientName, 3, row);
       row++;
     }
@@ -280,9 +280,10 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream().filter(Ingredient::isOnList)
         .filter(s -> s.getIngredientName().getShopType().equals(ShopType.MARKT)).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+      Label measureUnitLabel =
+          new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
+              : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       marktShoppingList.add(amountLabel, 1, row);
@@ -295,7 +296,7 @@ public class ShoppingListView {
         .filter(s -> s.getShopType().equals(ShopType.MARKT)).toList()) {
       Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
       ingredientName.setTextFill(Color.GREEN);
-      
+
       marktShoppingList.add(ingredientName, 3, row);
       row++;
     }
@@ -314,9 +315,10 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream().filter(Ingredient::isOnList)
         .filter(s -> s.getIngredientName().getShopType().equals(ShopType.OVERIG)).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+      Label measureUnitLabel =
+          new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
+              : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       otherShoppingList.add(amountLabel, 1, row);
@@ -329,7 +331,7 @@ public class ShoppingListView {
         .filter(s -> s.getShopType().equals(ShopType.OVERIG)).toList()) {
       Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
       ingredientName.setTextFill(Color.GREEN);
-      
+
       otherShoppingList.add(ingredientName, 3, row);
       row++;
     }
@@ -347,11 +349,4 @@ public class ShoppingListView {
         ? ingredient.getIngredientName().getName()
         : ingredient.getIngredientName().getPluralName();
   }
-
-
-  // private String getShoppingItemIngredientNameLabel(ShoppingItem shoppintItem) {
-  // return (shoppintItem.getAmount() == null || shoppintItem.getAmount() <= 1)
-  // ? shoppintItem.getIngredientName().getName()
-  // : shoppintItem.getIngredientName().getPluralName();
-  // }
 }
