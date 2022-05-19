@@ -145,6 +145,9 @@ public class PlanningService {
         .collect(Collectors.toList());
   }
 
-  private void registerCompletedPlanning(Planning planning) {}
-
+  private void registerCompletedPlanning(Planning planning) {
+    planning.getRecipes().stream()
+        .forEach(r -> {r.setLastServed(planning.getDate());
+                  r.setTimesServed(r.getTimesServed() + 1);});
+  }
 }

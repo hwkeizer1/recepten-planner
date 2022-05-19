@@ -74,7 +74,7 @@ public class ShoppingListView {
   private VBox getShoppingPanel() {
     VBox shoppingPanel = new VBox();
     shoppingPanel.setPadding(new Insets(15));
-    shoppingPanel.setSpacing(50);
+    shoppingPanel.setSpacing(40);
 
     shoppingPanel.getChildren().addAll(getShoppingBox(), getButtonPanel(), finalListBox);
     return shoppingPanel;
@@ -214,7 +214,7 @@ public class ShoppingListView {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
           : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          ingredient.getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       ekoShoppingList.add(amountLabel, 1, row);
@@ -248,7 +248,7 @@ public class ShoppingListView {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
           : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          ingredient.getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       dekaShoppingList.add(amountLabel, 1, row);
@@ -282,7 +282,7 @@ public class ShoppingListView {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
           : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          ingredient.getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       marktShoppingList.add(amountLabel, 1, row);
@@ -316,7 +316,7 @@ public class ShoppingListView {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
           : ingredient.getAmount().toString().replaceAll("\\.0*$", ""));
       Label measureUnitLabel = new Label(
-          ingredient.getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
       otherShoppingList.add(amountLabel, 1, row);
