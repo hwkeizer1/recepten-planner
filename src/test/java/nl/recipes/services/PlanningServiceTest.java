@@ -23,7 +23,7 @@ class PlanningServiceTest {
   }
 
   @Test
-  void testcanConsolidate() {
+  void testCanConsolidate() {
     MeasureUnit firstMeasureUnit = testData.getMeasureUnit(1L, "bak", "bakken");
     MeasureUnit secondMeasureUnit = testData.getMeasureUnit(1L, "zak", "zakken");
     IngredientName firstIngredientName =

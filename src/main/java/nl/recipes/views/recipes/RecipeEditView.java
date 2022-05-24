@@ -306,8 +306,10 @@ public class RecipeEditView {
 
   private void updateRecipe(ActionEvent event) {
     formFieldsToSelectedRecipe();
-    Recipe updatedRecipe = recipeService.update(selectedRecipe);
-    rootView.showRecipeSingleViewPanel(updatedRecipe);
+    Optional<Recipe> updatedRecipe = recipeService.update(selectedRecipe);
+    if (updatedRecipe.isPresent()) {
+      rootView.showRecipeSingleViewPanel(updatedRecipe.get());
+    }
   }
 
   private void handleKeyReleasedAction(KeyEvent keyEvent) {

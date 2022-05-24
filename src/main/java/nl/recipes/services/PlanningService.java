@@ -140,14 +140,27 @@ public class PlanningService {
   private List<Planning> removeExpiredPlannings(List<Planning> planningList) {
     planningList.stream().filter(p -> p.getDate().isBefore(LocalDate.now()))
         .forEach(this::registerCompletedPlanning);
+    
+    planningList.stream().filter(p -> p.getDate().isBefore(LocalDate.now()))
+    .forEach(this::deletePlanning);
 
     return planningList.stream().filter(p -> !p.getDate().isBefore(LocalDate.now()))
         .collect(Collectors.toList());
   }
 
   private void registerCompletedPlanning(Planning planning) {
-    planning.getRecipes().stream()
-        .forEach(r -> {r.setLastServed(planning.getDate());
-                  r.setTimesServed(r.getTimesServed() + 1);});
+    for (Recipe recipe : planning.getRecipes()) {
+      recipe.setLastServed(planning.getDate());
+      if (recipe.getTimesServed() != null) {
+        recipe.setTimesServed(recipe.getTimesServed() + 1);
+      } else {
+        recipe.setTimesServed(1);
+      }
+      recipeService.update(recipe);
+    }
+  }
+  
+  private void deletePlanning(Planning planning) {
+    planningRepository.delete(planning);
   }
 }

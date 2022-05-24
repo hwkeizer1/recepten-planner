@@ -10,12 +10,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.RecipeRepository;
 
+@Slf4j
 @Service
 public class RecipeService {
 
@@ -67,10 +69,15 @@ public class RecipeService {
     return createdRecipe;
   }
 
-  public Recipe update(Recipe recipe) {
+  public Optional<Recipe> update(Recipe recipe) {
     Recipe updatedRecipe = recipeRepository.save(recipe);
-    observableRecipeList.set(observableRecipeList.lastIndexOf(recipe), updatedRecipe);
-    return updatedRecipe;
+    
+    Optional<Recipe> optionalRecipe = findByName(recipe.getName());
+    if (optionalRecipe.isPresent()) {
+      observableRecipeList.set(observableRecipeList.lastIndexOf(optionalRecipe.get()), updatedRecipe);
+      return Optional.of(updatedRecipe);
+    }
+    return Optional.empty();
   }
 
   public void remove(Recipe recipe) throws NotFoundException {

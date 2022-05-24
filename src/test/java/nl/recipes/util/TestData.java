@@ -1,18 +1,31 @@
 package nl.recipes.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
+import nl.recipes.domain.Recipe;
+import nl.recipes.domain.RecipeType;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.Tag;
 
 public class TestData {
+  
+  public ObservableList<Recipe> getRecipeList() {
+    List<Recipe> recipeList = new ArrayList<>();
+    recipeList.add(getRecipe(1L, "First recipe", RecipeType.HOOFDGERECHT));
+    recipeList.add(getRecipe(2L, "Second recipe", RecipeType.AMUSE));
+    recipeList.add(getRecipe(3L, "Third recipe", RecipeType.NAGERECHT));
+    recipeList.add(getRecipe(4L, "Fourth recipe", RecipeType.VOORGERECHT));
+    return FXCollections.observableList(recipeList);
+  }
   
   public List<Ingredient> getIngredientList() {
     List<Ingredient> ingredientList = new ArrayList<>();
@@ -73,6 +86,16 @@ public class TestData {
     tagList.add(getTag(3L, "Feestelijk"));
     tagList.add(getTag(4L, "Pasta"));
     return FXCollections.observableList(tagList);
+  }
+  
+  public Recipe getRecipe(Long id, String name, RecipeType recipeType) {
+    Recipe recipe = new Recipe(name);
+    recipe.setId(id);
+    recipe.setRecipeType(recipeType);
+    Set<Ingredient> ingredientList = new HashSet<>();
+    ingredientList.addAll(getIngredientList());
+    recipe.setIngredients(ingredientList);
+    return recipe;
   }
   
   public Ingredient getIngredient(Long id, Float amount, MeasureUnit measureUnit, IngredientName ingredientName) {
