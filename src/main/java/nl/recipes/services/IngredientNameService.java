@@ -64,7 +64,6 @@ public class IngredientNameService {
     ingredientName.setIngredientType(update.getIngredientType());
     ingredientName.setMeasureUnit(update.getMeasureUnit());
 
-    log.debug("{}", ingredientName);
     IngredientName updatedIngredientName = ingredientNameRepository.save(ingredientName);
 
     observableIngredientNameList.set(observableIngredientNameList.lastIndexOf(ingredientName),

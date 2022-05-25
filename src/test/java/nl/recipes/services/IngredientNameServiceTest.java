@@ -138,8 +138,6 @@ class IngredientNameServiceTest {
         false, ShopType.EKO, IngredientType.GROENTE);
     when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
 
-    log.debug("expectedIngredientName: {}", expectedIngredientName);
-    log.debug("update: {}", ingredientNameService.update(originalIngredientName, update));
     assertEquals(expectedIngredientName,
         ingredientNameService.update(originalIngredientName, update));
     assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
