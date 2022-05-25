@@ -1,28 +1,24 @@
 package nl.recipes.services;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static nl.recipes.util.testdata.MockTags.NEWTAG;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.TagRepository;
-import nl.recipes.util.TestData;
+import nl.recipes.util.testdata.MockTags;
 
 class TagServiceTest {
-
-  private static final String NEWTAG = "Newtag";
 
   @Mock
   TagRepository tagRepository;
@@ -30,25 +26,25 @@ class TagServiceTest {
   @InjectMocks
   TagService tagService;
 
-  TestData testData;
+  MockTags mockTags;
 
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
-    testData = new TestData();
-    tagService.setObservableTagList(testData.getTagList());
+    mockTags = new MockTags();
+    tagService.setObservableTagList(mockTags.getTagList());
   }
 
   @Test
   void testGetReadonlyTagList() {
-    List<Tag> expectedList = testData.getTagList();
+    List<Tag> expectedList = mockTags.getTagList();
 
     assertEquals(expectedList, tagService.getReadonlyTagList());
   }
 
   @Test
   void testFindByName_HappyPath() {
-    Optional<Tag> expectedTag = Optional.of(testData.getTag(3L, "Feestelijk"));
+    Optional<Tag> expectedTag = Optional.of(mockTags.getTag(3L, "Feestelijk"));
 
     assertEquals(expectedTag, tagService.findByName("Feestelijk"));
   }
@@ -62,7 +58,7 @@ class TagServiceTest {
 
   @Test
   void testFindById_HappyPath() {
-    Optional<Tag> expectedTag = Optional.of(testData.getTag(3L, "Feestelijk"));
+    Optional<Tag> expectedTag = Optional.of(mockTags.getTag(3L, "Feestelijk"));
 
     assertEquals(expectedTag, tagService.findById(3L));
   }
@@ -78,7 +74,7 @@ class TagServiceTest {
   void testCreate_HappyPath() throws Exception {
     Tag tag = new Tag();
     tag.setName(NEWTAG);
-    Tag savedTag = testData.getTag(5L, NEWTAG);
+    Tag savedTag = mockTags.getTag(5L, NEWTAG);
     when(tagRepository.save(tag)).thenReturn(savedTag);
 
     assertEquals(savedTag, tagService.create(tag));
@@ -116,7 +112,7 @@ class TagServiceTest {
   void testUpdate_HappyPath() throws Exception {
     Tag originalTag = tagService.findByName("Makkelijk").get();
 
-    Tag expectedTag = testData.getTag(2L, "Moeilijk");
+    Tag expectedTag = mockTags.getTag(2L, "Moeilijk");
     when(tagRepository.save(expectedTag)).thenReturn(expectedTag);
 
     assertEquals(expectedTag, tagService.update(originalTag, "Moeilijk"));
@@ -126,7 +122,7 @@ class TagServiceTest {
 
   @Test
   void testUpdate_NotFoundException() throws Exception {
-    Tag originalTag = testData.getTag(3000L, "onbekend");
+    Tag originalTag = mockTags.getTag(3000L, "onbekend");
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       tagService.update(originalTag, "bekend");
@@ -138,7 +134,7 @@ class TagServiceTest {
 
   @Test
   void testUpdate_AlreadyExistsException() throws Exception {
-    Tag originalTag = testData.getTag(1L, "Vegetarisch");
+    Tag originalTag = mockTags.getTag(1L, "Vegetarisch");
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       tagService.update(originalTag, "Feestelijk");
@@ -160,7 +156,7 @@ class TagServiceTest {
 
   @Test
   void testRemove_NotFound() throws Exception {
-    Tag originalTag = testData.getTag(3000L, "Onbekend");
+    Tag originalTag = mockTags.getTag(3000L, "Onbekend");
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       tagService.remove(originalTag);

@@ -18,7 +18,7 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.MeasureUnitRepository;
-import nl.recipes.util.TestData;
+import nl.recipes.util.testdata.MockMeasureUnits;
 
 class MeasureUnitServiceTest {
 
@@ -32,18 +32,18 @@ class MeasureUnitServiceTest {
   @InjectMocks
   MeasureUnitService measureUnitService;
 
-  TestData testData;
+  MockMeasureUnits mockMeasureUnits;
 
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
-    testData = new TestData();
-    measureUnitService.setObservableMeasureUnitList(testData.getMeasureUnitList());
+    mockMeasureUnits = new MockMeasureUnits();
+    measureUnitService.setObservableMeasureUnitList(mockMeasureUnits.getMeasureUnitList());
   }
 
   @Test
   void testGetReadonlyMeasureUnitList() {
-    List<MeasureUnit> expectedList = testData.getMeasureUnitList();
+    List<MeasureUnit> expectedList = mockMeasureUnits.getMeasureUnitList();
 
     assertEquals(expectedList, measureUnitService.getReadonlyMeasureUnitList());
   }
@@ -51,7 +51,7 @@ class MeasureUnitServiceTest {
   @Test
   void testFindByName_HappyPath() {
     Optional<MeasureUnit> expectedMeasureUnit =
-        Optional.of(testData.getMeasureUnit(3L, "pot", "potten"));
+        Optional.of(mockMeasureUnits.getMeasureUnit(3L, "pot", "potten"));
 
     assertEquals(expectedMeasureUnit, measureUnitService.findByName("pot"));
   }
@@ -66,7 +66,7 @@ class MeasureUnitServiceTest {
   @Test
   void testFindById_HappyPath() {
     Optional<MeasureUnit> expectedMeasureUnit =
-        Optional.of(testData.getMeasureUnit(3L, "pot", "potten"));
+        Optional.of(mockMeasureUnits.getMeasureUnit(3L, "pot", "potten"));
 
     assertEquals(expectedMeasureUnit, measureUnitService.findById(3L));
   }
@@ -83,7 +83,7 @@ class MeasureUnitServiceTest {
     MeasureUnit measureUnit = new MeasureUnit();
     measureUnit.setName(NEW_MEASUREUNIT);
     measureUnit.setPluralName(NEW_MEASUREUNITS);
-    MeasureUnit savedMeasureUnit = testData.getMeasureUnit(5L, NEW_MEASUREUNIT, NEW_MEASUREUNITS);
+    MeasureUnit savedMeasureUnit = mockMeasureUnits.getMeasureUnit(5L, NEW_MEASUREUNIT, NEW_MEASUREUNITS);
     when(measureUnitRepository.save(measureUnit)).thenReturn(savedMeasureUnit);
 
     assertEquals(savedMeasureUnit, measureUnitService.create(measureUnit));
@@ -125,7 +125,7 @@ class MeasureUnitServiceTest {
     update.setName("mespuntje");
     update.setPluralName("mespuntjes");
 
-    MeasureUnit expectedMeasureUnit = testData.getMeasureUnit(2L, "mespuntje", "mespuntjes");
+    MeasureUnit expectedMeasureUnit = mockMeasureUnits.getMeasureUnit(2L, "mespuntje", "mespuntjes");
     when(measureUnitRepository.save(expectedMeasureUnit)).thenReturn(expectedMeasureUnit);
 
     assertEquals(expectedMeasureUnit, measureUnitService.update(originalMeasureUnit, update));
@@ -135,7 +135,7 @@ class MeasureUnitServiceTest {
 
   @Test
   void testUpdate_NotFoundException() throws Exception {
-    MeasureUnit originalMeasureUnit = testData.getMeasureUnit(3000L, "onbekend", "onbekenden");
+    MeasureUnit originalMeasureUnit = mockMeasureUnits.getMeasureUnit(3000L, "onbekend", "onbekenden");
     MeasureUnit update = new MeasureUnit();
     update.setName("bekend");
     update.setPluralName("bekenden");
@@ -150,7 +150,7 @@ class MeasureUnitServiceTest {
 
   @Test
   void testUpdate_AlreadyExistsException() throws Exception {
-    MeasureUnit originalMeasureUnit = testData.getMeasureUnit(1L, "bakje", "bakjes");
+    MeasureUnit originalMeasureUnit = mockMeasureUnits.getMeasureUnit(1L, "bakje", "bakjes");
     MeasureUnit update = new MeasureUnit();
     update.setName("theelepel");
     update.setPluralName("theelepels");
@@ -175,7 +175,7 @@ class MeasureUnitServiceTest {
 
   @Test
   void testRemove_NotFound() throws Exception {
-    MeasureUnit originalMeasureUnit = testData.getMeasureUnit(3000L, "onbekend", "onbekenden");
+    MeasureUnit originalMeasureUnit = mockMeasureUnits.getMeasureUnit(3000L, "onbekend", "onbekenden");
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       measureUnitService.remove(originalMeasureUnit);

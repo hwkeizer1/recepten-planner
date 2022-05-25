@@ -1,18 +1,15 @@
 package nl.recipes.services;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.ShopType;
@@ -20,7 +17,7 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.IngredientNameRepository;
-import nl.recipes.util.TestData;
+import nl.recipes.util.testdata.MockIngredientNames;
 
 class IngredientNameServiceTest {
 
@@ -34,25 +31,25 @@ class IngredientNameServiceTest {
   @InjectMocks
   IngredientNameService ingredientNameService;
 
-  TestData testData;
+  MockIngredientNames mockIngredientNames;
 
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
-    testData = new TestData();
-    ingredientNameService.setObservableIngredientNameList(testData.getIngredientNameList());
+    mockIngredientNames = new MockIngredientNames();
+    ingredientNameService.setObservableIngredientNameList(mockIngredientNames.getIngredientNameList());
   }
 
   @Test
   void testGetReadonlyIngredientNameList() {
-    List<IngredientName> expectedList = testData.getIngredientNameList();
+    List<IngredientName> expectedList = mockIngredientNames.getIngredientNameList();
 
     assertEquals(expectedList, ingredientNameService.getReadonlyIngredientNameList());
   }
 
   @Test
   void testFindByName_HappyPath() {
-    Optional<IngredientName> expectedIngredientName = Optional.of(testData.getIngredientName(3L,
+    Optional<IngredientName> expectedIngredientName = Optional.of(mockIngredientNames.getIngredientName(3L, null,
         "prei", "preien", false, ShopType.DEKA, IngredientType.GROENTE));
 
     assertEquals(expectedIngredientName, ingredientNameService.findByName("prei"));
@@ -67,7 +64,7 @@ class IngredientNameServiceTest {
 
   @Test
   void testFindById_HappyPath() {
-    Optional<IngredientName> expectedIngredientName = Optional.of(testData.getIngredientName(3L,
+    Optional<IngredientName> expectedIngredientName = Optional.of(mockIngredientNames.getIngredientName(3L, null,
         "prei", "preien", false, ShopType.DEKA, IngredientType.GROENTE));
 
     assertEquals(expectedIngredientName, ingredientNameService.findById(3L));
@@ -88,7 +85,7 @@ class IngredientNameServiceTest {
     ingredientName.setStock(true);
     ingredientName.setShopType(ShopType.MARKT);
     ingredientName.setIngredientType(IngredientType.OVERIG);
-    IngredientName savedIngredientName = testData.getIngredientName(5L, NEW_INGREDIENTNAME,
+    IngredientName savedIngredientName = mockIngredientNames.getIngredientName(5L, null, NEW_INGREDIENTNAME,
         NEW_INGREDIENTNAMES, true, ShopType.MARKT, IngredientType.OVERIG);
     when(ingredientNameRepository.save(ingredientName)).thenReturn(savedIngredientName);
 
@@ -134,7 +131,7 @@ class IngredientNameServiceTest {
     update.setShopType(ShopType.EKO);
     update.setIngredientType(IngredientType.GROENTE);
 
-    IngredientName expectedIngredientName = testData.getIngredientName(2L, "wortel", "wortels",
+    IngredientName expectedIngredientName = mockIngredientNames.getIngredientName(2L, null, "wortel", "wortels",
         false, ShopType.EKO, IngredientType.GROENTE);
     when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
 
@@ -146,7 +143,7 @@ class IngredientNameServiceTest {
 
   @Test
   void testUpdate_NotFoundException() throws Exception {
-    IngredientName originalIngredientName = testData.getIngredientName(3000L, "onbekend",
+    IngredientName originalIngredientName = mockIngredientNames.getIngredientName(3000L, null, "onbekend",
         "onbekenden", true, ShopType.DEKA, IngredientType.GROENTE);
     IngredientName update = new IngredientName();
     update.setName("bekend");
@@ -163,7 +160,7 @@ class IngredientNameServiceTest {
   @Test
   void testUpdate_AlreadyExistsException() throws Exception {
     IngredientName originalIngredientName =
-        testData.getIngredientName(1L, "water", "water", true, null, IngredientType.OVERIG);
+        mockIngredientNames.getIngredientName(1L, null, "water", "water", true, null, IngredientType.OVERIG);
     IngredientName update = new IngredientName();
     update.setName("mozzarella");
     update.setPluralName("mozzarella");
@@ -189,7 +186,7 @@ class IngredientNameServiceTest {
 
   @Test
   void testRemove_NotFound() throws Exception {
-    IngredientName originalIngredientName = testData.getIngredientName(3000L, "onbekend",
+    IngredientName originalIngredientName = mockIngredientNames.getIngredientName(3000L, null, "onbekend",
         "onbekenden", true, null, IngredientType.OVERIG);
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
