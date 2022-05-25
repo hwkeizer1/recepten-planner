@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.ShopType;
@@ -19,6 +20,7 @@ import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.IngredientNameRepository;
 import nl.recipes.util.testdata.MockIngredientNames;
 
+@Slf4j
 class IngredientNameServiceTest {
 
   private static final String NEW_INGREDIENTNAME = "NewIngredientName";
@@ -79,12 +81,14 @@ class IngredientNameServiceTest {
 
   @Test
   void testCreate_HappyPath() throws Exception {
-    IngredientName ingredientName = new IngredientName();
-    ingredientName.setName(NEW_INGREDIENTNAME);
-    ingredientName.setPluralName(NEW_INGREDIENTNAMES);
-    ingredientName.setStock(true);
-    ingredientName.setShopType(ShopType.MARKT);
-    ingredientName.setIngredientType(IngredientType.OVERIG);
+    IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
+        .withName(NEW_INGREDIENTNAME)
+        .withPluralName(NEW_INGREDIENTNAMES)
+        .withStock(true)
+        .withShopType(ShopType.MARKT)
+        .withIngredientType(IngredientType.OVERIG)
+        .build();
+
     IngredientName savedIngredientName = mockIngredientNames.getIngredientName(5L, null, NEW_INGREDIENTNAME,
         NEW_INGREDIENTNAMES, true, ShopType.MARKT, IngredientType.OVERIG);
     when(ingredientNameRepository.save(ingredientName)).thenReturn(savedIngredientName);
@@ -97,8 +101,7 @@ class IngredientNameServiceTest {
 
   @Test
   void testCreate_AlreadyExistsException() throws Exception {
-    IngredientName ingredientName = new IngredientName();
-    ingredientName.setName("water");
+    IngredientName ingredientName = new IngredientName.IngredientNameBuilder().withName("water").build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       ingredientNameService.create(ingredientName);
@@ -110,8 +113,7 @@ class IngredientNameServiceTest {
 
   @Test
   void testCreate_IllegalValueException() throws Exception {
-    IngredientName ingredientName = new IngredientName();
-    ingredientName.setName("");
+    IngredientName ingredientName = new IngredientName.IngredientNameBuilder().withName("").build();
 
     IllegalValueException exception = Assertions.assertThrows(IllegalValueException.class, () -> {
       ingredientNameService.create(ingredientName);
@@ -124,17 +126,20 @@ class IngredientNameServiceTest {
   @Test
   void testUpdate_HappyPath() throws Exception {
     IngredientName originalIngredientName = ingredientNameService.findByName("ui").get();
-    IngredientName update = new IngredientName();
-    update.setName("wortel");
-    update.setPluralName("wortels");
-    update.setStock(false);
-    update.setShopType(ShopType.EKO);
-    update.setIngredientType(IngredientType.GROENTE);
+    IngredientName update = new IngredientName.IngredientNameBuilder()
+        .withName("wortel")
+        .withPluralName("wortels")
+        .withStock(false)
+        .withShopType(ShopType.EKO)
+        .withIngredientType(IngredientType.GROENTE)
+        .build();
 
     IngredientName expectedIngredientName = mockIngredientNames.getIngredientName(2L, null, "wortel", "wortels",
         false, ShopType.EKO, IngredientType.GROENTE);
     when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
 
+    log.debug("expectedIngredientName: {}", expectedIngredientName);
+    log.debug("update: {}", ingredientNameService.update(originalIngredientName, update));
     assertEquals(expectedIngredientName,
         ingredientNameService.update(originalIngredientName, update));
     assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
@@ -145,9 +150,10 @@ class IngredientNameServiceTest {
   void testUpdate_NotFoundException() throws Exception {
     IngredientName originalIngredientName = mockIngredientNames.getIngredientName(3000L, null, "onbekend",
         "onbekenden", true, ShopType.DEKA, IngredientType.GROENTE);
-    IngredientName update = new IngredientName();
-    update.setName("bekend");
-    update.setPluralName("bekenden");
+    IngredientName update = new IngredientName.IngredientNameBuilder()
+        .withName("bekend")
+        .withPluralName("bekenden")
+        .build();
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       ingredientNameService.update(originalIngredientName, update);
@@ -161,9 +167,10 @@ class IngredientNameServiceTest {
   void testUpdate_AlreadyExistsException() throws Exception {
     IngredientName originalIngredientName =
         mockIngredientNames.getIngredientName(1L, null, "water", "water", true, null, IngredientType.OVERIG);
-    IngredientName update = new IngredientName();
-    update.setName("mozzarella");
-    update.setPluralName("mozzarella");
+    IngredientName update = new IngredientName.IngredientNameBuilder()
+        .withName("mozzarella")
+        .withPluralName("mozzarella")
+        .build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       ingredientNameService.update(originalIngredientName, update);

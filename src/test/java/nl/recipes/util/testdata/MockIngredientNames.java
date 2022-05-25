@@ -13,20 +13,29 @@ public class MockIngredientNames {
 
   
   public ObservableList<IngredientName> getIngredientNameList() {
-    List<IngredientName> ingredientnameList = new ArrayList<>();
-    ingredientnameList
+    List<IngredientName> ingredientNameList = new ArrayList<>();
+    ingredientNameList
         .add(getIngredientName(1L, null, "water", "water", true, null, IngredientType.OVERIG));
-    ingredientnameList
+    ingredientNameList
         .add(getIngredientName(2L, null, "ui", "uien", true, ShopType.EKO, IngredientType.GROENTE));
-    ingredientnameList
+    ingredientNameList
         .add(getIngredientName(3L, null, "prei", "preien", false, ShopType.DEKA, IngredientType.GROENTE));
-    ingredientnameList.add(getIngredientName(4L, null, "mozzarella", "mozzarella", false, ShopType.DEKA,
+    ingredientNameList.add(getIngredientName(4L, null, "mozzarella", "mozzarella", false, ShopType.DEKA,
         IngredientType.ZUIVEL));
-    return FXCollections.observableList(ingredientnameList);
+    return FXCollections.observableList(ingredientNameList);
   }
   
   public IngredientName getIngredientName(Long id, MeasureUnit measureUnit, String name, String pluralName, boolean stock,
       ShopType shopType, IngredientType ingredientType) {
-    return new IngredientName(id, measureUnit, name, pluralName, stock, shopType, ingredientType);
+    IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(measureUnit)
+        .withName(name)
+        .withPluralName(pluralName)
+        .withStock(stock)
+        .withShopType(shopType)
+        .withIngredientType(ingredientType)
+        .build();
+    ingredientName.setId(id);
+    return ingredientName;
   }
 }

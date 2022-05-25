@@ -267,13 +267,15 @@ public class IngredientNameTableEditWidget {
   }
 
   private void createIngredientName(ActionEvent actionEvent) {
-    IngredientName ingredientName = new IngredientName();
-    ingredientName.setName(nameTextField.getText());
-    ingredientName.setPluralName(pluralNameTextField.getText());
-    ingredientName.setStock(stockCheckBox.isSelected());
-    ingredientName.setMeasureUnit(measureUnitComboBox.getValue());
-    ingredientName.setShopType(shopTypeComboBox.getValue());
-    ingredientName.setIngredientType(ingredientTypeComboBox.getValue());
+    IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
+        .withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText())
+        .withStock(stockCheckBox.isSelected())
+        .withMeasureUnit(measureUnitComboBox.getValue())
+        .withShopType(shopTypeComboBox.getValue())
+        .withIngredientType(ingredientTypeComboBox.getValue())
+        .build();
+       
     try {
       ingredientNameService.create(ingredientName);
       ingredientNameTableView.getSelectionModel().select(ingredientName);
@@ -284,13 +286,15 @@ public class IngredientNameTableEditWidget {
   }
 
   private void updateIngredientName(ActionEvent actionEvent) {
-    IngredientName update = new IngredientName();
-    update.setName(nameTextField.getText());
-    update.setPluralName(pluralNameTextField.getText());
-    update.setStock(stockCheckBox.isSelected());
-    update.setMeasureUnit(measureUnitComboBox.getValue());
-    update.setShopType(shopTypeComboBox.getValue());
-    update.setIngredientType(ingredientTypeComboBox.getValue());
+    IngredientName update = new IngredientName.IngredientNameBuilder()
+        .withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText())
+        .withStock(stockCheckBox.isSelected())
+        .withMeasureUnit(measureUnitComboBox.getValue())
+        .withShopType(shopTypeComboBox.getValue())
+        .withIngredientType(ingredientTypeComboBox.getValue())
+        .build();
+    
     try {
       ingredientNameService.update(selectedIngredientName, update);
     } catch (NotFoundException | AlreadyExistsException e) {
