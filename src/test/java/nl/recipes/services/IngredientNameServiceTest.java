@@ -51,8 +51,14 @@ class IngredientNameServiceTest {
 
   @Test
   void testFindByName_HappyPath() {
-    Optional<IngredientName> expectedIngredientName = Optional.of(mockIngredientNames.getIngredientName(3L, null,
-        "prei", "preien", false, ShopType.DEKA, IngredientType.GROENTE));
+    Optional<IngredientName> expectedIngredientName = Optional.of(new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName("prei")
+        .withPluralName("preien")
+        .withStock(false)
+        .withShopType(ShopType.DEKA)
+        .withIngredientType(IngredientType.GROENTE)
+        .build(3L));
 
     assertEquals(expectedIngredientName, ingredientNameService.findByName("prei"));
   }
@@ -66,8 +72,14 @@ class IngredientNameServiceTest {
 
   @Test
   void testFindById_HappyPath() {
-    Optional<IngredientName> expectedIngredientName = Optional.of(mockIngredientNames.getIngredientName(3L, null,
-        "prei", "preien", false, ShopType.DEKA, IngredientType.GROENTE));
+    Optional<IngredientName> expectedIngredientName = Optional.of(new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName("prei")
+        .withPluralName("preien")
+        .withStock(false)
+        .withShopType(ShopType.DEKA)
+        .withIngredientType(IngredientType.GROENTE)
+        .build(3L));
 
     assertEquals(expectedIngredientName, ingredientNameService.findById(3L));
   }
@@ -89,8 +101,15 @@ class IngredientNameServiceTest {
         .withIngredientType(IngredientType.OVERIG)
         .build();
 
-    IngredientName savedIngredientName = mockIngredientNames.getIngredientName(5L, null, NEW_INGREDIENTNAME,
-        NEW_INGREDIENTNAMES, true, ShopType.MARKT, IngredientType.OVERIG);
+    IngredientName savedIngredientName = new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName(NEW_INGREDIENTNAME)
+        .withPluralName(NEW_INGREDIENTNAMES)
+        .withStock(true)
+        .withShopType(ShopType.MARKT)
+        .withIngredientType(IngredientType.OVERIG)
+        .build(5L);
+        
     when(ingredientNameRepository.save(ingredientName)).thenReturn(savedIngredientName);
 
     assertEquals(savedIngredientName, ingredientNameService.create(ingredientName));
@@ -134,8 +153,15 @@ class IngredientNameServiceTest {
         .withIngredientType(IngredientType.GROENTE)
         .build();
 
-    IngredientName expectedIngredientName = mockIngredientNames.getIngredientName(2L, null, "wortel", "wortels",
-        false, ShopType.EKO, IngredientType.GROENTE);
+    IngredientName expectedIngredientName = new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName("wortel")
+        .withPluralName("wortels")
+        .withStock(false)
+        .withShopType(ShopType.EKO)
+        .withIngredientType(IngredientType.GROENTE)
+        .build(2L);
+
     when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
 
     assertEquals(expectedIngredientName,
@@ -146,8 +172,15 @@ class IngredientNameServiceTest {
 
   @Test
   void testUpdate_NotFoundException() throws Exception {
-    IngredientName originalIngredientName = mockIngredientNames.getIngredientName(3000L, null, "onbekend",
-        "onbekenden", true, ShopType.DEKA, IngredientType.GROENTE);
+    IngredientName originalIngredientName = new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName("onbekend")
+        .withPluralName("onbekenden")
+        .withStock(true)
+        .withShopType(ShopType.DEKA)
+        .withIngredientType(IngredientType.GROENTE)
+        .build(3000L);
+
     IngredientName update = new IngredientName.IngredientNameBuilder()
         .withName("bekend")
         .withPluralName("bekenden")
@@ -163,8 +196,15 @@ class IngredientNameServiceTest {
 
   @Test
   void testUpdate_AlreadyExistsException() throws Exception {
-    IngredientName originalIngredientName =
-        mockIngredientNames.getIngredientName(1L, null, "water", "water", true, null, IngredientType.OVERIG);
+    IngredientName originalIngredientName = new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName("water")
+        .withPluralName("water")
+        .withStock(true)
+        .withShopType(null)
+        .withIngredientType(IngredientType.OVERIG)
+        .build(1L);
+
     IngredientName update = new IngredientName.IngredientNameBuilder()
         .withName("mozzarella")
         .withPluralName("mozzarella")
@@ -191,8 +231,14 @@ class IngredientNameServiceTest {
 
   @Test
   void testRemove_NotFound() throws Exception {
-    IngredientName originalIngredientName = mockIngredientNames.getIngredientName(3000L, null, "onbekend",
-        "onbekenden", true, null, IngredientType.OVERIG);
+    IngredientName originalIngredientName = new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName("onbekend")
+        .withPluralName("onbekenden")
+        .withStock(true)
+        .withShopType(null)
+        .withIngredientType(IngredientType.OVERIG)
+        .build(3000L);
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       ingredientNameService.remove(originalIngredientName);

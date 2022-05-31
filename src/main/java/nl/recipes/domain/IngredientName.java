@@ -159,6 +159,12 @@ public class IngredientName {
       IngredientName ingredientName = new IngredientName(this);
       return ingredientName;
     }
+    
+    public IngredientName build(Long id) {
+      IngredientName ingredientName = new IngredientName(this);
+      ingredientName.setId(id);
+      return ingredientName;
+    }
   }
 
   @Override
