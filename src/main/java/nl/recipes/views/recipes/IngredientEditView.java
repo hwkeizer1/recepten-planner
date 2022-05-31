@@ -31,9 +31,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
-import nl.recipes.domain.MeasureUnit;
 import nl.recipes.services.IngredientNameService;
-import nl.recipes.services.MeasureUnitService;
 
 import static nl.recipes.views.ViewConstants.*;
 

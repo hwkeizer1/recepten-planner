@@ -51,7 +51,10 @@ class MeasureUnitServiceTest {
   @Test
   void testFindByName_HappyPath() {
     Optional<MeasureUnit> expectedMeasureUnit =
-        Optional.of(mockMeasureUnits.getMeasureUnit(3L, "pot", "potten"));
+        Optional.of(new MeasureUnit.MeasureUnitBuilder()
+            .withName("pot")
+            .withPluralName("potten")
+            .build(3L));
 
     assertEquals(expectedMeasureUnit, measureUnitService.findByName("pot"));
   }
@@ -66,7 +69,10 @@ class MeasureUnitServiceTest {
   @Test
   void testFindById_HappyPath() {
     Optional<MeasureUnit> expectedMeasureUnit =
-        Optional.of(mockMeasureUnits.getMeasureUnit(3L, "pot", "potten"));
+        Optional.of(new MeasureUnit.MeasureUnitBuilder()
+            .withName("pot")
+            .withPluralName("potten")
+            .build(3L));
 
     assertEquals(expectedMeasureUnit, measureUnitService.findById(3L));
   }
@@ -80,10 +86,16 @@ class MeasureUnitServiceTest {
 
   @Test
   void testCreate_HappyPath() throws Exception {
-    MeasureUnit measureUnit = new MeasureUnit();
-    measureUnit.setName(NEW_MEASUREUNIT);
-    measureUnit.setPluralName(NEW_MEASUREUNITS);
-    MeasureUnit savedMeasureUnit = mockMeasureUnits.getMeasureUnit(5L, NEW_MEASUREUNIT, NEW_MEASUREUNITS);
+    MeasureUnit measureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName(NEW_MEASUREUNIT)
+        .withPluralName(NEW_MEASUREUNITS)
+        .build();
+
+    MeasureUnit savedMeasureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName(NEW_MEASUREUNIT)
+        .withPluralName(NEW_MEASUREUNITS)
+        .build(5L);
+    
     when(measureUnitRepository.save(measureUnit)).thenReturn(savedMeasureUnit);
 
     assertEquals(savedMeasureUnit, measureUnitService.create(measureUnit));
@@ -93,9 +105,10 @@ class MeasureUnitServiceTest {
 
   @Test
   void testCreate_AlreadyExistsException() throws Exception {
-    MeasureUnit measureUnit = new MeasureUnit();
-    measureUnit.setName("theelepel");
-    measureUnit.setPluralName("theelepels");
+    MeasureUnit measureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName("theelepel")
+        .withPluralName("theelepels")
+        .build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       measureUnitService.create(measureUnit);
@@ -107,8 +120,9 @@ class MeasureUnitServiceTest {
 
   @Test
   void testCreate_IllegalValueException() throws Exception {
-    MeasureUnit measureUnit = new MeasureUnit();
-    measureUnit.setName("");
+    MeasureUnit measureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName("")
+        .build();
 
     IllegalValueException exception = Assertions.assertThrows(IllegalValueException.class, () -> {
       measureUnitService.create(measureUnit);
@@ -121,11 +135,16 @@ class MeasureUnitServiceTest {
   @Test
   void testUpdate_HappyPath() throws Exception {
     MeasureUnit originalMeasureUnit = measureUnitService.findByName("eetlepel").get();
-    MeasureUnit update = new MeasureUnit();
-    update.setName("mespuntje");
-    update.setPluralName("mespuntjes");
+    MeasureUnit update = new MeasureUnit.MeasureUnitBuilder()
+        .withName("mespuntje")
+        .withPluralName("mespuntjes")
+        .build();
 
-    MeasureUnit expectedMeasureUnit = mockMeasureUnits.getMeasureUnit(2L, "mespuntje", "mespuntjes");
+    MeasureUnit expectedMeasureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName("mespuntje")
+        .withPluralName("mespuntjes")
+        .build(2L);
+    
     when(measureUnitRepository.save(expectedMeasureUnit)).thenReturn(expectedMeasureUnit);
 
     assertEquals(expectedMeasureUnit, measureUnitService.update(originalMeasureUnit, update));
@@ -135,10 +154,15 @@ class MeasureUnitServiceTest {
 
   @Test
   void testUpdate_NotFoundException() throws Exception {
-    MeasureUnit originalMeasureUnit = mockMeasureUnits.getMeasureUnit(3000L, "onbekend", "onbekenden");
-    MeasureUnit update = new MeasureUnit();
-    update.setName("bekend");
-    update.setPluralName("bekenden");
+    MeasureUnit originalMeasureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName("onbekend")
+        .withPluralName("onbekenden")
+        .build(3000L);
+        
+    MeasureUnit update = new MeasureUnit.MeasureUnitBuilder()
+        .withName("bekend")
+        .withPluralName("bekenden")
+        .build();
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       measureUnitService.update(originalMeasureUnit, update);
@@ -150,10 +174,15 @@ class MeasureUnitServiceTest {
 
   @Test
   void testUpdate_AlreadyExistsException() throws Exception {
-    MeasureUnit originalMeasureUnit = mockMeasureUnits.getMeasureUnit(1L, "bakje", "bakjes");
-    MeasureUnit update = new MeasureUnit();
-    update.setName("theelepel");
-    update.setPluralName("theelepels");
+    MeasureUnit originalMeasureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName("bakje")
+        .withPluralName("bakjes")
+        .build(1L);
+        
+    MeasureUnit update = new MeasureUnit.MeasureUnitBuilder()
+        .withName("theelepel")
+        .withPluralName("theelepels")
+        .build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       measureUnitService.update(originalMeasureUnit, update);
@@ -175,7 +204,10 @@ class MeasureUnitServiceTest {
 
   @Test
   void testRemove_NotFound() throws Exception {
-    MeasureUnit originalMeasureUnit = mockMeasureUnits.getMeasureUnit(3000L, "onbekend", "onbekenden");
+    MeasureUnit originalMeasureUnit = new MeasureUnit.MeasureUnitBuilder()
+        .withName("onbekend")
+        .withPluralName("onbekenden")
+        .build(3000L);
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       measureUnitService.remove(originalMeasureUnit);

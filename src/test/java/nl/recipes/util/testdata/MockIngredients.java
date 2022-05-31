@@ -1,6 +1,5 @@
 package nl.recipes.util.testdata;
 
-import java.util.ArrayList;
 import java.util.List;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;

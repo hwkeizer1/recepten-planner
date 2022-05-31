@@ -13,9 +13,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 public class IngredientName {
@@ -114,7 +111,7 @@ public class IngredientName {
   @Transient
   @JsonIgnore
   public String getListLabel() {
-    return name + (measureUnit == null ? "" : " (" + measureUnit.getName() + ")");
+    return name + (measureUnit == null ? "" : " (" + measureUnit.getListLabel() + ")");
   }
   
   public static class IngredientNameBuilder {
@@ -190,6 +187,4 @@ public class IngredientName {
     IngredientName other = (IngredientName) obj;
     return Objects.equals(name, other.name);
   }
-  
-  
 }

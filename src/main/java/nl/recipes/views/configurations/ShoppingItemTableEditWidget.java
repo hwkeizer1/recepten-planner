@@ -26,7 +26,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;

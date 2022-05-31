@@ -1,20 +1,16 @@
 package nl.recipes.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class MeasureUnit {
 
   @Id
@@ -26,15 +22,89 @@ public class MeasureUnit {
   private String name;
 
   private String pluralName;
+  
+  protected MeasureUnit() {}
+  
+  private MeasureUnit(MeasureUnitBuilder builder) {
+    this.name = builder.name;
+    this.pluralName = builder.pluralName;
+  }
 
-  public MeasureUnit(String name, String pluralName) {
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
     this.name = name;
+  }
+
+  public String getPluralName() {
+    return pluralName;
+  }
+
+  public void setPluralName(String pluralName) {
     this.pluralName = pluralName;
+  }
+  
+  @Transient
+  @JsonIgnore
+  public String getListLabel() {
+    return name;
+  }
+  
+  public static class MeasureUnitBuilder { 
+    private String name;
+    private String pluralName;
+    
+    public MeasureUnitBuilder withName(String name) {
+      this.name = name;
+      return this;
+    }
+    
+    public MeasureUnitBuilder withPluralName(String pluralName) {
+      this.pluralName = pluralName;
+      return this;
+    }
+    
+    public MeasureUnit build() {
+      MeasureUnit measureUnit = new MeasureUnit(this);
+      return measureUnit;
+    }
+    
+    public MeasureUnit build(Long id) {
+      MeasureUnit measureUnit = new MeasureUnit(this);
+      measureUnit.setId(id);
+      return measureUnit;
+    }
   }
 
   @Override
   public String toString() {
-    return name;
+    return "MeasureUnit [id=" + id + ", name=" + name + ", pluralName=" + pluralName + "]";
   }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(name);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    MeasureUnit other = (MeasureUnit) obj;
+    return Objects.equals(name, other.name);
+  }
 }

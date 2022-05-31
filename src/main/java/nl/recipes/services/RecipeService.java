@@ -3,21 +3,17 @@ package nl.recipes.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.RecipeRepository;
 
-@Slf4j
 @Service
 public class RecipeService {
 

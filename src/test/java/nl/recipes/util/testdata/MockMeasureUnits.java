@@ -10,14 +10,22 @@ public class MockMeasureUnits {
 
   public ObservableList<MeasureUnit> getMeasureUnitList() {
     List<MeasureUnit> measureUnitList = new ArrayList<>();
-    measureUnitList.add(getMeasureUnit(1L, "bakje", "bakjes"));
-    measureUnitList.add(getMeasureUnit(2L, "eetlepel", "eetlepels"));
-    measureUnitList.add(getMeasureUnit(3L, "pot", "potten"));
-    measureUnitList.add(getMeasureUnit(4L, "theelepel", "theelepels"));
+    measureUnitList.add( new MeasureUnit.MeasureUnitBuilder()
+        .withName("bakje")
+        .withPluralName("bakjes")
+        .build(1L));
+    measureUnitList.add( new MeasureUnit.MeasureUnitBuilder()
+        .withName("eetlepel")
+        .withPluralName("eetlepels")
+        .build(2L));
+    measureUnitList.add( new MeasureUnit.MeasureUnitBuilder()
+        .withName("pot")
+        .withPluralName("potten")
+        .build(3L));
+    measureUnitList.add( new MeasureUnit.MeasureUnitBuilder()
+        .withName("theelepel")
+        .withPluralName("theelepels")
+        .build(4L));
     return FXCollections.observableList(measureUnitList);
-  }
-  
-  public MeasureUnit getMeasureUnit(Long id, String name, String pluralName) {
-    return new MeasureUnit(id, name, pluralName);
   }
 }

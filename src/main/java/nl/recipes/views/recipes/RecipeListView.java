@@ -1,11 +1,10 @@
 package nl.recipes.views.recipes;
 
+import static nl.recipes.views.ViewConstants.RP_TABLE;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Predicate;
-
 import org.springframework.stereotype.Component;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
@@ -14,29 +13,25 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.root.RootView;
 
-import static nl.recipes.views.ViewConstants.*;
-
-@Slf4j
 @Component
 public class RecipeListView {
 

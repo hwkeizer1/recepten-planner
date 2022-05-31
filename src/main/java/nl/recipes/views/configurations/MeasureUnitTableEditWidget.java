@@ -186,7 +186,10 @@ public class MeasureUnitTableEditWidget {
 
   private void createMeasureUnit(ActionEvent actionEvent) {
     MeasureUnit measureUnit =
-        new MeasureUnit(nameTextField.getText(), pluralNameTextField.getText());
+        new MeasureUnit.MeasureUnitBuilder()
+        .withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText())
+        .build();
     try {
       measureUnitService.create(measureUnit);
       measureUnitTableView.getSelectionModel().select(measureUnit);
@@ -197,9 +200,10 @@ public class MeasureUnitTableEditWidget {
   }
 
   private void updateMeasureUnit(ActionEvent actionEvent) {
-    MeasureUnit update = new MeasureUnit();
-    update.setName(nameTextField.getText());
-    update.setPluralName(pluralNameTextField.getText());
+    MeasureUnit update = new MeasureUnit.MeasureUnitBuilder()
+        .withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText())
+        .build();
     try {
       measureUnitService.update(selectedMeasureUnit, update);
     } catch (NotFoundException | AlreadyExistsException e) {

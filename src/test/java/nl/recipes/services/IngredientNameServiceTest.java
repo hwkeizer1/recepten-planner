@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.ShopType;
@@ -20,7 +19,6 @@ import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.IngredientNameRepository;
 import nl.recipes.util.testdata.MockIngredientNames;
 
-@Slf4j
 class IngredientNameServiceTest {
 
   private static final String NEW_INGREDIENTNAME = "NewIngredientName";
