@@ -104,7 +104,7 @@ public class RecipeEditView {
     this.rootView = rootView;
   }
 
-  public Node getRecipeEditViewPanel(Recipe recipe) {
+  public Node getRecipeUpdateViewPanel(Recipe recipe) {
     selectedRecipe = recipe;
     selectedRecipeToFormFields();
 
@@ -114,8 +114,8 @@ public class RecipeEditView {
     return scrollPanel;
   }
 
-  public Node getNewRecipeEditViewPanel() {
-    selectedRecipe = new Recipe();
+  public Node getRecipeCreateViewPanel() {
+    selectedRecipe = new Recipe.RecipeBuilder().build();
     selectedRecipeToFormFields();
 
     createButton.setVisible(true);

@@ -147,11 +147,11 @@ public class RootView {
   }
 
   public void showRecipeEditViewPanel(Recipe recipe) {
-    rootWindow.setCenter(recipeEditView.getRecipeEditViewPanel(recipe));
+    rootWindow.setCenter(recipeEditView.getRecipeUpdateViewPanel(recipe));
   }
 
   public void showNewRecipeEditViewPanel() {
-    rootWindow.setCenter(recipeEditView.getNewRecipeEditViewPanel());
+    rootWindow.setCenter(recipeEditView.getRecipeCreateViewPanel());
   }
 
   public void showPlanningPanel(ActionEvent actionEvent) {
