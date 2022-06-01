@@ -238,11 +238,12 @@ public class IngredientEditView {
   }
 
   private void createIngredient(ActionEvent actionEvent) {
-    Ingredient ingredient = new Ingredient();
-    ingredient
-        .setAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
-            : Float.valueOf(amountTextField.getText()));
-    ingredient.setIngredientName(ingredientNameComboBox.getValue());
+    Ingredient ingredient = new Ingredient.IngredientBuilder()
+        .withAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+            : Float.valueOf(amountTextField.getText()))
+        .withIngredientName(ingredientNameComboBox.getValue())
+        .build();
+
     ingredientList.add(ingredient);
     ingredientTable.getSelectionModel().clearSelection();
     amountTextField.setText(null);
