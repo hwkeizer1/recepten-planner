@@ -109,13 +109,7 @@ public class PlanningService {
   }
 
   boolean canConsolidate(Ingredient x, Ingredient y) {
-    if (!x.getIngredientName().equals(y.getIngredientName()))
-      return false;
-    if (x.getMeasureUnit() == null ^ y.getMeasureUnit() == null)
-      return false;
-    if (x.getMeasureUnit() == null)
-      return true;
-    return (x.getMeasureUnit().equals(y.getMeasureUnit()));
+    return (x.getIngredientName().equals(y.getIngredientName()));
   }
 
   private List<Ingredient> getIngredientsFromPlanning() {

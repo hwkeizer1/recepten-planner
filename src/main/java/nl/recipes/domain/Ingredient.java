@@ -31,9 +31,9 @@ public class Ingredient {
   private Recipe recipe;
 
   private Float amount;
-
-  @OneToOne(fetch = FetchType.EAGER)
-  private MeasureUnit measureUnit;
+//
+//  @OneToOne(fetch = FetchType.EAGER)
+//  private MeasureUnit measureUnit;
 
   @OneToOne(fetch = FetchType.EAGER)
   private IngredientName ingredientName;
@@ -46,7 +46,7 @@ public class Ingredient {
   private Ingredient(IngredientBuilder builder) {
     this.recipe = builder.recipe;
     this.amount = builder.amount;
-    this.measureUnit = builder.measureUnit;
+//    this.measureUnit = builder.measureUnit;
     this.ingredientName = builder.ingredientName;
     this.onList = builder.onList;
   }
@@ -75,13 +75,13 @@ public class Ingredient {
     this.amount = amount;
   }
 
-  public MeasureUnit getMeasureUnit() {
-    return measureUnit;
-  }
-
-  public void setMeasureUnit(MeasureUnit measureUnit) {
-    this.measureUnit = measureUnit;
-  }
+//  public MeasureUnit getMeasureUnit() {
+//    return measureUnit;
+//  }
+//
+//  public void setMeasureUnit(MeasureUnit measureUnit) {
+//    this.measureUnit = measureUnit;
+//  }
 
   public IngredientName getIngredientName() {
     return ingredientName;
@@ -145,13 +145,13 @@ public class Ingredient {
 
   @Override
   public String toString() {
-    return "Ingredient [id=" + id + ", amount=" + amount + ", measureUnit=" + measureUnit
+    return "Ingredient [id=" + id + ", recipe=" + recipe + ", amount=" + amount
         + ", ingredientName=" + ingredientName + ", onList=" + onList + "]";
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, id, ingredientName, measureUnit, onList);
+    return Objects.hash(amount, id, ingredientName, onList, recipe);
   }
 
   @Override
@@ -164,7 +164,7 @@ public class Ingredient {
       return false;
     Ingredient other = (Ingredient) obj;
     return Objects.equals(amount, other.amount) && Objects.equals(id, other.id)
-        && Objects.equals(ingredientName, other.ingredientName)
-        && Objects.equals(measureUnit, other.measureUnit) && onList == other.onList;
+        && Objects.equals(ingredientName, other.ingredientName) && onList == other.onList
+        && Objects.equals(recipe, other.recipe);
   }
 }

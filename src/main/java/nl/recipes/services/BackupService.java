@@ -354,7 +354,6 @@ public class BackupService {
     Set<Ingredient> ingredientList = new HashSet<>();
 
     for (Ingredient ingredient : recipe.getIngredients()) {
-      ingredient.setMeasureUnit(null);
       if (ingredient.getIngredientName().getMeasureUnit() != null) {
         Optional<MeasureUnit> optionalMeasureUnit =
             measureUnitService.findByName(ingredient.getIngredientName().getMeasureUnit().getName());
