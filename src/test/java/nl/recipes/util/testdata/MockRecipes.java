@@ -8,22 +8,25 @@ import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 
 public class MockRecipes {
-
-//  public ObservableList<Recipe> getRecipeListBasic() {
-//    List<Recipe> recipeList = new ArrayList<>();
-//    recipeList.add(getRecipe(1L, "First recipe", RecipeType.HOOFDGERECHT));
-//    recipeList.add(getRecipe(2L, "Second recipe", RecipeType.AMUSE));
-//    recipeList.add(getRecipe(3L, "Third recipe", RecipeType.NAGERECHT));
-//    recipeList.add(getRecipe(4L, "Fourth recipe", RecipeType.VOORGERECHT));
-//    return FXCollections.observableList(recipeList);
-//  }
-//  
-//  public Recipe getRecipe(Long id, String name, RecipeType recipeType) {
-//    Recipe recipe = new Recipe(name);
-//    recipe.setId(id);
-//    recipe.setRecipeType(recipeType);
-//    return recipe;
-//  }
   
+  private MockIngredients mockIngredients = new MockIngredients();
 
+  public ObservableList<Recipe> getRecipeListBasic() {
+    List<Recipe> recipeList = new ArrayList<>();
+    recipeList.add(new Recipe.RecipeBuilder()
+        .withName("First recipe")
+        .withRecipeType(RecipeType.HOOFDGERECHT)
+        .withIngredients(mockIngredients.getIngredientSet()).build(1L));
+    recipeList.add(new Recipe.RecipeBuilder()
+        .withName("Second recipe")
+        .withRecipeType(RecipeType.AMUSE).build(2L));
+    recipeList.add(new Recipe.RecipeBuilder()
+        .withName("Third recipe")
+        .withRecipeType(RecipeType.NAGERECHT).build(3L));
+    recipeList.add(new Recipe.RecipeBuilder()
+        .withName("Fourth recipe")
+        .withRecipeType(RecipeType.HOOFDGERECHT).build(4L));
+
+    return FXCollections.observableList(recipeList);
+  }
 }

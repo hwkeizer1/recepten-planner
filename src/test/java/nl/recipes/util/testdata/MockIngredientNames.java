@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
-import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
 
 public class MockIngredientNames {
