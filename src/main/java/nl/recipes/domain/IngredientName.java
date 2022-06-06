@@ -173,7 +173,7 @@ public class IngredientName {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(measureUnit, name);
   }
 
   @Override
@@ -185,6 +185,6 @@ public class IngredientName {
     if (getClass() != obj.getClass())
       return false;
     IngredientName other = (IngredientName) obj;
-    return Objects.equals(name, other.name);
+    return Objects.equals(measureUnit, other.measureUnit) && Objects.equals(name, other.name);
   }
 }
