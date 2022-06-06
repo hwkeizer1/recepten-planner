@@ -12,12 +12,6 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
 @Entity
 @JsonIgnoreProperties("recipe")
 public class Ingredient {
@@ -31,9 +25,6 @@ public class Ingredient {
   private Recipe recipe;
 
   private Float amount;
-//
-//  @OneToOne(fetch = FetchType.EAGER)
-//  private MeasureUnit measureUnit;
 
   @OneToOne(fetch = FetchType.EAGER)
   private IngredientName ingredientName;
@@ -46,7 +37,6 @@ public class Ingredient {
   private Ingredient(IngredientBuilder builder) {
     this.recipe = builder.recipe;
     this.amount = builder.amount;
-//    this.measureUnit = builder.measureUnit;
     this.ingredientName = builder.ingredientName;
     this.onList = builder.onList;
   }
@@ -75,14 +65,6 @@ public class Ingredient {
     this.amount = amount;
   }
 
-//  public MeasureUnit getMeasureUnit() {
-//    return measureUnit;
-//  }
-//
-//  public void setMeasureUnit(MeasureUnit measureUnit) {
-//    this.measureUnit = measureUnit;
-//  }
-
   public IngredientName getIngredientName() {
     return ingredientName;
   }
@@ -102,7 +84,6 @@ public class Ingredient {
   public static class IngredientBuilder {
     private Recipe recipe;
     private Float amount;
-    private MeasureUnit measureUnit;
     private IngredientName ingredientName;
     private boolean onList;
     
@@ -113,11 +94,6 @@ public class Ingredient {
     
     public IngredientBuilder withAmount(Float amount) {
       this.amount = amount;
-      return this;
-    }
-    
-    public IngredientBuilder withMeasureUnit(MeasureUnit measureUnit) {
-      this.measureUnit = measureUnit;
       return this;
     }
     
