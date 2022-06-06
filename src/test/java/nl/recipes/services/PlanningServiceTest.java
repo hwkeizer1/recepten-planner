@@ -5,65 +5,109 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.MeasureUnit;
+import nl.recipes.util.testdata.MockIngredients;
 
 class PlanningServiceTest {
 
   @InjectMocks
   PlanningService planningService;
 
-//  TestData testData;
+  MockIngredients mockIngredients;
 
-//  @BeforeEach
-//  public void setup() {
-//    MockitoAnnotations.openMocks(this);
-//    testData = new TestData();
-//  }
-//
-//  @Test
-//  void testCanConsolidate() {
-//    MeasureUnit firstMeasureUnit = testData.getMeasureUnit(1L, "bak", "bakken");
-//    MeasureUnit secondMeasureUnit = testData.getMeasureUnit(1L, "zak", "zakken");
-//    IngredientName firstIngredientName =
-//        testData.getIngredientName(1L, "ui", "uien", false, null, null);
-//    IngredientName secondIngredientName =
-//        testData.getIngredientName(1L, "prei", "preien", false, null, null);
-//    assertEquals(true,
-//        planningService.canConsolidate(
-//            testData.getIngredient(1L, 2F, firstMeasureUnit, firstIngredientName),
-//            testData.getIngredient(1L, 2F, firstMeasureUnit, firstIngredientName)));
-//    assertEquals(false,
-//        planningService.canConsolidate(
-//            testData.getIngredient(1L, 2F, firstMeasureUnit, firstIngredientName),
-//            testData.getIngredient(1L, 2F, secondMeasureUnit, firstIngredientName)));
-//    assertEquals(false,
-//        planningService.canConsolidate(
-//            testData.getIngredient(1L, 2F, firstMeasureUnit, firstIngredientName),
-//            testData.getIngredient(1L, 2F, firstMeasureUnit, secondIngredientName)));
-//    assertEquals(false,
-//        planningService.canConsolidate(
-//            testData.getIngredient(1L, 2F, secondMeasureUnit, firstIngredientName),
-//            testData.getIngredient(1L, 2F, firstMeasureUnit, secondIngredientName)));
-//    assertEquals(false,
-//        planningService.canConsolidate(
-//            testData.getIngredient(1L, 2F, firstMeasureUnit, firstIngredientName),
-//            testData.getIngredient(1L, 2F, null, firstIngredientName)));
-//    assertEquals(false,
-//        planningService.canConsolidate(
-//            testData.getIngredient(1L, 2F, null, firstIngredientName),
-//            testData.getIngredient(1L, 2F, secondMeasureUnit, firstIngredientName)));
-//    assertEquals(true,
-//        planningService.canConsolidate(
-//            testData.getIngredient(1L, 2F, null, firstIngredientName),
-//            testData.getIngredient(1L, 2F, null, firstIngredientName)));
-//    
-//  }
-//
-//  @Test
-//  void testConsolidateIngredients() {
-//    assertEquals(testData.getConsolidatedList(),
-//        planningService.consolidateIngredients(testData.getIngredientList()));
-//  }
+  @BeforeEach
+  public void setup() {
+    MockitoAnnotations.openMocks(this);
+    mockIngredients = new MockIngredients();
+  }
+
+  @Test
+  void testCanConsolidate_BothEqual() {
+    assertEquals(true,
+        planningService
+            .canConsolidate(
+                new Ingredient.IngredientBuilder()
+                    .withIngredientName(new IngredientName.IngredientNameBuilder()
+                        .withMeasureUnit(
+                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
+                        .withName("ui").build())
+                    .build(),
+                new Ingredient.IngredientBuilder()
+                    .withIngredientName(new IngredientName.IngredientNameBuilder()
+                        .withMeasureUnit(
+                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
+                        .withName("ui").build())
+                    .build()));
+  }
+
+  @Test
+  void testCanConsolidate_MeasureUnitsDifferent() {
+    assertEquals(false,
+        planningService
+            .canConsolidate(
+                new Ingredient.IngredientBuilder()
+                    .withIngredientName(new IngredientName.IngredientNameBuilder()
+                        .withMeasureUnit(
+                            new MeasureUnit.MeasureUnitBuilder().withName("bak").build())
+                        .withName("ui").build())
+                    .build(),
+                new Ingredient.IngredientBuilder()
+                    .withIngredientName(new IngredientName.IngredientNameBuilder()
+                        .withMeasureUnit(
+                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
+                        .withName("ui").build())
+                    .build()));
+  }
+
+  @Test
+  void testCanConsolidate_IngredientNamesDifferent() {
+    assertEquals(false,
+        planningService
+            .canConsolidate(
+                new Ingredient.IngredientBuilder().withIngredientName(
+                    new IngredientName.IngredientNameBuilder()
+                        .withMeasureUnit(
+                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
+                        .withName("prei").build())
+                    .build(),
+                new Ingredient.IngredientBuilder()
+                    .withIngredientName(new IngredientName.IngredientNameBuilder()
+                        .withMeasureUnit(
+                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
+                        .withName("ui").build())
+                    .build()));
+  }
+
+  @Test
+  void testCanConsolidate_NoMeasureUnits() {
+    assertEquals(true, planningService.canConsolidate(
+        new Ingredient.IngredientBuilder()
+            .withIngredientName(new IngredientName.IngredientNameBuilder().withName("ui").build())
+            .build(),
+        new Ingredient.IngredientBuilder()
+            .withIngredientName(new IngredientName.IngredientNameBuilder().withName("ui").build())
+            .build()));
+  }
+
+  @Test
+  void testCanConsolidate_OneMeasureUnit() {
+    assertEquals(false,
+        planningService.canConsolidate(
+            new Ingredient.IngredientBuilder().withIngredientName(
+                new IngredientName.IngredientNameBuilder().withName("ui").build()).build(),
+            new Ingredient.IngredientBuilder()
+                .withIngredientName(new IngredientName.IngredientNameBuilder()
+                    .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
+                    .withName("ui").build())
+                .build()));
+  }
+
+  @Test
+  void testConsolidateIngredients() {
+    assertEquals(mockIngredients.getConsolidatedIngredientList(),
+        planningService.consolidateIngredients(mockIngredients.getIngredientList()));
+  }
 
 }
