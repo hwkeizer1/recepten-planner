@@ -1,14 +1,14 @@
 package nl.recipes.views.recipes;
 
+import static nl.recipes.views.ViewConstants.VALIDATION;
+import static nl.recipes.views.ViewConstants.WIDGET;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-
 import org.springframework.stereotype.Component;
-
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -30,16 +30,14 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.converter.IntegerStringConverter;
-import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.RecipeService;
 import nl.recipes.services.TagService;
 import nl.recipes.views.root.RootView;
-
-import static nl.recipes.views.ViewConstants.*;
 
 @Component
 public class RecipeEditView {
@@ -130,7 +128,6 @@ public class RecipeEditView {
     recipeForm.setPadding(new Insets(10, 0, 0, 0));
     recipeForm.setHgap(20);
     recipeForm.setVgap(10);
-    // recipeForm.setGridLinesVisible(true);
 
     ColumnConstraints column0 = new ColumnConstraints();
     column0.setPercentWidth(10);
@@ -294,8 +291,7 @@ public class RecipeEditView {
   }
 
   private void createRecipe(ActionEvent event) {
-    formFieldsToSelectedRecipe();
-
+    selectedRecipe = formFieldsToRecipe();
     try {
       Recipe createdRecipe = recipeService.create(selectedRecipe);
       rootView.showRecipeSingleViewPanel(createdRecipe);
@@ -305,10 +301,16 @@ public class RecipeEditView {
   }
 
   private void updateRecipe(ActionEvent event) {
-    formFieldsToSelectedRecipe();
-    Optional<Recipe> updatedRecipe = recipeService.update(selectedRecipe);
-    if (updatedRecipe.isPresent()) {
-      rootView.showRecipeSingleViewPanel(updatedRecipe.get());
+    Recipe update = formFieldsToRecipe();
+    Optional<Recipe> updatedRecipe;
+    try {
+      updatedRecipe = recipeService.update(selectedRecipe, update);
+      if (updatedRecipe.isPresent()) {
+        rootView.showRecipeSingleViewPanel(updatedRecipe.get());
+      }
+    } catch (NotFoundException | AlreadyExistsException e) {
+      // Fix this error message
+      e.printStackTrace();
     }
   }
 
@@ -316,23 +318,23 @@ public class RecipeEditView {
     recipeNameError.setText(null);
   }
 
-  private void formFieldsToSelectedRecipe() {
-
-    // Column 1 and 2
-    selectedRecipe.setName(recipeName.getText());
-    selectedRecipe.setPreparationTime(
-        (preparationTime.getText().isEmpty()) ? null : Integer.valueOf(preparationTime.getText()));
-    selectedRecipe
-        .setCookTime((cookTime.getText().isEmpty()) ? null : Integer.valueOf(cookTime.getText()));
-    selectedRecipe
-        .setServings((servings.getText().isEmpty()) ? null : Integer.valueOf(servings.getText()));
-    selectedRecipe.setPreparations(preparations.getText());
-    selectedRecipe.setDirections(directions.getText());
-
-    Set<Ingredient> ingredientSet = new HashSet<>(ingredientEditView.getIngredientList());
-    selectedRecipe.setIngredients(ingredientSet);
-
-    // Column 3 and 4
+  private Recipe formFieldsToRecipe() {
+    return new Recipe.RecipeBuilder()
+        .withName(recipeName.getText())
+        .withPreparationTime((preparationTime.getText().isEmpty()) ? null : Integer.valueOf(preparationTime.getText()))
+        .withCookTime((cookTime.getText().isEmpty()) ? null : Integer.valueOf(cookTime.getText()))
+        .withServings((servings.getText().isEmpty()) ? null : Integer.valueOf(servings.getText()))
+        .withPreparations(preparations.getText())
+        .withDirections(directions.getText())
+        .withIngredients(new HashSet<>(ingredientEditView.getIngredientList()))
+        .withTags(getSelectedTags())
+        .withRecipeType(recipeTypeComboBox.getValue())
+        .withRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText()))
+        .withNotes(notes.getText())
+        .build();
+  }
+  
+  private Set<Tag> getSelectedTags() {
     Set<Tag> tags = new HashSet<>();
     for (CheckBox checkBox : tagCheckBoxes) {
       if (checkBox.isSelected()) {
@@ -342,11 +344,7 @@ public class RecipeEditView {
         }
       }
     }
-    selectedRecipe.setTags(tags);
-    selectedRecipe.setRecipeType(recipeTypeComboBox.getValue());
-    selectedRecipe
-        .setRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText()));
-    selectedRecipe.setNotes(notes.getText());
+    return tags;
   }
 
   private void selectedRecipeToFormFields() {

@@ -57,7 +57,7 @@ public class RecipeService {
   }
 
   public Recipe create(Recipe recipe) throws AlreadyExistsException {
-    if (recipeRepository.findByName(recipe.getName()).isPresent()) {
+    if (findByName(recipe.getName()).isPresent()) {
       throw new AlreadyExistsException("Recept " + recipe.getName() + " bestaat al");
     }
     Recipe createdRecipe = recipeRepository.save(recipe);
@@ -65,15 +65,21 @@ public class RecipeService {
     return createdRecipe;
   }
 
-  public Optional<Recipe> update(Recipe recipe) {
-    Recipe updatedRecipe = recipeRepository.save(recipe);
-    
-    Optional<Recipe> optionalRecipe = findByName(recipe.getName());
-    if (optionalRecipe.isPresent()) {
-      observableRecipeList.set(observableRecipeList.lastIndexOf(optionalRecipe.get()), updatedRecipe);
-      return Optional.of(updatedRecipe);
+  public Optional<Recipe> update(Recipe recipe, Recipe update)
+      throws NotFoundException, AlreadyExistsException {
+    if (!findById(recipe.getId()).isPresent()) {
+      throw new NotFoundException("Recept " + recipe.getName() + " niet gevonden");
     }
-    return Optional.empty();
+    if (!recipe.getName().equals(update.getName()) && findByName(update.getName()).isPresent()) {
+      throw new AlreadyExistsException("Recept " + update.getName() + " bestaat al");
+    }
+    // Assume update object is complete but the id field might be empty
+    update.setId(recipe.getId());
+
+    Recipe updatedRecipe = recipeRepository.save(update);
+    observableRecipeList.set(observableRecipeList.lastIndexOf(recipe), update);
+    return Optional.of(updatedRecipe);
+
   }
 
   public void remove(Recipe recipe) throws NotFoundException {
@@ -109,4 +115,8 @@ public class RecipeService {
     observableIngredientList.removeListener(listener);
   }
 
+  // Setter for JUnit testing only
+  void setObservableRecipeList(ObservableList<Recipe> observableRecipeList) {
+    this.observableRecipeList = observableRecipeList;
+  }
 }

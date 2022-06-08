@@ -13,17 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
-import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.RecipeRepository;
 import nl.recipes.util.testdata.MockIngredients;
 import nl.recipes.util.testdata.MockRecipes;
 
-@Slf4j
 class RecipeServiceTest {
 
   @Mock 
@@ -80,6 +78,81 @@ class RecipeServiceTest {
     });
 
     Assertions.assertEquals("Recept First recipe bestaat al", exception.getMessage());
+    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+  }
+  
+  @Test
+  void testUpdate_HappyPath() throws Exception {
+    Recipe originalRecipe = recipeService.findByName("Second recipe").get();
+    Recipe update = new Recipe.RecipeBuilder().withName("Updated recipe").build();
+
+    Recipe expectedRecipe = new Recipe.RecipeBuilder().withName("Updated recipe").build(2L);
+
+    when(recipeRepository.save(expectedRecipe)).thenReturn(expectedRecipe);
+
+    assertEquals(Optional.of(expectedRecipe), recipeService.update(originalRecipe, update));
+    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    assertEquals(Optional.of(expectedRecipe), recipeService.findById(2L));
+  }
+  
+  @Test
+  void testUpdate_NotFoundException() throws Exception {
+    Recipe originalRecipe = new Recipe.RecipeBuilder()
+        .withName("onbekend recept")
+        .build(3000L);
+
+    Recipe update = new Recipe.RecipeBuilder()
+        .withName("updated onbekend recept")
+        .build();
+
+    NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
+      recipeService.update(originalRecipe, update);
+    });
+
+    Assertions.assertEquals("Recept onbekend recept niet gevonden", exception.getMessage());
+    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+  }
+  
+  @Test
+  void testUpdate_AlreadyExistsException() throws Exception {
+    Recipe originalIngredientName = new Recipe.RecipeBuilder()
+        .withName("First recipe")
+        .build(1L);
+
+    Recipe update = new Recipe.RecipeBuilder()
+        .withName("Fourth recipe")
+        .build();
+
+    AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
+      recipeService.update(originalIngredientName, update);
+    });
+
+    Assertions.assertEquals("Recept Fourth recipe bestaat al", exception.getMessage());
+    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+  }
+  
+  @Test
+  void testRemove_HappyPath() throws Exception {
+    Recipe originalRecipe = recipeService.findByName("Third recipe").get();
+
+    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    recipeService.remove(originalRecipe);
+    assertEquals(3, recipeService.getReadonlyRecipeList().size());
+    assertEquals(Optional.empty(),
+        recipeService.findByName(originalRecipe.getName()));
+  }
+
+  @Test
+  void testRemove_NotFound() throws Exception {
+    Recipe originalRecipe = new Recipe.RecipeBuilder()
+        .withName("onbekend recept")
+        .build(3000L);
+
+    NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
+      recipeService.remove(originalRecipe);
+    });
+
+    Assertions.assertEquals("Recept onbekend recept niet gevonden", exception.getMessage());
     assertEquals(4, recipeService.getReadonlyRecipeList().size());
   }
   

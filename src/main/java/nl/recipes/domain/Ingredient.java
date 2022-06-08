@@ -121,13 +121,13 @@ public class Ingredient {
 
   @Override
   public String toString() {
-    return "Ingredient [id=" + id + ", recipe=" + recipe + ", amount=" + amount
+    return "Ingredient [id=" + id + ", amount=" + amount
         + ", ingredientName=" + ingredientName + ", onList=" + onList + "]";
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, id, ingredientName, onList, recipe);
+    return Objects.hash(amount, id, ingredientName, onList);
   }
 
   @Override
@@ -140,7 +140,6 @@ public class Ingredient {
       return false;
     Ingredient other = (Ingredient) obj;
     return Objects.equals(amount, other.amount) && Objects.equals(id, other.id)
-        && Objects.equals(ingredientName, other.ingredientName) && onList == other.onList
-        && Objects.equals(recipe, other.recipe);
+        && Objects.equals(ingredientName, other.ingredientName) && onList == other.onList;
   }
 }

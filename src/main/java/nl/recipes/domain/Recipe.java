@@ -80,7 +80,9 @@ public class Recipe {
     this.name = builder.name;
     this.servingTips = builder.servingTips;
     this.notes = builder.notes;
-    this.ingredients = builder.ingredients;
+    for (Ingredient ingredient : builder.ingredients) {
+      addIngredient(ingredient);
+    }
     this.image = builder.image;
     this.recipeType = builder.recipeType;
     this.tags = builder.tags;
@@ -348,8 +350,7 @@ public class Recipe {
     }
     
     public Recipe build() {
-      Recipe recipe = new Recipe(this);
-      return recipe;
+      return new Recipe(this);
     }
     
     public Recipe build(Long id) {
