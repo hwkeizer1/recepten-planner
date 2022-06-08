@@ -116,7 +116,6 @@
 	  <connection>scm:git:ssh://git@github.com/hwkeizer1/recepten-planner.git</connection>
 	  <developerConnection>scm:git:ssh://git@github.com/hwkeizer1/recepten-planner.git</developerConnection>
 	  <url>https://github.com/hwkeizer1/recepten-planner/tree/master</url>
-	  <tag>HEAD</tag>
   	</scm>
 
 	<build>
