@@ -5,6 +5,15 @@ target/
 !**/src/test/**/target/
 .attach_pid*
 
+### Maven release plugin ###
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
 ### STS ###
 .apt_generated
 .classpath
