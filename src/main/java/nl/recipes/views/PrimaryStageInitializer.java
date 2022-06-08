@@ -27,9 +27,8 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
         getClass().getResource("/css/single-recipe-view.css").toExternalForm(),
         getClass().getResource("/css/planning.css").toExternalForm());
     stage.setScene(scene);
-    stage.setTitle("Recepten-planner 0.2-beta");
+    stage.setTitle(ViewConstants.PROGRAM_TITLE);
     stage.show();
     stage.setMaximized(true);
   }
-
 }
