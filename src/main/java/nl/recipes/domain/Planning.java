@@ -19,14 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * The planning class contains one or more recipes (or '- no recipe planned -') for a single day.
- * There can only be one planning for each day on the planBoard so date is a unique field. equals,
- * hashCode and compareTo methods will all only use the date field.
- */
 @Entity
-@Data
-@NoArgsConstructor
 public class Planning implements Comparable<Planning> {
 
   @Id
@@ -45,16 +38,50 @@ public class Planning implements Comparable<Planning> {
   private Integer servings;
 
   private boolean onShoppingList = true;
-
-  public Planning(LocalDate date, Recipe recipe, boolean onShoppingList) {
-    this.date = date;
-    this.recipes.add(recipe);
-    this.servings = recipe.getServings();
-    this.onShoppingList = onShoppingList;
+  
+  protected Planning() {}
+  
+  private Planning(PlanningBuilder builder) {
+    this.date = builder.date;
+    this.recipes = builder.recipes;
+    this.servings = builder.servings;
+    this.onShoppingList = builder.onShoppingList;
   }
 
-  public Planning(LocalDate date) {
-    this.date = date;
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public LocalDate getDate() {
+    return date;
+  }
+
+  public List<Recipe> getRecipes() {
+    return recipes;
+  }
+
+  public void setRecipes(List<Recipe> recipes) {
+    this.recipes = recipes;
+  }
+
+  public Integer getServings() {
+    return servings;
+  }
+
+  public void setServings(Integer servings) {
+    this.servings = servings;
+  }
+
+  public boolean isOnShoppingList() {
+    return onShoppingList;
+  }
+
+  public void setOnShoppingList(boolean onShoppingList) {
+    this.onShoppingList = onShoppingList;
   }
 
   public void addRecipe(Recipe recipe) {
@@ -78,6 +105,46 @@ public class Planning implements Comparable<Planning> {
   @Override
   public int compareTo(Planning other) {
     return this.getDate().compareTo(other.getDate());
+  }
+  
+  public static class PlanningBuilder {
+    private LocalDate date;
+    private List<Recipe> recipes = new ArrayList<>();
+    private Integer servings;
+    private boolean onShoppingList = true;
+    
+    public PlanningBuilder withDate(LocalDate date) {
+      this.date = date;
+      return this;
+    }
+    
+    public PlanningBuilder withRecipe(Recipe recipe) {
+      if (recipe != null) {
+        this.recipes.add(recipe);
+      }
+      return this;
+    }
+    
+    public PlanningBuilder withServings(Integer servings) {
+      this.servings = servings;
+      return this;
+    }
+    
+    public PlanningBuilder withOnShoppingList(boolean onShoppingList) {
+      this.onShoppingList = onShoppingList;
+      return this;
+    }
+    
+    public Planning build() {
+      Planning planning = new Planning(this);
+      return planning;
+    }
+    
+    public Planning build(Long id) {
+      Planning planning = new Planning(this);
+      planning.setId(id);
+      return planning;
+    }
   }
 
   /**

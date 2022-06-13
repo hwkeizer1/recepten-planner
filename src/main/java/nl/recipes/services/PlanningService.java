@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
@@ -18,6 +19,7 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.PlanningRepository;
 
+@Slf4j
 @Service
 public class PlanningService {
 
@@ -123,7 +125,9 @@ public class PlanningService {
 
     int size = planningList.size();
     for (int i = size; i < 10; i++) {
-      planningList.add(new Planning(LocalDate.now().plusDays(i)));
+      planningList.add(new Planning.PlanningBuilder()
+          .withDate(LocalDate.now().plusDays(i))
+          .build());
     }
 
     observablePlanningList = FXCollections.observableArrayList(planningList);
@@ -159,5 +163,15 @@ public class PlanningService {
   
   private void deletePlanning(Planning planning) {
     planningRepository.delete(planning);
+  }
+  
+  // Setter for JUnit testing only
+  void setMockObservablePlanningList(ObservableList<Planning> observablePlanningList) {
+    this.observablePlanningList = observablePlanningList;
+  }
+  
+  // Getter for JUnit testing only
+  ObservableList<Planning> getMockObservablePlanningList() {
+    return observablePlanningList;
   }
 }
