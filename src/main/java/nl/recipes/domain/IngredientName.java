@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -24,8 +23,7 @@ public class IngredientName {
   @OneToOne(fetch = FetchType.EAGER)
   private MeasureUnit measureUnit;
   
-  @NotNull
-  @Column(unique = true, length = 50)
+  @Column(length = 50)
   private String name;
 
   @Column(length = 50)

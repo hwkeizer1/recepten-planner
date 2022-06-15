@@ -57,8 +57,8 @@ public class IngredientNameTableEditWidget {
   TableColumn<IngredientName, String> pluralNameColumn = new TableColumn<>("Meervoud");
 
   TableColumn<IngredientName, Boolean> stockColumn = new TableColumn<>("Voorraad");
-  
-  TableColumn<IngredientName, MeasureUnit> measureUnitColumn = new TableColumn<>("Maateenheid");
+
+  TableColumn<IngredientName, String> measureUnitColumn = new TableColumn<>("Maateenheid");
 
   TableColumn<IngredientName, ShopType> shopTypeColumn = new TableColumn<>("Winkel");
 
@@ -91,7 +91,7 @@ public class IngredientNameTableEditWidget {
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 
   ChangeListener<IngredientName> ingredientNameChangeListener;
-  
+
   Callback<ListView<MeasureUnit>, ListCell<MeasureUnit>> measureUnitCellFactory =
       input -> new ListCell<MeasureUnit>() {
 
@@ -168,11 +168,12 @@ public class IngredientNameTableEditWidget {
     stockColumn.setCellFactory(c -> new CheckBoxTableCell<>());
     stockColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.15));
 
-    measureUnitColumn
-    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getMeasureUnit()));
-    measureUnitColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.15));
+    measureUnitColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
+        c.getValue().getMeasureUnit() != null ? c.getValue().getMeasureUnit().getName() : null));
+    measureUnitColumn.prefWidthProperty()
+        .bind(ingredientNameTableView.widthProperty().multiply(0.15));
     shopTypeColumn
-    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
+        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
     shopTypeColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.15));
     ingredientTypeColumn
         .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientType()));
@@ -255,7 +256,7 @@ public class IngredientNameTableEditWidget {
     inputForm.add(measureUnitLabel, 2, 0);
     measureUnitComboBox.setMinWidth(150);
     inputForm.add(measureUnitComboBox, 3, 0);
-    
+
     Label shopTypeLabel = new Label("Winkel:");
     inputForm.add(shopTypeLabel, 2, 2);
     shopTypeComboBox.getItems().setAll(ShopType.values());
@@ -287,14 +288,11 @@ public class IngredientNameTableEditWidget {
 
   private void createIngredientName(ActionEvent actionEvent) {
     IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
-        .withName(nameTextField.getText())
-        .withPluralName(pluralNameTextField.getText())
-        .withStock(stockCheckBox.isSelected())
-        .withMeasureUnit(measureUnitComboBox.getValue())
+        .withName(nameTextField.getText()).withPluralName(pluralNameTextField.getText())
+        .withStock(stockCheckBox.isSelected()).withMeasureUnit(measureUnitComboBox.getValue())
         .withShopType(shopTypeComboBox.getValue())
-        .withIngredientType(ingredientTypeComboBox.getValue())
-        .build();
-       
+        .withIngredientType(ingredientTypeComboBox.getValue()).build();
+
     try {
       ingredientNameService.create(ingredientName);
       ingredientNameTableView.getSelectionModel().select(ingredientName);
@@ -306,14 +304,11 @@ public class IngredientNameTableEditWidget {
 
   private void updateIngredientName(ActionEvent actionEvent) {
     IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withName(nameTextField.getText())
-        .withPluralName(pluralNameTextField.getText())
-        .withStock(stockCheckBox.isSelected())
-        .withMeasureUnit(measureUnitComboBox.getValue())
+        .withName(nameTextField.getText()).withPluralName(pluralNameTextField.getText())
+        .withStock(stockCheckBox.isSelected()).withMeasureUnit(measureUnitComboBox.getValue())
         .withShopType(shopTypeComboBox.getValue())
-        .withIngredientType(ingredientTypeComboBox.getValue())
-        .build();
-    
+        .withIngredientType(ingredientTypeComboBox.getValue()).build();
+
     try {
       ingredientNameService.update(selectedIngredientName, update);
     } catch (NotFoundException | AlreadyExistsException e) {

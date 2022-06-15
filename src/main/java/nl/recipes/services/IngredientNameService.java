@@ -14,7 +14,7 @@ import nl.recipes.repositories.IngredientNameRepository;
 @Service
 public class IngredientNameService {
 
-  private static final String INGREDIENT_NAAM = "Ingrediënt naam ";
+  private static final String INGREDIENT_NAAM = "Ingrediënt ";
 
   private final IngredientNameRepository ingredientNameRepository;
 
@@ -36,8 +36,9 @@ public class IngredientNameService {
         || ingredientName.getName().isEmpty()) {
       throw new IllegalValueException("Ingrediënt naam mag niet leeg zijn");
     }
-    if (findByName(ingredientName.getName()).isPresent()) {
-      throw new AlreadyExistsException(INGREDIENT_NAAM + ingredientName.getName() + " bestaat al");
+    if (ingredientNameExists(ingredientName)) {
+      throw new AlreadyExistsException(INGREDIENT_NAAM + ingredientName.getName()
+          + getMeasureUnitSuffix(ingredientName) + " bestaat al");
     }
     IngredientName createdIngredientName = ingredientNameRepository.save(ingredientName);
     observableIngredientNameList.add(createdIngredientName);
@@ -47,11 +48,12 @@ public class IngredientNameService {
   public IngredientName update(IngredientName ingredientName, IngredientName update)
       throws NotFoundException, AlreadyExistsException {
     if (!findById(ingredientName.getId()).isPresent()) {
-      throw new NotFoundException(INGREDIENT_NAAM + ingredientName.getName() + " niet gevonden");
+      throw new NotFoundException(INGREDIENT_NAAM + ingredientName.getName()
+          + getMeasureUnitSuffix(ingredientName) + " niet gevonden");
     }
-    if (!ingredientName.getName().equals(update.getName())
-        && findByName(update.getName()).isPresent()) {
-      throw new AlreadyExistsException(INGREDIENT_NAAM + update.getName() + " bestaat al");
+    if (!(ingredientName.equals(update)) && ingredientNameExists(update)) {
+      throw new AlreadyExistsException(INGREDIENT_NAAM + update.getName()
+          + getMeasureUnitSuffix(update) + " bestaat al");
     }
     ingredientName.setName(update.getName());
     ingredientName.setPluralName(update.getPluralName());
@@ -94,10 +96,18 @@ public class IngredientNameService {
     observableIngredientNameList.removeListener(listener);
   }
 
+  boolean ingredientNameExists(IngredientName ingredientName) {
+    return observableIngredientNameList.contains(ingredientName);
+  }
+  
+  private String getMeasureUnitSuffix(IngredientName ingredientName) {
+    if (ingredientName.getMeasureUnit() == null) return "";
+    return " (" + ingredientName.getMeasureUnit().getName() +")";
+  }
+  
   // Setter for JUnit testing only
   void setObservableIngredientNameList(
       ObservableList<IngredientName> observableIngredientNameList) {
     this.observableIngredientNameList = observableIngredientNameList;
   }
-
 }

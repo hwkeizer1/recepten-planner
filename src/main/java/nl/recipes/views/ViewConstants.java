@@ -2,7 +2,7 @@ package nl.recipes.views;
 
 public final class ViewConstants {
 
-  public static final String PROGRAM_TITLE = "Recepten-planner versie 1.0";
+  public static final String PROGRAM_TITLE = "Recepten-planner versie 1.0.1";
   
   // Styling constants
   public static final String BACKGROUND = "background";
