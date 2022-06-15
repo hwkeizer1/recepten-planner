@@ -15,4 +15,13 @@ public class MockPlannings {
     }
     return planningList;
   }
+  
+  public List<Planning> getPlanningListFrom2DaysAgo() {
+    List<Planning> planningList = new ArrayList<>();
+    for (int i = -2; i < 8; i++) {
+      planningList
+          .add(new Planning.PlanningBuilder().withDate(LocalDate.now().plusDays(i)).build());
+    }
+    return planningList;
+  }
 }

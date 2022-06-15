@@ -2,10 +2,9 @@ package nl.recipes.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
-import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,18 +12,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import javafx.collections.FXCollections;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
+import nl.recipes.domain.RecipeType;
 import nl.recipes.repositories.PlanningRepository;
 import nl.recipes.util.testdata.MockIngredients;
 import nl.recipes.util.testdata.MockPlannings;
 import nl.recipes.util.testdata.MockRecipes;
 
-@Slf4j
 class PlanningServiceTest {
 
   @Mock
@@ -32,6 +30,9 @@ class PlanningServiceTest {
   
   @Mock
   RecipeService recipeService;
+  
+  @Mock
+  PlanningService mockPlanningService;
   
   @InjectMocks
   PlanningService planningService;
@@ -47,7 +48,6 @@ class PlanningServiceTest {
     mockRecipes = new MockRecipes();
     mockPlannings = new MockPlannings();
     planningService.setMockObservablePlanningList(FXCollections.observableArrayList(mockPlannings.getPlanningList()));
-//    planningService.setMockObservableRecipeList(FXCollections.observableArrayList(mockRecipes.getRecipeListBasic()));
   }
 
   @Test 
@@ -111,6 +111,17 @@ class PlanningServiceTest {
     
     planningService.updatePlanning(planning);
     assertEquals(false, planningService.getMockObservablePlanningList().get(3).isOnShoppingList());
+  }
+  
+  @Test
+  void testGetIngredientsFromPlanning() {
+    for (Recipe recipe: mockRecipes.getRecipeListBasic()) {
+      planningService.addRecipeToPlanning(recipe);
+    }
+    when(recipeService.findById(Long.valueOf("1"))).thenReturn(Optional.of(mockRecipes.getRecipeListBasic().get(0)));
+    planningService.moveRecipeToPlanning(mockPlannings.getPlanningList().get(0), "1");
+    
+    assertEquals(mockIngredients.getConsolidatedIngredientList(), planningService.getIngredientList());
   }
   
   @Test
@@ -193,11 +204,32 @@ class PlanningServiceTest {
                     .withName("ui").build())
                 .build()));
   }
-
+  
   @Test
-  void testConsolidateIngredients() {
-    assertEquals(mockIngredients.getConsolidatedIngredientList(),
-        planningService.consolidateIngredients(mockIngredients.getIngredientList()));
+  void testRegisterCompletedPlanning_NothingExpired() {
+    List<Planning> plannings = mockPlannings.getPlanningList();
+    
+    assertEquals(mockPlannings.getPlanningList(), planningService.removeExpiredPlannings(plannings));
   }
-
+  
+  @Test
+  void testRegisterCompletedPlanning_2DaysAgo_NoRecipes() {
+    List<Planning> plannings = mockPlannings.getPlanningListFrom2DaysAgo();
+    
+    List<Planning> expectedPlannings = plannings.subList(2, plannings.size());
+      
+    assertEquals(expectedPlannings, planningService.removeExpiredPlannings(plannings));
+  }
+  
+  @Test
+  void testRegisterCompletedPlanning_2DaysAgo_WithRecipe() {
+    List<Planning> plannings = mockPlannings.getPlanningListFrom2DaysAgo();
+    Recipe recipe = new Recipe.RecipeBuilder().withName("newRecipe").withRecipeType(RecipeType.HOOFDGERECHT).build(1L);
+    Planning planning = plannings.get(0);
+    planning.addRecipe(recipe);
+    
+    List<Planning> expectedPlannings = plannings.subList(2, plannings.size());
+      
+    assertEquals(expectedPlannings, planningService.removeExpiredPlannings(plannings));
+  }
 }

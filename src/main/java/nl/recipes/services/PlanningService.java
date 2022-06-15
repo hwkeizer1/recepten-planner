@@ -2,7 +2,6 @@ package nl.recipes.services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -10,16 +9,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
-import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.PlanningRepository;
 
-@Slf4j
 @Service
 public class PlanningService {
 
@@ -85,10 +81,6 @@ public class PlanningService {
     return consolidateIngredients(ingredients);
   }
 
-  public List<ShoppingItem> getStandardShoppings() {
-    return Collections.emptyList();
-  }
-
   List<Ingredient> consolidateIngredients(List<Ingredient> ingredients) {
     List<Ingredient> ingredientList = new ArrayList<>();
     for (Ingredient ingredient : ingredients) {
@@ -133,7 +125,7 @@ public class PlanningService {
     observablePlanningList = FXCollections.observableArrayList(planningList);
   }
 
-  private List<Planning> removeExpiredPlannings(List<Planning> planningList) {
+  protected List<Planning> removeExpiredPlannings(List<Planning> planningList) {
     planningList.stream().filter(p -> p.getDate().isBefore(LocalDate.now()))
         .forEach(this::registerCompletedPlanning);
     
@@ -144,7 +136,7 @@ public class PlanningService {
         .collect(Collectors.toList());
   }
 
-  private void registerCompletedPlanning(Planning planning) {
+  protected void registerCompletedPlanning(Planning planning) {
     for (Recipe recipe : planning.getRecipes()) {
       recipe.setLastServed(planning.getDate());
       if (recipe.getTimesServed() != null) {

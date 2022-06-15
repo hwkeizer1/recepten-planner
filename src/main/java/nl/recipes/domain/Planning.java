@@ -16,8 +16,6 @@ import javax.persistence.ManyToMany;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 public class Planning implements Comparable<Planning> {
