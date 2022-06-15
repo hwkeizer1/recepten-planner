@@ -96,7 +96,7 @@ public class IngredientEditView {
     }
 
     ingredientTable.setItems(ingredientList);
-    Label ingredientTableEmpty = new Label("Nog geen ingredienten beschikbaar");
+    Label ingredientTableEmpty = new Label("Nog geen ingredienten toegevoegd");
     ingredientTableEmpty.getStyleClass().add(EMPTY_INGREDIENT_TABLE);
     ingredientTable.setPlaceholder(ingredientTableEmpty);
     ingredientTable.setFixedCellSize(25);

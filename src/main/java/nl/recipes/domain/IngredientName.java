@@ -111,7 +111,7 @@ public class IngredientName {
   @Transient
   @JsonIgnore
   public String getListLabel() {
-    return name + (measureUnit == null ? "" : " (" + measureUnit.getListLabel() + ")");
+    return name + (measureUnit == null ? "" : " (" + measureUnit.getName() + ")");
   }
   
   public static class IngredientNameBuilder {

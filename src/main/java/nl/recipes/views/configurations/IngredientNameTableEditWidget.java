@@ -15,6 +15,8 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -23,6 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
@@ -88,14 +91,30 @@ public class IngredientNameTableEditWidget {
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 
   ChangeListener<IngredientName> ingredientNameChangeListener;
+  
+  Callback<ListView<MeasureUnit>, ListCell<MeasureUnit>> measureUnitCellFactory =
+      input -> new ListCell<MeasureUnit>() {
+
+        @Override
+        protected void updateItem(MeasureUnit measureUnit, boolean empty) {
+          super.updateItem(measureUnit, empty);
+          if (measureUnit == null || empty) {
+            setText(null);
+          } else {
+            setText(measureUnit.getName());
+          }
+        }
+      };
 
   public IngredientNameTableEditWidget(IngredientNameService ingredientNameService,
       MeasureUnitService measureUnitService) {
     this.ingredientNameService = ingredientNameService;
     this.measureUnitService = measureUnitService;
-    
+
     measureUnitComboBox = new ComboBox<>();
     measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitComboBox.setButtonCell(measureUnitCellFactory.call(null));
+    measureUnitComboBox.setCellFactory(measureUnitCellFactory);
 
     ingredientNameChangeListener = (observable, oldValue, newValue) -> {
       selectedIngredientName = newValue;
