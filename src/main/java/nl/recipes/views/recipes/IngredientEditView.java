@@ -1,9 +1,14 @@
 package nl.recipes.views.recipes;
 
+import static nl.recipes.views.ViewConstants.DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.EMPTY_INGREDIENT_TABLE;
+import static nl.recipes.views.ViewConstants.INGREDIENT_EDIT_TABLE;
+import static nl.recipes.views.ViewConstants.RP_TABLE;
+import static nl.recipes.views.ViewConstants.WIDGET;
 import java.util.ArrayList;
-
+import org.controlsfx.control.SearchableComboBox;
+import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -17,10 +22,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -28,12 +30,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.services.IngredientNameService;
-
-import static nl.recipes.views.ViewConstants.*;
+import nl.recipes.views.converters.IngredientNameStringConverter;
 
 @Component
 public class IngredientEditView {
@@ -48,25 +48,11 @@ public class IngredientEditView {
 
   TextField amountTextField;
 
-  ComboBox<IngredientName> ingredientNameComboBox;
+  SearchableComboBox<IngredientName> ingredientNameComboBox;
 
   private Ingredient selectedIngredient;
 
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
-  
-  Callback<ListView<IngredientName>, ListCell<IngredientName>> ingredientNameCellFactory =
-      input -> new ListCell<IngredientName>() {
-
-        @Override
-        protected void updateItem(IngredientName item, boolean empty) {
-          super.updateItem(item, empty);
-          if (item == null || empty) {
-            setText(null);
-          } else {
-            setText(item.getListLabel());
-          }
-        }
-      };
 
   public IngredientEditView(IngredientNameService ingredientNameService) {
     this.ingredientNameService = ingredientNameService;
@@ -75,11 +61,11 @@ public class IngredientEditView {
     ingredientPanel.setPadding(new Insets(10, 0, 0, 0));
     ingredientPanel.getStyleClass().addAll(WIDGET, DROP_SHADOW);
     amountTextField = new TextField();
-    ingredientNameComboBox = new ComboBox<>();
+    ingredientNameComboBox = new SearchableComboBox<>();
+    ingredientNameComboBox.setConverter(new IngredientNameStringConverter());
+    TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(), ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
     ingredientNameComboBox.getItems()
         .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
-    ingredientNameComboBox.setButtonCell(ingredientNameCellFactory.call(null));
-    ingredientNameComboBox.setCellFactory(ingredientNameCellFactory);
 
     ingredientPanel.getChildren().addAll(getIngredientTableViewPanel(), getIngredientEditPanel());
   }
@@ -264,4 +250,3 @@ public class IngredientEditView {
     ingredientList.remove(selectedIngredient);
   }
 }
-

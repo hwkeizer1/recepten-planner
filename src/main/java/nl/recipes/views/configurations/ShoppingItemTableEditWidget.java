@@ -5,6 +5,8 @@ import static nl.recipes.views.ViewConstants.RP_TABLE;
 import static nl.recipes.views.ViewConstants.TITLE;
 import static nl.recipes.views.ViewConstants.VALIDATION;
 import static nl.recipes.views.ViewConstants.WIDGET;
+import org.controlsfx.control.SearchableComboBox;
+import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -16,16 +18,12 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
@@ -33,6 +31,7 @@ import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.IngredientNameService;
 import nl.recipes.services.ShoppingItemService;
+import nl.recipes.views.converters.IngredientNameStringConverter;
 
 @Component
 public class ShoppingItemTableEditWidget {
@@ -43,27 +42,13 @@ public class ShoppingItemTableEditWidget {
 
   TableView<ShoppingItem> shoppingItemTableView;
 
-  ComboBox<IngredientName> ingredientNameComboBox;
+  SearchableComboBox<IngredientName> ingredientNameComboBox;
 
   Label ingredientNameError = new Label();
 
   private ShoppingItem selectedShoppingItem;
 
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
-  
-  Callback<ListView<IngredientName>, ListCell<IngredientName>> ingredientNameCellFactory =
-      input -> new ListCell<IngredientName>() {
-
-        @Override
-        protected void updateItem(IngredientName item, boolean empty) {
-          super.updateItem(item, empty);
-          if (item == null || empty) {
-            setText(null);
-          } else {
-            setText(item.getListLabel());
-          }
-        }
-      };
 
   public ShoppingItemTableEditWidget(ShoppingItemService shoppingItemService, IngredientNameService ingredientNameService) {
     this.shoppingItemService = shoppingItemService;
@@ -132,11 +117,11 @@ public class ShoppingItemTableEditWidget {
     form.getColumnConstraints().addAll(column0, column1);
 
     Label ingredientNameLabel = new Label("Artikel:");
-    ingredientNameComboBox = new ComboBox<>();
+    ingredientNameComboBox = new SearchableComboBox<>();
+    ingredientNameComboBox.setConverter(new IngredientNameStringConverter());
+    TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(), ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
     ingredientNameComboBox.getItems()
         .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
-    ingredientNameComboBox.setButtonCell(ingredientNameCellFactory.call(null));
-    ingredientNameComboBox.setCellFactory(ingredientNameCellFactory);
     ingredientNameComboBox.setMinWidth(150);
     ingredientNameComboBox.setOnAction(e -> modifiedProperty.set(true));
     GridPane.setValignment(ingredientNameLabel, VPos.TOP);
