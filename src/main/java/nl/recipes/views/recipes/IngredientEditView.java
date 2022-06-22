@@ -207,15 +207,15 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
     column1.setPercentWidth(65);
     inputForm.getColumnConstraints().addAll(column0, column1);
 
-    Label ingredientNameLabel = new Label("Ingrediënt:");
-    inputForm.add(ingredientNameLabel, 0, 0);
-    ingredientNameComboBox.setMinWidth(250);
-    inputForm.add(ingredientNameComboBox, 1, 0);
-
     Label amountLabel = new Label("Hoeveelheid:");
-    inputForm.add(amountLabel, 0, 1);
+    inputForm.add(amountLabel, 0, 0);
     amountTextField.setMaxWidth(80);
-    inputForm.add(amountTextField, 1, 1);
+    inputForm.add(amountTextField, 1, 0);
+    
+    Label ingredientNameLabel = new Label("Ingrediënt:");
+    inputForm.add(ingredientNameLabel, 0, 1);
+    ingredientNameComboBox.setMinWidth(250);
+    inputForm.add(ingredientNameComboBox, 1, 1);
 
     amountTextField.setOnKeyReleased(this::handleKeyReleasedAction);
     ingredientNameComboBox.setOnAction(e -> modifiedProperty.set(true));
