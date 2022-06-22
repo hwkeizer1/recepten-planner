@@ -12,6 +12,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -41,7 +42,7 @@ import nl.recipes.services.MeasureUnitService;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
 
 @Component
-public class IngredientNameTableEditWidget {
+public class IngredientNameTableEditWidget implements  ListChangeListener<MeasureUnit>{
 
   private IngredientNameService ingredientNameService;
 
@@ -99,6 +100,8 @@ public class IngredientNameTableEditWidget {
       MeasureUnitService measureUnitService) {
     this.ingredientNameService = ingredientNameService;
     this.measureUnitService = measureUnitService;
+    
+    this.measureUnitService.addListener(this);
     
     measureUnitComboBox = new SearchableComboBox<>();
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
@@ -314,4 +317,8 @@ public class IngredientNameTableEditWidget {
     }
   }
 
+  @Override
+  public void onChanged(Change<? extends MeasureUnit> c) {
+    measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
+  }
 }

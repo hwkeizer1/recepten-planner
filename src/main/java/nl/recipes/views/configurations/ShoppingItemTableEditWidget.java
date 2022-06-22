@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -34,7 +35,7 @@ import nl.recipes.services.ShoppingItemService;
 import nl.recipes.views.converters.IngredientNameStringConverter;
 
 @Component
-public class ShoppingItemTableEditWidget {
+public class ShoppingItemTableEditWidget implements ListChangeListener<IngredientName> {
 
   private final ShoppingItemService shoppingItemService;
 
@@ -50,9 +51,12 @@ public class ShoppingItemTableEditWidget {
 
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 
-  public ShoppingItemTableEditWidget(ShoppingItemService shoppingItemService, IngredientNameService ingredientNameService) {
+  public ShoppingItemTableEditWidget(ShoppingItemService shoppingItemService,
+      IngredientNameService ingredientNameService) {
     this.shoppingItemService = shoppingItemService;
     this.ingredientNameService = ingredientNameService;
+
+    this.ingredientNameService.addListener(this);
   }
 
   public Node getShoppingItemPanel() {
@@ -82,17 +86,19 @@ public class ShoppingItemTableEditWidget {
       if (c.getValue().getIngredientName().getMeasureUnit() == null) {
         return new ReadOnlyObjectWrapper<>();
       } else {
-        return new ReadOnlyObjectWrapper<>(c.getValue().getIngredientName().getMeasureUnit().getName());        
+        return new ReadOnlyObjectWrapper<>(
+            c.getValue().getIngredientName().getMeasureUnit().getName());
       }
     });
-    
+
     TableColumn<ShoppingItem, String> nameColumn = new TableColumn<>("Naam");
-    nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
-        c.getValue().getIngredientName().getName()));
-        
+    nameColumn.setCellValueFactory(
+        c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientName().getName()));
+
     nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty());
-    
-    measureUnitColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.35));
+
+    measureUnitColumn.prefWidthProperty()
+        .bind(shoppingItemTableView.widthProperty().multiply(0.35));
     nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.65));
 
     shoppingItemTableView.getColumns().add(measureUnitColumn);
@@ -119,7 +125,8 @@ public class ShoppingItemTableEditWidget {
     Label ingredientNameLabel = new Label("Artikel:");
     ingredientNameComboBox = new SearchableComboBox<>();
     ingredientNameComboBox.setConverter(new IngredientNameStringConverter());
-    TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(), ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
+    TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(),
+        ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
     ingredientNameComboBox.getItems()
         .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
     ingredientNameComboBox.setMinWidth(150);
@@ -200,6 +207,11 @@ public class ShoppingItemTableEditWidget {
     } catch (NotFoundException e) {
       ingredientNameError.setText(e.getMessage());
     }
+  }
+
+  @Override
+  public void onChanged(Change<? extends IngredientName> c) {
+    ingredientNameComboBox.getItems().setAll(ingredientNameService.getReadonlyIngredientNameList());
   }
 
 }

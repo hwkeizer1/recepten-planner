@@ -15,6 +15,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -36,7 +37,7 @@ import nl.recipes.services.IngredientNameService;
 import nl.recipes.views.converters.IngredientNameStringConverter;
 
 @Component
-public class IngredientEditView {
+public class IngredientEditView implements ListChangeListener<IngredientName> {
 
   private final IngredientNameService ingredientNameService;
 
@@ -57,13 +58,16 @@ public class IngredientEditView {
   public IngredientEditView(IngredientNameService ingredientNameService) {
     this.ingredientNameService = ingredientNameService;
 
+    this.ingredientNameService.addListener(this);
+
     ingredientPanel = new VBox();
     ingredientPanel.setPadding(new Insets(10, 0, 0, 0));
     ingredientPanel.getStyleClass().addAll(WIDGET, DROP_SHADOW);
     amountTextField = new TextField();
     ingredientNameComboBox = new SearchableComboBox<>();
     ingredientNameComboBox.setConverter(new IngredientNameStringConverter());
-    TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(), ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
+    TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(),
+        ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
     ingredientNameComboBox.getItems()
         .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
 
@@ -86,7 +90,7 @@ public class IngredientEditView {
     ingredientTableEmpty.getStyleClass().add(EMPTY_INGREDIENT_TABLE);
     ingredientTable.setPlaceholder(ingredientTableEmpty);
     ingredientTable.setFixedCellSize(25);
-    
+
     ingredientTable.prefHeightProperty().bind(
         Bindings.size(ingredientTable.getItems()).multiply(ingredientTable.getFixedCellSize()));
     ingredientTable.setMinHeight(25);
@@ -101,7 +105,7 @@ public class IngredientEditView {
     VBox ingredientTableViewPanel = new VBox();
 
     ingredientTable = new TableView<>();
-    ingredientTable.getStyleClass().addAll(RP_TABLE,  INGREDIENT_EDIT_TABLE);
+    ingredientTable.getStyleClass().addAll(RP_TABLE, INGREDIENT_EDIT_TABLE);
     TableColumn<Ingredient, Number> amountColumn = new TableColumn<>();
     TableColumn<Ingredient, String> measureUnitColumn = new TableColumn<>();
     TableColumn<Ingredient, String> ingredientNameColumn = new TableColumn<>();
@@ -207,7 +211,7 @@ public class IngredientEditView {
     inputForm.add(ingredientNameLabel, 0, 0);
     ingredientNameComboBox.setMinWidth(250);
     inputForm.add(ingredientNameComboBox, 1, 0);
-    
+
     Label amountLabel = new Label("Hoeveelheid:");
     inputForm.add(amountLabel, 0, 1);
     amountTextField.setMaxWidth(80);
@@ -225,10 +229,10 @@ public class IngredientEditView {
 
   private void createIngredient(ActionEvent actionEvent) {
     Ingredient ingredient = new Ingredient.IngredientBuilder()
-        .withAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
-            : Float.valueOf(amountTextField.getText()))
-        .withIngredientName(ingredientNameComboBox.getValue())
-        .build();
+        .withAmount(
+            (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+                : Float.valueOf(amountTextField.getText()))
+        .withIngredientName(ingredientNameComboBox.getValue()).build();
 
     ingredientList.add(ingredient);
     ingredientTable.getSelectionModel().clearSelection();
@@ -248,5 +252,11 @@ public class IngredientEditView {
 
   private void removeIngredient(ActionEvent actionEvent) {
     ingredientList.remove(selectedIngredient);
+  }
+
+  @Override
+  public void onChanged(Change<? extends IngredientName> c) {
+    ingredientNameComboBox.getItems()
+        .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
   }
 }
