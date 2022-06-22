@@ -31,6 +31,7 @@ import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.Recipe;
+import nl.recipes.domain.ShoppingItem;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
@@ -58,6 +59,8 @@ public class BackupService {
   private static final String MEASURE_UNITS_PLAN = "measureunits.plan";
 
   private static final String RECIPES_PLAN = "recipes.plan";
+  
+  private static final String SHOPPINGITEMS_PLAN = "shoppingitems.plan";
 
   private final TagService tagService;
 
@@ -66,6 +69,8 @@ public class BackupService {
   private final MeasureUnitService measureUnitService;
 
   private final RecipeService recipeService;
+  
+  private final ShoppingItemService shoppingItemService;
 
   private final ConfigService configService;
 
@@ -73,13 +78,14 @@ public class BackupService {
 
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
       MeasureUnitService measureUnitService, RecipeService recipeService,
-      ConfigService configService) {
+      ConfigService configService, ShoppingItemService shoppingItemService) {
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     this.tagService = tagService;
     this.ingredientNameService = ingredientNameService;
     this.measureUnitService = measureUnitService;
     this.recipeService = recipeService;
+    this.shoppingItemService = shoppingItemService;
     this.configService = configService;
   }
 
@@ -99,6 +105,11 @@ public class BackupService {
     String recipes = readRecipesFromFile(directoryPath);
     if (recipes != null) {
       restoreRecipes(recipes);
+    }
+    
+    String shoppingItems = readShoppingItemsFromFile(directoryPath);
+    if (shoppingItems != null) {
+      restoreShoppingItems(shoppingItems);
     }
   }
 
@@ -129,6 +140,11 @@ public class BackupService {
     String recipes = backupRecipes();
     if (recipes != null) {
       writeRecipesToFile(backupDirectory.toString(), recipes);
+    }
+    
+    String shoppingItems = backupShoppingItems();
+    if (shoppingItems != null) {
+      writeShoppingItemsToFile(backupDirectory.toString(), shoppingItems);
     }
   }
 
@@ -379,6 +395,58 @@ public class BackupService {
     } catch (AlreadyExistsException ex) {
       log.error("Recipe {} already exists", recipe.getName());
       return null;
+    }
+  }
+  
+  private String backupShoppingItems() {
+    List<ShoppingItem> shoppingItemList = shoppingItemService.getShoppingItemList();
+    try {
+      return objectMapper.writeValueAsString(shoppingItemList);
+    } catch (JsonProcessingException e) {
+      log.error(FOUT_BIJ_HET_MAKEN_VAN_DE_BACKUP_FILE + SHOPPINGITEMS_PLAN);
+    }
+    return "";
+  }
+
+  private void writeShoppingItemsToFile(String directoryPath, String shoppingItems) {
+    File shoppingItemFile = new File(directoryPath, SHOPPINGITEMS_PLAN);
+
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(shoppingItemFile))) {
+      writer.write(shoppingItems);
+    } catch (IOException ex) {
+      log.error(FOUT_BIJ_HET_SCHRIJVEN_VAN_DE_BACKUP_FILE + SHOPPINGITEMS_PLAN);
+    }
+  }
+
+  private String readShoppingItemsFromFile(String directoryPath) {
+    File shoppingItemFile = new File(directoryPath, SHOPPINGITEMS_PLAN);
+    if (shoppingItemFile.exists()) {
+      try (BufferedReader reader = new BufferedReader(new FileReader(shoppingItemFile))) {
+        return reader.readLine();
+      } catch (IOException ex) {
+        log.error(FOUT_BIJ_HET_LEZEN_VAN_DE_BACKUP_FILE + SHOPPINGITEMS_PLAN);
+      }
+    }
+    return null;
+  }
+
+  private void restoreShoppingItems(String shoppingItems) {
+    try {
+      List<ShoppingItem> shoppingItemList = objectMapper.readValue(shoppingItems, new TypeReference<List<ShoppingItem>>() {});
+      for (ShoppingItem shoppingItem : shoppingItemList) {
+        shoppingItem.setId(null);
+        createShoppingItem(shoppingItem);
+      }
+    } catch (JsonProcessingException ex) {
+      log.error(FOUT_BIJ_HET_VERWERKEN_VAN_DE_BACKUP_FILE + TAGS_PLAN);
+    }
+  }
+
+  private void createShoppingItem(ShoppingItem shoppingItem) {
+    try {
+      shoppingItemService.create(shoppingItem);
+    } catch (AlreadyExistsException | IllegalValueException ex) {
+      log.error("Tag {} already exists", shoppingItem.getIngredientName().getName());
     }
   }
 
