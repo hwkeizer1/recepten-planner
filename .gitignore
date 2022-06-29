@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .attach_pid*
+.gradle/
+build/
+bin/
+gradle*
 
 ### STS ###
 .apt_generated
