@@ -8,6 +8,8 @@ target/
 build/
 bin/
 gradle*
+credentials.json
+StoredCredential
 
 ### STS ###
 .apt_generated
