@@ -431,6 +431,7 @@ public class BackupService {
   }
 
   private void restoreShoppingItems(String shoppingItems) {
+    log.debug(shoppingItems);
     try {
       List<ShoppingItem> shoppingItemList = objectMapper.readValue(shoppingItems, new TypeReference<List<ShoppingItem>>() {});
       for (ShoppingItem shoppingItem : shoppingItemList) {
@@ -438,7 +439,7 @@ public class BackupService {
         createShoppingItem(shoppingItem);
       }
     } catch (JsonProcessingException ex) {
-      log.error(FOUT_BIJ_HET_VERWERKEN_VAN_DE_BACKUP_FILE + TAGS_PLAN);
+      log.error(FOUT_BIJ_HET_VERWERKEN_VAN_DE_BACKUP_FILE + SHOPPINGITEMS_PLAN);
     }
   }
 

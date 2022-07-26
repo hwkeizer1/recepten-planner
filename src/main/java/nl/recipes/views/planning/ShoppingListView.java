@@ -59,8 +59,6 @@ public class ShoppingListView {
         ingredientList.stream().filter(i -> i.getIngredientName().isStock()).map(i -> {
           ShoppingItem shoppingItem = new ShoppingItem();
           shoppingItem.setIngredientName(i.getIngredientName());
-          shoppingItem.setIngredientType(i.getIngredientName().getIngredientType());
-          shoppingItem.setShopType(i.getIngredientName().getShopType());
           shoppingItem.setStandard(false);
           shoppingItem.setOnList(false);
           return shoppingItem;
@@ -356,7 +354,7 @@ public class ShoppingListView {
   
   private List<ShoppingItem> getEkoShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getShopType().equals(ShopType.EKO)).toList();
+        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.EKO)).toList();
   }
   
   private List<Ingredient> getDekaIngredientList() {
@@ -366,7 +364,7 @@ public class ShoppingListView {
   
   private List<ShoppingItem> getDekaShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getShopType().equals(ShopType.DEKA)).toList();
+        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.DEKA)).toList();
   }
   
   private List<Ingredient> getMarktIngredientList() {
@@ -376,7 +374,7 @@ public class ShoppingListView {
   
   private List<ShoppingItem> getMarktShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getShopType().equals(ShopType.MARKT)).toList();
+        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.MARKT)).toList();
   }
   
   private List<Ingredient> getOtherIngredientList() {
@@ -386,7 +384,7 @@ public class ShoppingListView {
   
   private List<ShoppingItem> getOtherShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getShopType().equals(ShopType.OVERIG)).toList();
+        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.OVERIG)).toList();
   }
 
   private String getIngredientMeasureUnitLabel(Ingredient ingredient) {

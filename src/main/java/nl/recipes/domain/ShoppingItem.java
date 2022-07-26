@@ -1,9 +1,6 @@
 package nl.recipes.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,14 +25,6 @@ public class ShoppingItem {
   private IngredientName ingredientName;
 
   boolean isStandard;
-
-  @Enumerated(EnumType.STRING)
-  @Column(length = 20, nullable = false)
-  ShopType shopType = ShopType.OVERIG;
-
-  @Enumerated(EnumType.STRING)
-  @Column(length = 20, nullable = false)
-  IngredientType ingredientType = IngredientType.OVERIG;
 
   boolean onList;
 

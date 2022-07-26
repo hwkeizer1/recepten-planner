@@ -38,8 +38,6 @@ public class ShoppingItemService {
           "Artikel " + shoppingItem.getIngredientName().getName() + " bestaat al");
     }
     shoppingItem.setStandard(true);
-    shoppingItem.setShopType(shoppingItem.getIngredientName().getShopType());
-    shoppingItem.setIngredientType(shoppingItem.getIngredientName().getIngredientType());
     ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
     observableShoppingItemList.add(createdShoppingItem);
     return createdShoppingItem;
