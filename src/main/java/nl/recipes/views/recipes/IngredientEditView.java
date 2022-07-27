@@ -34,6 +34,7 @@ import javafx.scene.layout.VBox;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.services.IngredientNameService;
+import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.converters.IngredientNameStringConverter;
 
 @Component
@@ -118,7 +119,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
       selectedIngredient = newValue;
       if (newValue != null) {
         amountTextField.setText(selectedIngredient.getAmount() == null ? null
-            : selectedIngredient.getAmount().toString());
+            : Utils.format(selectedIngredient.getAmount()));
         ingredientNameComboBox.setValue(selectedIngredient.getIngredientName());
       } else {
         amountTextField.setText(null);

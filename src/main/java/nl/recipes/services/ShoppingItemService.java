@@ -54,6 +54,7 @@ public class ShoppingItemService {
       throw new AlreadyExistsException(
           "Artikel " + update.getIngredientName().getName() + " bestaat al");
     }
+    shoppingItem.setAmount(update.getAmount());
     shoppingItem.setIngredientName(update.getIngredientName());
 
     ShoppingItem updatedShoppingItem = shoppingItemRepository.save(shoppingItem);
