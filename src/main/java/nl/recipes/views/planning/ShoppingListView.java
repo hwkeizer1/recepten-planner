@@ -25,13 +25,12 @@ import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.ShoppingItemService;
+import nl.recipes.views.components.utils.Utils;
 
 @Slf4j
 @Component
 public class ShoppingListView {
 
-  private static final String REGEXP_NO_SINGLE_ZERO_DIGIT = "\\.0*$";
-  
   private final PlanningService planningService;
   private final ShoppingItemService shoppingItemService;
   private final GoogleSheetService googleSheetService;
@@ -121,7 +120,7 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream()
         .filter(s -> !s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+          : Utils.format(ingredient.getAmount()));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
@@ -153,7 +152,7 @@ public class ShoppingListView {
     for (Ingredient ingredient : ingredientList.stream()
         .filter(s -> s.getIngredientName().isStock()).toList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+          : Utils.format(ingredient.getAmount()));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
@@ -226,7 +225,7 @@ public class ShoppingListView {
     int row = 1;
     for (Ingredient ingredient : getEkoIngredientList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+          : Utils.format(ingredient.getAmount()));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
@@ -259,7 +258,7 @@ public class ShoppingListView {
     int row = 1;
     for (Ingredient ingredient : getDekaIngredientList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+          : Utils.format(ingredient.getAmount()));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
@@ -292,7 +291,7 @@ public class ShoppingListView {
     int row = 1;
     for (Ingredient ingredient : getMarktIngredientList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+          : Utils.format(ingredient.getAmount()));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
@@ -325,7 +324,7 @@ public class ShoppingListView {
     int row = 1;
     for (Ingredient ingredient : getOtherIngredientList()) {
       Label amountLabel = new Label(ingredient.getAmount() == null ? ""
-          : ingredient.getAmount().toString().replaceAll(REGEXP_NO_SINGLE_ZERO_DIGIT, ""));
+          : Utils.format(ingredient.getAmount()));
       Label measureUnitLabel =
           new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
               : getIngredientMeasureUnitLabel(ingredient));
