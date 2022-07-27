@@ -431,7 +431,6 @@ public class BackupService {
   }
 
   private void restoreShoppingItems(String shoppingItems) {
-    log.debug(shoppingItems);
     try {
       List<ShoppingItem> shoppingItemList = objectMapper.readValue(shoppingItems, new TypeReference<List<ShoppingItem>>() {});
       for (ShoppingItem shoppingItem : shoppingItemList) {

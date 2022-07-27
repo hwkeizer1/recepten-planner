@@ -108,8 +108,7 @@ public class Ingredient {
     }
     
     public Ingredient build() {
-      Ingredient ingredient = new Ingredient(this);
-      return ingredient;
+      return new Ingredient(this);
     }
     
     public Ingredient build(Long id) {

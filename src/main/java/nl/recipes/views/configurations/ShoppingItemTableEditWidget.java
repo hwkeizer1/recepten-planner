@@ -179,8 +179,10 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
   }
 
   private void createShoppingItem(ActionEvent actionEvent) {
-    ShoppingItem shoppingItem = new ShoppingItem();
-    shoppingItem.setIngredientName(ingredientNameComboBox.getValue());
+    ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
+        .withIngredientName(ingredientNameComboBox.getValue())
+        .build();
+    
     try {
       shoppingItemService.create(shoppingItem);
       shoppingItemTableView.getSelectionModel().select(shoppingItem);
@@ -190,9 +192,10 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
   }
 
   private void updateShoppingItem(ActionEvent actionEvent) {
-    ShoppingItem update = new ShoppingItem();
-    update.setIngredientName(ingredientNameComboBox.getValue());
-
+    ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
+        .withIngredientName(ingredientNameComboBox.getValue())
+        .build();
+ 
     try {
       shoppingItemService.update(selectedShoppingItem, update);
     } catch (NotFoundException | AlreadyExistsException e) {

@@ -56,13 +56,13 @@ public class ShoppingListView {
     finalListBox.getChildren().clear();
     ingredientList = FXCollections.observableList(planningService.getIngredientList());
     List<ShoppingItem> ingredientShoppingItems =
-        ingredientList.stream().filter(i -> i.getIngredientName().isStock()).map(i -> {
-          ShoppingItem shoppingItem = new ShoppingItem();
-          shoppingItem.setIngredientName(i.getIngredientName());
-          shoppingItem.setStandard(false);
-          shoppingItem.setOnList(false);
-          return shoppingItem;
-        }).collect(Collectors.toList());
+        ingredientList.stream().filter(i -> i.getIngredientName().isStock())
+            .map(i -> new ShoppingItem.ShoppingItemBuilder()
+                .withIngredientName(i.getIngredientName())
+                .withIsStandard(false)
+                .withOnList(false)
+                .build())
+            .collect(Collectors.toList());
     shoppingItems = new ArrayList<>();
     shoppingItems.addAll(ingredientShoppingItems);
     for (ShoppingItem shoppingItem : shoppingItemService.getShoppingItemList()) {
