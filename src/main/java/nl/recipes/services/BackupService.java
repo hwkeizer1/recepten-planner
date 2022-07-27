@@ -399,7 +399,7 @@ public class BackupService {
   }
   
   private String backupShoppingItems() {
-    List<ShoppingItem> shoppingItemList = shoppingItemService.getShoppingItemList();
+    List<ShoppingItem> shoppingItemList = shoppingItemService.getReadonlyShoppingItemList();
     try {
       return objectMapper.writeValueAsString(shoppingItemList);
     } catch (JsonProcessingException e) {

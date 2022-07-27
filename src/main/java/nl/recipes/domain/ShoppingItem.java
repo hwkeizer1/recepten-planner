@@ -104,7 +104,7 @@ public class ShoppingItem {
     }
 
     public ShoppingItem build(Long id) {
-      ShoppingItem shoppingItem = new ShoppingItem();
+      ShoppingItem shoppingItem = new ShoppingItem(this);
       shoppingItem.setId(id);
       return shoppingItem;
     }
@@ -118,7 +118,7 @@ public class ShoppingItem {
 
   @Override
   public int hashCode() {
-    return Objects.hash(amount, id, ingredientName, isStandard, onList);
+    return Objects.hash(ingredientName);
   }
 
   @Override
@@ -130,8 +130,6 @@ public class ShoppingItem {
     if (getClass() != obj.getClass())
       return false;
     ShoppingItem other = (ShoppingItem) obj;
-    return Objects.equals(amount, other.amount) && Objects.equals(id, other.id)
-        && Objects.equals(ingredientName, other.ingredientName) && isStandard == other.isStandard
-        && onList == other.onList;
+    return Objects.equals(ingredientName, other.ingredientName);
   }
 }

@@ -65,7 +65,7 @@ public class ShoppingListView {
             .collect(Collectors.toList());
     shoppingItems = new ArrayList<>();
     shoppingItems.addAll(ingredientShoppingItems);
-    for (ShoppingItem shoppingItem : shoppingItemService.getShoppingItemList()) {
+    for (ShoppingItem shoppingItem : shoppingItemService.getReadonlyShoppingItemList()) {
       if (shoppingItems.stream()
           .noneMatch(s -> s.getIngredientName().equals(shoppingItem.getIngredientName()))) {
         shoppingItems.add(shoppingItem);

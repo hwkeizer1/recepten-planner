@@ -24,7 +24,7 @@ public class ShoppingItemService {
     observableShoppingItemList = FXCollections.observableList(shoppingItemRepository.findAll());
   }
 
-  public ObservableList<ShoppingItem> getShoppingItemList() {
+  public ObservableList<ShoppingItem> getReadonlyShoppingItemList() {
     return FXCollections.unmodifiableObservableList(observableShoppingItemList);
   }
 

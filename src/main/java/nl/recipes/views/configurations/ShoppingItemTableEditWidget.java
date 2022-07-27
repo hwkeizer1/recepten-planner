@@ -79,7 +79,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
   private VBox createTable() {
     shoppingItemTableView = new TableView<>();
     shoppingItemTableView.getStyleClass().add(RP_TABLE);
-    shoppingItemTableView.setItems(shoppingItemService.getShoppingItemList());
+    shoppingItemTableView.setItems(shoppingItemService.getReadonlyShoppingItemList());
 
     TableColumn<ShoppingItem, String> measureUnitColumn = new TableColumn<>("Maateenheid");
     measureUnitColumn.setCellValueFactory(c -> {
