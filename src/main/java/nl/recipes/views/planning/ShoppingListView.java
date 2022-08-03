@@ -10,6 +10,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -18,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.ShopType;
@@ -208,10 +211,21 @@ public class ShoppingListView {
   }
   
   private void sendShoppingListToGoogle(ActionEvent event) {
-    googleSheetService.setEkoShoppings(getEkoIngredientList(), getEkoShoppingList());
-    googleSheetService.setDekaShoppings(getDekaIngredientList(), getDekaShoppingList());
-    googleSheetService.setMarktShoppings(getMarktIngredientList(), getMarktShoppingList());
-    googleSheetService.setOtherShoppings(getOtherIngredientList(), getOtherShoppingList());
+    if (!googleSheetService.credentialsValid()) {
+      Alert a = new Alert(AlertType.WARNING);
+      a.initModality(Modality.WINDOW_MODAL);
+      a.setTitle("Waarschuwing");
+      a.setHeaderText("Google credentials niet gevonden of verlopen");
+      a.setContentText(
+          "Sluit eerst dit waarschuwingsvenster, open je browser, ga naar 'inloggen met Google account', "
+          + "selecteer het account en bevestig dat je wilt doorgaan.");
+      a.showAndWait();
+      googleSheetService.createSheetService();
+    }
+      googleSheetService.setEkoShoppings(getEkoIngredientList(), getEkoShoppingList());
+      googleSheetService.setDekaShoppings(getDekaIngredientList(), getDekaShoppingList());
+      googleSheetService.setMarktShoppings(getMarktIngredientList(), getMarktShoppingList());
+      googleSheetService.setOtherShoppings(getOtherIngredientList(), getOtherShoppingList());
   }
 
   private GridPane getEkoListPanel() {
