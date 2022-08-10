@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.PlanningService;
+import nl.recipes.views.ViewMessages;
 import nl.recipes.views.root.RootView;
 
 @Component
@@ -105,8 +106,8 @@ public class PlanningListView {
   }
 
   private AnchorPane createPlanningListPanel() {
-    Button shoppingList = new Button("Naar boodschappenlijst");
-    shoppingList.setOnAction(this::showShoppingPanel);
+    Button shoppingList = new Button(ViewMessages.TO_SHOPPING_PAGE);
+    shoppingList.setOnAction(this::showShoppingPage);
 
     Label rightPanelTitle = new Label("Dag planning");
     rightPanelTitle.getStyleClass().add("header");
@@ -154,8 +155,8 @@ public class PlanningListView {
     planningPanel.getItems().addAll(createRecipeListPanel(), createPlanningListPanel());
   }
 
-  private void showShoppingPanel(ActionEvent event) {
-    rootView.showShoppingPanel(event);
+  private void showShoppingPage(ActionEvent event) {
+    rootView.showShoppingPage(event);
   }
 
 }
