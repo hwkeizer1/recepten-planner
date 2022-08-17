@@ -15,23 +15,21 @@ public class MockShoppingItems {
     List<ShoppingItem> shoppingItemList = new ArrayList<>();
     shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder()
         .withAmount(750F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
-            .withName("kaas").build(1L))
+        .withName("kaas")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
         .withIsStandard(true)
         .withOnList(false)
         .build(1L));
     shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder()
         .withAmount(250F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
-            .withName("boter").build(2L))
+        .withName("boter")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
         .withIsStandard(false)
         .withOnList(true)
         .build(2L));
     shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder()
         .withAmount(6F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder().withName("eieren").build(3L))
+        .withName("eieren")
         .withIsStandard(true)
         .withOnList(true)
         .build(3L));

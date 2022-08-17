@@ -19,6 +19,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -28,40 +29,53 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import nl.recipes.domain.IngredientName;
+import nl.recipes.domain.IngredientType;
+import nl.recipes.domain.MeasureUnit;
+import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
-import nl.recipes.services.IngredientNameService;
+import nl.recipes.services.MeasureUnitService;
 import nl.recipes.services.ShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
-import nl.recipes.views.converters.IngredientNameStringConverter;
+import nl.recipes.views.converters.MeasureUnitStringConverter;
 
 @Component
-public class ShoppingItemTableEditWidget implements ListChangeListener<IngredientName> {
+public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUnit> {
 
   private final ShoppingItemService shoppingItemService;
-
-  private final IngredientNameService ingredientNameService;
+  private final MeasureUnitService measureUnitService;
 
   TableView<ShoppingItem> shoppingItemTableView;
   
   TextField amountTextField;
 
-  SearchableComboBox<IngredientName> ingredientNameComboBox;
+  TextField nameField;
+  
+  SearchableComboBox<MeasureUnit> measureUnitComboBox;
+  
+  ComboBox<ShopType> shopTypeComboBox;
 
-  Label ingredientNameError = new Label();
+  ComboBox<IngredientType> ingredientTypeComboBox;
+
+  Label nameError = new Label();
 
   private ShoppingItem selectedShoppingItem;
 
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 
   public ShoppingItemTableEditWidget(ShoppingItemService shoppingItemService,
-      IngredientNameService ingredientNameService) {
+      MeasureUnitService measureUnitService) {
     this.shoppingItemService = shoppingItemService;
-    this.ingredientNameService = ingredientNameService;
+    this.measureUnitService = measureUnitService;
 
-    this.ingredientNameService.addListener(this);
+    this.measureUnitService.addListener(this);
+    
+    measureUnitComboBox = new SearchableComboBox<>();
+    measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
+    TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
+    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
   }
 
   public Node getShoppingItemPanel() {
@@ -94,26 +108,39 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
  
     TableColumn<ShoppingItem, String> measureUnitColumn = new TableColumn<>("Maateenheid");
     measureUnitColumn.setCellValueFactory(c -> {
-      if (c.getValue().getIngredientName().getMeasureUnit() == null) {
+      if (c.getValue().getMeasureUnit() == null) {
         return new ReadOnlyObjectWrapper<>();
       } else {
         return new ReadOnlyObjectWrapper<>(
-            c.getValue().getIngredientName().getMeasureUnit().getName());
+            c.getValue().getMeasureUnit().getName());
       }
     });
 
     TableColumn<ShoppingItem, String> nameColumn = new TableColumn<>("Naam");
     nameColumn.setCellValueFactory(
-        c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientName().getName()));
+        c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
 
-    amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.25));
+    amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
     measureUnitColumn.prefWidthProperty()
-        .bind(shoppingItemTableView.widthProperty().multiply(0.30));
-    nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.45));
+        .bind(shoppingItemTableView.widthProperty().multiply(0.25));
+    nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.30));
+    
+    TableColumn<ShoppingItem, ShopType> shopTypeColumn = new TableColumn<>("Winkel");
+    shopTypeColumn
+    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
+    shopTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
+
+    TableColumn<ShoppingItem, IngredientType> ingredientTypeColumn = new TableColumn<>("Type");
+    ingredientTypeColumn
+    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientType()));
+    ingredientTypeColumn.prefWidthProperty()
+    .bind(shoppingItemTableView.widthProperty().multiply(0.15));
 
     shoppingItemTableView.getColumns().add(amountColumn);
     shoppingItemTableView.getColumns().add(measureUnitColumn);
     shoppingItemTableView.getColumns().add(nameColumn);
+    shoppingItemTableView.getColumns().add(shopTypeColumn);
+    shoppingItemTableView.getColumns().add(ingredientTypeColumn);
 
     VBox shoppingItemTableBox = new VBox();
     shoppingItemTableBox.getChildren().add(shoppingItemTableView);
@@ -127,11 +154,17 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
     form.setVgap(10);
 
     ColumnConstraints column0 = new ColumnConstraints();
-    column0.setPercentWidth(40);
+    column0.setPercentWidth(20);
     column0.setHalignment(HPos.RIGHT);
     ColumnConstraints column1 = new ColumnConstraints();
-    column1.setPercentWidth(50);
-    form.getColumnConstraints().addAll(column0, column1);
+    column1.setPercentWidth(30);
+    ColumnConstraints column2 = new ColumnConstraints();
+    column2.setPercentWidth(20);
+    column2.setHalignment(HPos.RIGHT);
+    ColumnConstraints column3 = new ColumnConstraints();
+    column3.setPercentWidth(30);
+    
+    form.getColumnConstraints().addAll(column0, column1, column2, column3);
 
     Label amountLabel = new Label("Hoeveelheid:");
     amountTextField = new TextField();
@@ -139,21 +172,39 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
     form.add(amountTextField, 1, 0);
     amountTextField.setOnKeyReleased(this::handleKeyReleasedAction);
     
-    Label ingredientNameLabel = new Label("Artikel:");
-    ingredientNameComboBox = new SearchableComboBox<>();
-    ingredientNameComboBox.setConverter(new IngredientNameStringConverter());
-    TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(),
-        ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
-    ingredientNameComboBox.getItems()
-        .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
-    ingredientNameComboBox.setMinWidth(150);
-    ingredientNameComboBox.setOnAction(e -> modifiedProperty.set(true));
-    GridPane.setValignment(ingredientNameLabel, VPos.TOP);
-    VBox ingredientNameWithValidation = new VBox();
-    ingredientNameError.getStyleClass().add(VALIDATION);
-    ingredientNameWithValidation.getChildren().addAll(ingredientNameComboBox, ingredientNameError);
-    form.add(ingredientNameLabel, 0, 1);
-    form.add(ingredientNameWithValidation, 1, 1);
+    Label measureUnitLabel = new Label("Maateenheid:");
+    form.add(measureUnitLabel, 0, 1);
+    measureUnitComboBox.setMinWidth(150);
+    measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
+    form.add(measureUnitComboBox, 1, 1);
+    
+    Label nameLabel = new Label("Naam:");
+    nameField = new TextField();
+    nameField.setMinWidth(150);
+    nameField.setOnAction(e -> modifiedProperty.set(true));
+    GridPane.setValignment(nameLabel, VPos.TOP);
+    nameField.setOnKeyReleased(this::handleKeyReleasedAction);
+    VBox nameWithValidation = new VBox();
+    nameError.getStyleClass().add(VALIDATION);
+    nameWithValidation.getChildren().addAll(nameField, nameError);
+    form.add(nameLabel, 0, 2);
+    form.add(nameWithValidation, 1, 2);
+    
+    Label shopTypeLabel = new Label("Winkel:");
+    form.add(shopTypeLabel, 2, 1);
+    shopTypeComboBox = new ComboBox<>();
+    shopTypeComboBox.getItems().setAll(ShopType.values());
+    shopTypeComboBox.setMinWidth(150);
+    shopTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
+    form.add(shopTypeComboBox, 3, 1);
+
+    Label ingredientTypeLabel = new Label("Ingrediënt type:");
+    form.add(ingredientTypeLabel, 2, 2);
+    ingredientTypeComboBox = new ComboBox<>();
+    ingredientTypeComboBox.getItems().setAll(IngredientType.values());
+    ingredientTypeComboBox.setMinWidth(150);
+    ingredientTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
+    form.add(ingredientTypeComboBox, 3, 2);
 
     shoppingItemTableView.getSelectionModel().selectedItemProperty()
         .addListener((observable, oldValue, newValue) -> {
@@ -161,12 +212,18 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
           if (newValue != null) {
             amountTextField.setText(selectedShoppingItem.getAmount() == null ? null
                 : Utils.format(selectedShoppingItem.getAmount()));
-            ingredientNameComboBox.setValue(selectedShoppingItem.getIngredientName());
-            ingredientNameError.setText("");
+            nameField.setText(selectedShoppingItem.getName());
+            nameError.setText("");
+            measureUnitComboBox.setValue(selectedShoppingItem.getMeasureUnit());
+            shopTypeComboBox.setValue(selectedShoppingItem.getShopType());
+            ingredientTypeComboBox.setValue(selectedShoppingItem.getIngredientType());
           } else {
             amountTextField.setText(null);
-            ingredientNameComboBox.setValue(null);
-            ingredientNameError.setText("");
+            nameField.setText(null);
+            nameError.setText("");
+            measureUnitComboBox.setValue(null);
+            shopTypeComboBox.setValue(null);
+            ingredientTypeComboBox.setValue(null);
           }
           modifiedProperty.set(false);
         });
@@ -206,14 +263,17 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
     ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
         .withAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
                 : Float.valueOf(amountTextField.getText()))
-        .withIngredientName(ingredientNameComboBox.getValue())
+        .withMeasureUnit(measureUnitComboBox.getValue())
+        .withName(nameField.getText())
+        .withShopType(shopTypeComboBox.getValue())
+        .withIngredientType(ingredientTypeComboBox.getValue())
         .build();
     
     try {
       shoppingItemService.create(shoppingItem);
       shoppingItemTableView.getSelectionModel().select(shoppingItem);
     } catch (AlreadyExistsException | IllegalValueException e) {
-      ingredientNameError.setText(e.getMessage());
+      nameError.setText(e.getMessage());
     }
   }
 
@@ -221,13 +281,16 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
     ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
         .withAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
             : Float.valueOf(amountTextField.getText()))
-        .withIngredientName(ingredientNameComboBox.getValue())
+        .withMeasureUnit(measureUnitComboBox.getValue())
+        .withName(nameField.getText())
+        .withShopType(shopTypeComboBox.getValue())
+        .withIngredientType(ingredientTypeComboBox.getValue())
         .build();
  
     try {
       shoppingItemService.update(selectedShoppingItem, update);
     } catch (NotFoundException | AlreadyExistsException e) {
-      ingredientNameError.setText(e.getMessage());
+      nameError.setText(e.getMessage());
     }
     modifiedProperty.set(false);
   }
@@ -236,13 +299,13 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<Ingredien
     try {
       shoppingItemService.remove(selectedShoppingItem);
     } catch (NotFoundException e) {
-      ingredientNameError.setText(e.getMessage());
+      nameError.setText(e.getMessage());
     }
   }
 
   @Override
-  public void onChanged(Change<? extends IngredientName> c) {
-    ingredientNameComboBox.getItems().setAll(ingredientNameService.getReadonlyIngredientNameList());
+  public void onChanged(Change<? extends MeasureUnit> c) {
+    measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 
 }

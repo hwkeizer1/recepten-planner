@@ -446,7 +446,7 @@ public class BackupService {
     try {
       shoppingItemService.create(shoppingItem);
     } catch (AlreadyExistsException | IllegalValueException ex) {
-      log.error("Tag {} already exists", shoppingItem.getIngredientName().getName());
+      log.error("Tag {} already exists", shoppingItem.getName());
     }
   }
 

@@ -1,12 +1,16 @@
 package nl.recipes.domain;
 
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import nl.recipes.domain.IngredientName.IngredientNameBuilder;
 
 @Entity
 public class ShoppingItem {
@@ -15,22 +19,38 @@ public class ShoppingItem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne(fetch = FetchType.EAGER)
-  private IngredientName ingredientName;
+  private String name;
+  
+  private String pluralName;
 
   private Float amount;
+  
+  @OneToOne(fetch = FetchType.EAGER)
+  private MeasureUnit measureUnit;
 
   private boolean isStandard;
 
   private boolean onList;
+  
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20)
+  private ShopType shopType;
+
+  @Enumerated(EnumType.STRING)
+  @Column(length = 20)
+  private IngredientType ingredientType;
 
   protected ShoppingItem() {}
 
   private ShoppingItem(ShoppingItemBuilder builder) {
     this.amount = builder.amount;
-    this.ingredientName = builder.ingredientName;
+    this.name = builder.name;
+    this.pluralName = builder.pluralName;
+    this.measureUnit = builder.measureUnit;
     this.isStandard = builder.isStandard;
     this.onList = builder.onList;
+    this.shopType = builder.shopType;
+    this.ingredientType = builder.ingredientType;
   }
 
   public Long getId() {
@@ -49,12 +69,28 @@ public class ShoppingItem {
     this.amount = amount;
   }
 
-  public IngredientName getIngredientName() {
-    return ingredientName;
+  public String getName() {
+    return name;
   }
 
-  public void setIngredientName(IngredientName ingredientName) {
-    this.ingredientName = ingredientName;
+  public void setName(String name) {
+    this.name = name;
+  }
+  
+  public String getPluralName() {
+    return pluralName;
+  }
+
+  public void setPluralName(String pluralName) {
+    this.pluralName = pluralName;
+  }
+
+  public MeasureUnit getMeasureUnit() {
+    return measureUnit;
+  }
+
+  public void setMeasureUnit(MeasureUnit measureUnit) {
+    this.measureUnit = measureUnit;
   }
 
   public boolean isStandard() {
@@ -72,20 +108,51 @@ public class ShoppingItem {
   public void setOnList(boolean onList) {
     this.onList = onList;
   }
+  
+  public ShopType getShopType() {
+    return shopType;
+  }
+
+  public void setShopType(ShopType shopType) {
+    this.shopType = shopType;
+  }
+
+  public IngredientType getIngredientType() {
+    return ingredientType;
+  }
+
+  public void setIngredientType(IngredientType ingredientType) {
+    this.ingredientType = ingredientType;
+  }
+  
 
   public static class ShoppingItemBuilder {
     private Float amount;
-    private IngredientName ingredientName;
+    private String name;
+    private String pluralName;
+    private MeasureUnit measureUnit;
     private boolean isStandard;
     private boolean onList;
+    private ShopType shopType;
+    private IngredientType ingredientType;
 
     public ShoppingItemBuilder withAmount(Float amount) {
       this.amount = amount;
       return this;
     }
 
-    public ShoppingItemBuilder withIngredientName(IngredientName ingredientName) {
-      this.ingredientName = ingredientName;
+    public ShoppingItemBuilder withName(String name) {
+      this.name = name;
+      return this;
+    }
+    
+    public ShoppingItemBuilder withPluralName(String pluralName) {
+      this.pluralName = pluralName;
+      return this;
+    }
+    
+    public ShoppingItemBuilder withMeasureUnit(MeasureUnit measureUnit) {
+      this.measureUnit = measureUnit;
       return this;
     }
 
@@ -96,6 +163,16 @@ public class ShoppingItem {
 
     public ShoppingItemBuilder withOnList(boolean onList) {
       this.onList = onList;
+      return this;
+    }
+    
+    public ShoppingItemBuilder withShopType(ShopType shopType) {
+      this.shopType = shopType;
+      return this;
+    }
+    
+    public ShoppingItemBuilder withIngredientType(IngredientType ingredientType) {
+      this.ingredientType = ingredientType;
       return this;
     }
 
@@ -112,13 +189,14 @@ public class ShoppingItem {
 
   @Override
   public String toString() {
-    return "ShoppingItem [id=" + id + ", ingredientName=" + ingredientName + ", amount=" + amount
-        + ", isStandard=" + isStandard + ", onList=" + onList + "]";
+    return "ShoppingItem [id=" + id + ", name=" + name + ", amount=" + amount + ", measureUnit=" + measureUnit
+        + ", isStandard=" + isStandard + ", onList=" + onList + ", shopType=" + shopType + ", ingredientType="
+        + ingredientType + "]";
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(ingredientName);
+    return Objects.hash(name);
   }
 
   @Override
@@ -130,6 +208,8 @@ public class ShoppingItem {
     if (getClass() != obj.getClass())
       return false;
     ShoppingItem other = (ShoppingItem) obj;
-    return Objects.equals(ingredientName, other.ingredientName);
+    return Objects.equals(name, other.name);
   }
+
+
 }

@@ -51,24 +51,20 @@ class ShoppingItemServiceTest {
 
   @Test
   void testFindByName_HappyPath() {
-    IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
-        .withName("kaas").build(1L);
+    String name = "kaas";
     
     Optional<ShoppingItem> expectedShoppingItem = Optional.of(mockShoppingItems.getShoppingItemList().get(0));
 
-    assertEquals(expectedShoppingItem, shoppingItemService.findByName(ingredientName));
+    assertEquals(expectedShoppingItem, shoppingItemService.findByName(name));
   }
   
   @Test
   void testFindByName_NotFound() {
-    IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("kilo").build(1L))
-        .withName("kaas").build(1L);
+    String name = "kaaz";
     
     Optional<ShoppingItem> expectedShoppingItem = Optional.empty();
 
-    assertEquals(expectedShoppingItem, shoppingItemService.findByName(ingredientName));
+    assertEquals(expectedShoppingItem, shoppingItemService.findByName(name));
   }
   
   @Test
@@ -89,18 +85,16 @@ class ShoppingItemServiceTest {
   void testCreate_HappyPath() throws Exception {
     ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(1F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("zak").build(1L))
-            .withName("chips").build(1L))
+        .withName("chips")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("zak").build(1L))
         .withIsStandard(true)
         .withOnList(false)
         .build();
 
     ShoppingItem savedShoppingItem = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(1F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("zak").build(1L))
-            .withName("chips").build(1L))
+        .withName("chips")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("zak").build(1L))
         .withIsStandard(true)
         .withOnList(false)
         .build(4L);
@@ -110,38 +104,33 @@ class ShoppingItemServiceTest {
     assertEquals(savedShoppingItem, shoppingItemService.create(shoppingItem));
     assertEquals(4, shoppingItemService.getReadonlyShoppingItemList().size());
     assertEquals(Optional.of(savedShoppingItem),
-        shoppingItemService.findByName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("zak").build(1L))
-            .withName("chips").build(1L)));
+        shoppingItemService.findByName("chips"));
   }
   
   @Test
   void testCreate_AlreadyExistsException() throws Exception {
     ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder()
-                .withName("gram").build(1L))
-            .withName("boter")
-            .build(2L))
+        .withName("boter")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
         .build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       shoppingItemService.create(shoppingItem);
     });
 
-    Assertions.assertEquals("Artikel boter bestaat al", exception.getMessage());
+    Assertions.assertEquals("Naam boter bestaat al", exception.getMessage());
     assertEquals(3, shoppingItemService.getReadonlyShoppingItemList().size());
   }
   
   @Test
   void testCreate_IllegalValueException() throws Exception {
-    ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder().withIngredientName(null).build();
+    ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder().withName(null).build();
 
     IllegalValueException exception = Assertions.assertThrows(IllegalValueException.class, () -> {
       shoppingItemService.create(shoppingItem);
     });
 
-    Assertions.assertEquals("Artikel naam mag niet leeg zijn", exception.getMessage());
+    Assertions.assertEquals("Naam mag niet leeg zijn", exception.getMessage());
     assertEquals(3, shoppingItemService.getReadonlyShoppingItemList().size());
   }
   
@@ -150,13 +139,12 @@ class ShoppingItemServiceTest {
     ShoppingItem originalShoppingItem = shoppingItemService.findById(3L).get();
     ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(4F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withName("paaseieren").build(5L))
+        .withName("paaseieren")
         .build();
 
     ShoppingItem expectedShoppingItem = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(4F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder().withName("paaseieren").build(5L))
+        .withName("paaseieren")
         .withIsStandard(true)
         .withOnList(true)
         .build(3L);
@@ -173,16 +161,16 @@ class ShoppingItemServiceTest {
   void testUpdate_NotFoundException() throws Exception {
     ShoppingItem originalShoppingItem = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(650F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("druppels").build(1L))
-            .withName("druiven").build(9L))
+        .withName("druifen")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("druppels").build(1L))
         .withIsStandard(false)
         .withOnList(false)
         .build(1000L);
 
     ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(6F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder().withName("druiven").build(1L))
+        .withName("druiven")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("druppels").build(1L))
         .withIsStandard(true)
         .withOnList(true)
         .build(3L);
@@ -191,7 +179,7 @@ class ShoppingItemServiceTest {
       shoppingItemService.update(originalShoppingItem, update);
     });
 
-    Assertions.assertEquals("Artikel druiven niet gevonden", exception.getMessage());
+    Assertions.assertEquals("Naam druifen niet gevonden", exception.getMessage());
     assertEquals(3, shoppingItemService.getReadonlyShoppingItemList().size());
   }
   
@@ -199,16 +187,15 @@ class ShoppingItemServiceTest {
   void testUpdate_AlreadyExistsException() throws Exception {
     ShoppingItem originalShoppingItem = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(750F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
-            .withName("kaas").build(1L))
+        .withName("kaas")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
         .withIsStandard(true)
         .withOnList(false)
         .build(1L);
 
     ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(4F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder().withName("eieren").build(3L))
+        .withName("eieren")
         .withIsStandard(true)
         .withOnList(true)
         .build();
@@ -217,7 +204,7 @@ class ShoppingItemServiceTest {
       shoppingItemService.update(originalShoppingItem, update);
     });
 
-    Assertions.assertEquals("Artikel eieren bestaat al", exception.getMessage());
+    Assertions.assertEquals("Naam eieren bestaat al", exception.getMessage());
     assertEquals(3, shoppingItemService.getReadonlyShoppingItemList().size());
   }
   
@@ -229,16 +216,15 @@ class ShoppingItemServiceTest {
     shoppingItemService.remove(originalShoppingItem);
     assertEquals(2, shoppingItemService.getReadonlyShoppingItemList().size());
     assertEquals(Optional.empty(),
-        shoppingItemService.findByName(originalShoppingItem.getIngredientName()));
+        shoppingItemService.findByName(originalShoppingItem.getName()));
   }
   
   @Test
   void testRemove_NotFound() throws Exception {
     ShoppingItem originalIngredientName = new ShoppingItem.ShoppingItemBuilder()
         .withAmount(650F)
-        .withIngredientName(new IngredientName.IngredientNameBuilder()
-            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("druppels").build(1L))
-            .withName("druiven").build(9L))
+        .withName("druiven")
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("druppels").build(1L))
         .withIsStandard(false)
         .withOnList(false)
         .build(1000L);
@@ -247,7 +233,7 @@ class ShoppingItemServiceTest {
       shoppingItemService.remove(originalIngredientName);
     });
 
-    Assertions.assertEquals("Artikel druiven niet gevonden", exception.getMessage());
+    Assertions.assertEquals("Naam druiven niet gevonden", exception.getMessage());
     assertEquals(3, shoppingItemService.getReadonlyShoppingItemList().size());
   }
 }

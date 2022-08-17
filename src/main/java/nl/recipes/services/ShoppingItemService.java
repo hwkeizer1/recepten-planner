@@ -30,12 +30,12 @@ public class ShoppingItemService {
 
   public ShoppingItem create(ShoppingItem shoppingItem)
       throws AlreadyExistsException, IllegalValueException {
-    if (shoppingItem == null || shoppingItem.getIngredientName() == null) {
-      throw new IllegalValueException("Artikel naam mag niet leeg zijn");
+    if (shoppingItem == null || shoppingItem.getName() == null) {
+      throw new IllegalValueException("Naam mag niet leeg zijn");
     }
-    if (findByName(shoppingItem.getIngredientName()).isPresent()) {
+    if (findByName(shoppingItem.getName()).isPresent()) {
       throw new AlreadyExistsException(
-          "Artikel " + shoppingItem.getIngredientName().getName() + " bestaat al");
+          "Naam " + shoppingItem.getName() + " bestaat al");
     }
     shoppingItem.setStandard(true);
     ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
@@ -47,15 +47,18 @@ public class ShoppingItemService {
       throws NotFoundException, AlreadyExistsException {
     if (!findById(shoppingItem.getId()).isPresent()) {
       throw new NotFoundException(
-          "Artikel " + shoppingItem.getIngredientName().getName() + " niet gevonden");
+          "Naam " + shoppingItem.getName() + " niet gevonden");
     }
-    if (!shoppingItem.getIngredientName().equals(update.getIngredientName())
-        && findByName(update.getIngredientName()).isPresent()) {
+    if (!shoppingItem.getName().equals(update.getName())
+        && findByName(update.getName()).isPresent()) {
       throw new AlreadyExistsException(
-          "Artikel " + update.getIngredientName().getName() + " bestaat al");
+          "Naam " + update.getName() + " bestaat al");
     }
     shoppingItem.setAmount(update.getAmount());
-    shoppingItem.setIngredientName(update.getIngredientName());
+    shoppingItem.setMeasureUnit(update.getMeasureUnit());
+    shoppingItem.setName(update.getName());
+    shoppingItem.setShopType(update.getShopType());
+    shoppingItem.setIngredientType(update.getIngredientType());
 
     ShoppingItem updatedShoppingItem = shoppingItemRepository.save(shoppingItem);
     observableShoppingItemList.set(observableShoppingItemList.lastIndexOf(shoppingItem),
@@ -67,15 +70,15 @@ public class ShoppingItemService {
     // TODO add check for removing shoppingItems that are in use
     if (!findById(shoppingItem.getId()).isPresent()) {
       throw new NotFoundException(
-          "Artikel " + shoppingItem.getIngredientName().getName() + " niet gevonden");
+          "Naam " + shoppingItem.getName() + " niet gevonden");
     }
     shoppingItemRepository.delete(shoppingItem);
     observableShoppingItemList.remove(shoppingItem);
   }
 
-  public Optional<ShoppingItem> findByName(IngredientName ingredientName) {
+  public Optional<ShoppingItem> findByName(String name) {
     return observableShoppingItemList.stream()
-        .filter(shoppingItem -> ingredientName.equals(shoppingItem.getIngredientName())).findAny();
+        .filter(shoppingItem -> name.equals(shoppingItem.getName())).findAny();
   }
 
   public Optional<ShoppingItem> findById(Long id) {

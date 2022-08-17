@@ -54,7 +54,7 @@ public class ConfigurationView {
     BootstrapRow row = new BootstrapRow();
     row.addColumn(createColumn(tagTableEditWidget.getTagTableEditWidget()));
     row.addColumn(createColumn(measureUnitTableEditWidget.getMeasureUnitTableEditWidget()));
-    row.addColumn(createColumn(shoppingItemTableEditWidget.getShoppingItemPanel()));
+    row.addColumn(createLargeColumn(shoppingItemTableEditWidget.getShoppingItemPanel()));
     row.addColumn(
         createLargeColumn(ingredientNameTableEditWidget.getIngredientNameTableEditWidget()));
 

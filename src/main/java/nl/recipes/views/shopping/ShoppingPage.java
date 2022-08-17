@@ -57,12 +57,12 @@ public class ShoppingPage {
     ingredientList = FXCollections.observableList(planningService.getIngredientList());
     List<ShoppingItem> ingredientShoppingItems = ingredientList
         .stream().filter(i -> i.getIngredientName().isStock()).map(i -> new ShoppingItem.ShoppingItemBuilder()
-            .withIngredientName(i.getIngredientName()).withIsStandard(false).withOnList(false).build())
+            .withName(i.getIngredientName().getName()).withIsStandard(false).withOnList(false).build())
         .collect(Collectors.toList());
     shoppingItems = new ArrayList<>();
     shoppingItems.addAll(ingredientShoppingItems);
     for (ShoppingItem shoppingItem : shoppingItemService.getReadonlyShoppingItemList()) {
-      if (shoppingItems.stream().noneMatch(s -> s.getIngredientName().equals(shoppingItem.getIngredientName()))) {
+      if (shoppingItems.stream().noneMatch(s -> s.getName().equals(shoppingItem.getName()))) {
         shoppingItems.add(shoppingItem);
       }
     }
@@ -167,7 +167,7 @@ public class ShoppingPage {
     int row = 1;
     int col = 1;
     for (ShoppingItem shoppingItem : shoppingItems) {
-      Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
+      Label ingredientName = new Label(shoppingItem.getName());
       ingredientName.setTextFill(Color.GREEN);
       CheckBox onShoppingList = new CheckBox();
       onShoppingList.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue,
@@ -236,7 +236,7 @@ public class ShoppingPage {
     }
 
     for (ShoppingItem shoppingItem : getEkoShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
+      Label ingredientName = new Label(shoppingItem.getName());
       ingredientName.setTextFill(Color.GREEN);
 
       ekoShoppingList.add(ingredientName, 3, row);
@@ -267,7 +267,7 @@ public class ShoppingPage {
     }
 
     for (ShoppingItem shoppingItem : getDekaShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
+      Label ingredientName = new Label(shoppingItem.getName());
       ingredientName.setTextFill(Color.GREEN);
 
       dekaShoppingList.add(ingredientName, 3, row);
@@ -298,7 +298,7 @@ public class ShoppingPage {
     }
 
     for (ShoppingItem shoppingItem : getMarktShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
+      Label ingredientName = new Label(shoppingItem.getName());
       ingredientName.setTextFill(Color.GREEN);
 
       marktShoppingList.add(ingredientName, 3, row);
@@ -329,7 +329,7 @@ public class ShoppingPage {
     }
 
     for (ShoppingItem shoppingItem : getOtherShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getIngredientName().getPluralName());
+      Label ingredientName = new Label(shoppingItem.getName());
       ingredientName.setTextFill(Color.GREEN);
 
       otherShoppingList.add(ingredientName, 3, row);
@@ -345,7 +345,7 @@ public class ShoppingPage {
 
   private List<ShoppingItem> getEkoShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.EKO)).toList();
+        .filter(s -> s.getShopType().equals(ShopType.EKO)).toList();
   }
 
   private List<Ingredient> getDekaIngredientList() {
@@ -355,7 +355,7 @@ public class ShoppingPage {
 
   private List<ShoppingItem> getDekaShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.DEKA)).toList();
+        .filter(s -> s.getShopType().equals(ShopType.DEKA)).toList();
   }
 
   private List<Ingredient> getMarktIngredientList() {
@@ -365,7 +365,7 @@ public class ShoppingPage {
 
   private List<ShoppingItem> getMarktShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.MARKT)).toList();
+        .filter(s -> s.getShopType().equals(ShopType.MARKT)).toList();
   }
 
   private List<Ingredient> getOtherIngredientList() {
@@ -375,7 +375,7 @@ public class ShoppingPage {
 
   private List<ShoppingItem> getOtherShoppingList() {
     return shoppingItems.stream().filter(ShoppingItem::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.OVERIG)).toList();
+        .filter(s -> s.getShopType().equals(ShopType.OVERIG)).toList();
   }
 
   private String getIngredientMeasureUnitLabel(Ingredient ingredient) {

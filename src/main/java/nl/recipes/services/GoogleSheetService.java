@@ -143,7 +143,7 @@ public class GoogleSheetService {
       }
 
       for (ShoppingItem shoppingItem : ekoShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getIngredientName().getName()));
+        items.add(Arrays.asList("", "", shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);
@@ -171,7 +171,7 @@ public class GoogleSheetService {
       }
 
       for (ShoppingItem shoppingItem : dekaShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getIngredientName().getName()));
+        items.add(Arrays.asList("", "", shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);
@@ -199,7 +199,7 @@ public class GoogleSheetService {
       }
 
       for (ShoppingItem shoppingItem : marktShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getIngredientName().getName()));
+        items.add(Arrays.asList("", "", shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);
@@ -227,7 +227,7 @@ public class GoogleSheetService {
       }
 
       for (ShoppingItem shoppingItem : otherShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getIngredientName().getName()));
+        items.add(Arrays.asList("", "", shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);
