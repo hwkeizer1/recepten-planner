@@ -30,7 +30,7 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
     this.shoppingItemRepository = shoppingItemRepository;
     
     this.ingredientNameService.addListener(this);
-    stockShoppingItemList = getShoppingItemList();
+    loadShoppingItemList();
     synchronizeWithIngredientNameStockItems();
   }
 
@@ -57,7 +57,7 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
     return createdShoppingItem;
   }
 
-  protected ShoppingItem update(ShoppingItem shoppingItem, ShoppingItem update)
+  public ShoppingItem update(ShoppingItem shoppingItem, ShoppingItem update)
       throws NotFoundException {
     if (!findById(shoppingItem.getId()).isPresent()) {
       throw new NotFoundException(
@@ -99,8 +99,8 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
     stockShoppingItemList.removeListener(listener);
   }
 
-  private ObservableList<ShoppingItem> getShoppingItemList() {
-    return FXCollections.observableList(shoppingItemRepository.findAll().stream()
+  private void loadShoppingItemList() {
+    stockShoppingItemList = FXCollections.observableList(shoppingItemRepository.findByOrderByNameAsc().stream()
         .filter(s -> !s.isStandard())
         .collect(Collectors.toList()));
   }

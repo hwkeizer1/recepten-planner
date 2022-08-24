@@ -56,12 +56,6 @@ public class IngredientNameService {
       throw new AlreadyExistsException(INGREDIENT_NAAM + update.getName()
           + getMeasureUnitSuffix(update) + " bestaat al");
     }
-//    ingredientName.setName(update.getName());
-//    ingredientName.setPluralName(update.getPluralName());
-//    ingredientName.setStock(update.isStock());
-//    ingredientName.setShopType(update.getShopType());
-//    ingredientName.setIngredientType(update.getIngredientType());
-//    ingredientName.setMeasureUnit(update.getMeasureUnit());
 
     update.setId(ingredientName.getId());
     IngredientName updatedIngredientName = ingredientNameRepository.save(update);
@@ -81,14 +75,10 @@ public class IngredientNameService {
   }
 
   public Optional<IngredientName> findByName(String name) {
-//    return observableIngredientNameList.stream()
-//        .filter(ingredientName -> name.equals(ingredientName.getName())).findAny();
     return ingredientNameRepository.findByName(name);
   }
 
   public Optional<IngredientName> findById(Long id) {
-//    return observableIngredientNameList.stream()
-//        .filter(ingredientname -> id.equals(ingredientname.getId())).findAny();
     return ingredientNameRepository.findById(id);
   }
   
