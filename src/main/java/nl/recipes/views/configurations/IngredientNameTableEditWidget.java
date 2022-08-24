@@ -296,8 +296,10 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
   private void updateIngredientName(ActionEvent actionEvent) {
     IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withName(nameTextField.getText()).withPluralName(pluralNameTextField.getText())
-        .withStock(stockCheckBox.isSelected()).withMeasureUnit(measureUnitComboBox.getValue())
+        .withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText())
+        .withStock(stockCheckBox.isSelected())
+        .withMeasureUnit(measureUnitComboBox.getValue())
         .withShopType(shopTypeComboBox.getValue())
         .withIngredientType(ingredientTypeComboBox.getValue()).build();
 

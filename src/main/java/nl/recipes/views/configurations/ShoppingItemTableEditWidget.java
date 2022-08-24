@@ -37,14 +37,15 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.MeasureUnitService;
-import nl.recipes.services.ShoppingItemService;
+import nl.recipes.services.StandardShoppingItemService;
+import nl.recipes.services.StockShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
 
 @Component
 public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUnit> {
 
-  private final ShoppingItemService shoppingItemService;
+  private final StandardShoppingItemService shoppingItemService;
   private final MeasureUnitService measureUnitService;
 
   TableView<ShoppingItem> shoppingItemTableView;
@@ -65,7 +66,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
 
   private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
 
-  public ShoppingItemTableEditWidget(ShoppingItemService shoppingItemService,
+  public ShoppingItemTableEditWidget(StandardShoppingItemService shoppingItemService,
       MeasureUnitService measureUnitService) {
     this.shoppingItemService = shoppingItemService;
     this.measureUnitService = measureUnitService;

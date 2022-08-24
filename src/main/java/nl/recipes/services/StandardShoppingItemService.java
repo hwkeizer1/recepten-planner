@@ -1,11 +1,11 @@
 package nl.recipes.services;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
@@ -13,19 +13,19 @@ import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.ShoppingItemRepository;
 
 @Service
-public class ShoppingItemService {
+public class StandardShoppingItemService {
 
   private final ShoppingItemRepository shoppingItemRepository;
 
-  private ObservableList<ShoppingItem> observableShoppingItemList;
+  private ObservableList<ShoppingItem> standardShoppingItemList;
 
-  public ShoppingItemService(ShoppingItemRepository shoppingItemRepository) {
+  public StandardShoppingItemService(ShoppingItemRepository shoppingItemRepository) {
     this.shoppingItemRepository = shoppingItemRepository;
-    observableShoppingItemList = FXCollections.observableList(shoppingItemRepository.findAll());
+    standardShoppingItemList = getShoppingItemList();
   }
 
   public ObservableList<ShoppingItem> getReadonlyShoppingItemList() {
-    return FXCollections.unmodifiableObservableList(observableShoppingItemList);
+    return FXCollections.unmodifiableObservableList(standardShoppingItemList);
   }
 
   public ShoppingItem create(ShoppingItem shoppingItem)
@@ -39,7 +39,7 @@ public class ShoppingItemService {
     }
     shoppingItem.setStandard(true);
     ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
-    observableShoppingItemList.add(createdShoppingItem);
+    standardShoppingItemList.add(createdShoppingItem);
     return createdShoppingItem;
   }
 
@@ -61,42 +61,47 @@ public class ShoppingItemService {
     shoppingItem.setIngredientType(update.getIngredientType());
 
     ShoppingItem updatedShoppingItem = shoppingItemRepository.save(shoppingItem);
-    observableShoppingItemList.set(observableShoppingItemList.lastIndexOf(shoppingItem),
+    standardShoppingItemList.set(standardShoppingItemList.lastIndexOf(shoppingItem),
         updatedShoppingItem);
     return updatedShoppingItem;
   }
 
   public void remove(ShoppingItem shoppingItem) throws NotFoundException {
-    // TODO add check for removing shoppingItems that are in use
     if (!findById(shoppingItem.getId()).isPresent()) {
       throw new NotFoundException(
           "Naam " + shoppingItem.getName() + " niet gevonden");
     }
     shoppingItemRepository.delete(shoppingItem);
-    observableShoppingItemList.remove(shoppingItem);
+    standardShoppingItemList.remove(shoppingItem);
   }
 
   public Optional<ShoppingItem> findByName(String name) {
-    return observableShoppingItemList.stream()
+    return standardShoppingItemList.stream()
         .filter(shoppingItem -> name.equals(shoppingItem.getName())).findAny();
   }
 
   public Optional<ShoppingItem> findById(Long id) {
-    return observableShoppingItemList.stream()
+    return standardShoppingItemList.stream()
         .filter(shoppingItem -> id.equals(shoppingItem.getId())).findAny();
   }
 
   public void addListener(ListChangeListener<ShoppingItem> listener) {
-    observableShoppingItemList.addListener(listener);
+    standardShoppingItemList.addListener(listener);
   }
 
   public void removeChangeListener(ListChangeListener<ShoppingItem> listener) {
-    observableShoppingItemList.removeListener(listener);
+    standardShoppingItemList.removeListener(listener);
+  }
+  
+  private ObservableList<ShoppingItem> getShoppingItemList() {
+    return FXCollections.observableList(shoppingItemRepository.findAll().stream()
+        .filter(s -> s.isStandard())
+        .collect(Collectors.toList()));
   }
 
   // Setter for JUnit testing only
-  void setObservableShoppingItemList(ObservableList<ShoppingItem> observableShoppingItemList) {
-    this.observableShoppingItemList = observableShoppingItemList;
+  void setStandardShoppingItemList(ObservableList<ShoppingItem> standardShoppingItemList) {
+    this.standardShoppingItemList = standardShoppingItemList;
   }
 
 }

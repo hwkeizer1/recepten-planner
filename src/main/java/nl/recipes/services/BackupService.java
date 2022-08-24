@@ -70,7 +70,7 @@ public class BackupService {
 
   private final RecipeService recipeService;
   
-  private final ShoppingItemService shoppingItemService;
+  private final StandardShoppingItemService shoppingItemService;
 
   private final ConfigService configService;
 
@@ -78,7 +78,7 @@ public class BackupService {
 
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
       MeasureUnitService measureUnitService, RecipeService recipeService,
-      ConfigService configService, ShoppingItemService shoppingItemService) {
+      ConfigService configService, StandardShoppingItemService shoppingItemService) {
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     this.tagService = tagService;

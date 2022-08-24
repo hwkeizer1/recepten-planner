@@ -26,14 +26,14 @@ import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
 import nl.recipes.services.PlanningService;
-import nl.recipes.services.ShoppingItemService;
+import nl.recipes.services.StandardShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 
 @Component
 public class ShoppingPage {
 
   private final PlanningService planningService;
-  private final ShoppingItemService shoppingItemService;
+  private final StandardShoppingItemService shoppingItemService;
   private final GoogleSheetService googleSheetService;
 
   AnchorPane shoppingView;
@@ -44,8 +44,9 @@ public class ShoppingPage {
 
   ObservableList<Ingredient> ingredientList;
   List<ShoppingItem> shoppingItems;
+  List<ShoppingItem> stockSelectionList;
 
-  public ShoppingPage(PlanningService planningService, ShoppingItemService shoppingItemService,
+  public ShoppingPage(PlanningService planningService, StandardShoppingItemService shoppingItemService,
       GoogleSheetService googleSheetService) {
     this.planningService = planningService;
     this.shoppingItemService = shoppingItemService;
@@ -55,12 +56,13 @@ public class ShoppingPage {
   public AnchorPane getShoppingPage() {
     finalListBox.getChildren().clear();
     ingredientList = FXCollections.observableList(planningService.getIngredientList());
-    List<ShoppingItem> ingredientShoppingItems = ingredientList
-        .stream().filter(i -> i.getIngredientName().isStock()).map(i -> new ShoppingItem.ShoppingItemBuilder()
-            .withName(i.getIngredientName().getName()).withIsStandard(false).withOnList(false).build())
-        .collect(Collectors.toList());
+//    List<ShoppingItem> ingredientShoppingItems = ingredientList
+//        .stream().filter(i -> i.getIngredientName().isStock()).map(i -> new ShoppingItem.ShoppingItemBuilder()
+//            .withName(i.getIngredientName().getName()).withIsStandard(false).withOnList(false).build())
+//        .collect(Collectors.toList());
+//    shoppingItems = new ArrayList<>();
+//    shoppingItems.addAll(ingredientShoppingItems);
     shoppingItems = new ArrayList<>();
-    shoppingItems.addAll(ingredientShoppingItems);
     for (ShoppingItem shoppingItem : shoppingItemService.getReadonlyShoppingItemList()) {
       if (shoppingItems.stream().noneMatch(s -> s.getName().equals(shoppingItem.getName()))) {
         shoppingItems.add(shoppingItem);
@@ -85,7 +87,7 @@ public class ShoppingPage {
     HBox shoppingBox = new HBox();
     shoppingBox.setPadding(new Insets(15));
     shoppingBox.setSpacing(30);
-    shoppingBox.getChildren().addAll(getNoStockList(), getStockList(), getStandardList());
+    shoppingBox.getChildren().addAll(getNoStockList(), getStockList(), getStockSelectionList(), getStandardList());
     return shoppingBox;
   }
 
@@ -155,12 +157,41 @@ public class ShoppingPage {
     }
     return stockList;
   }
+  
+  private GridPane getStockSelectionList() {
+    GridPane stockList = new GridPane();
+    stockList.setHgap(20);
+
+    Label header = new Label("Selecteer voorraad boodschappen");
+    header.getStyleClass().add(PLANNING_DATE);
+    stockList.add(header, 1, 0, 4, 1);
+    
+    stockSelectionList = new ArrayList<>();
+    // Haal lijst met niet standaard shopping items op
+    for (Ingredient ingredient : ingredientList.stream().filter(s -> s.getIngredientName().isStock()).toList()) {
+      // Voor elk ingredient check aanwezigheid op niet standaard shopping items
+    }
+
+//    int row = 1;
+//    for (Ingredient ingredient : ingredientList.stream().filter(s -> s.getIngredientName().isStock()).toList()) {
+//      Label amountLabel = new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
+//      Label measureUnitLabel = new Label(
+//          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
+//      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
+
+//      stockList.add(amountLabel, 1, row);
+//      stockList.add(measureUnitLabel, 2, row);
+//      stockList.add(ingredientName, 3, row);
+//      row++;
+//    }
+    return stockList;
+  }
 
   private GridPane getStandardList() {
     GridPane standardList = new GridPane();
     standardList.setHgap(20);
 
-    Label header = new Label("Standaard en voorraad boodschappen");
+    Label header = new Label("Selecteer standaard boodschappen");
     header.getStyleClass().add(PLANNING_DATE);
     standardList.add(header, 1, 0, 4, 1);
 
