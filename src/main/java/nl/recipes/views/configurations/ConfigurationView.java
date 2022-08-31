@@ -5,11 +5,13 @@ import org.springframework.stereotype.Component;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.views.components.pane.bootstrap.BootstrapColumn;
 import nl.recipes.views.components.pane.bootstrap.BootstrapPane;
 import nl.recipes.views.components.pane.bootstrap.BootstrapRow;
 import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 
+@Slf4j
 @Component
 public class ConfigurationView {
 
@@ -37,7 +39,10 @@ public class ConfigurationView {
     scrollPane = new ScrollPane(root);
     scrollPane.setFitToWidth(true);
     scrollPane.setFitToHeight(true);
-    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); 
+    scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> {
+      root.notifyWidthChange(newValue);
+    });
   }
 
   public Node getConfigurationViewPanel() {
@@ -60,6 +65,8 @@ public class ConfigurationView {
         createLargeColumn(ingredientNameTableEditWidget.getIngredientNameTableEditWidget()));
 
     bootstrapPane.addRow(row);
+    
+    
 
     return bootstrapPane;
   }
@@ -69,7 +76,7 @@ public class ConfigurationView {
     column.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
     column.setBreakpointColumnWidth(Breakpoint.SMALL, 9);
     column.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
-    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 4);
+    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 3);
     return column;
   }
 
@@ -77,8 +84,8 @@ public class ConfigurationView {
     BootstrapColumn column = new BootstrapColumn(widget);
     column.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
     column.setBreakpointColumnWidth(Breakpoint.SMALL, 10);
-    column.setBreakpointColumnWidth(Breakpoint.LARGE, 8);
-    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 6);
+    column.setBreakpointColumnWidth(Breakpoint.LARGE, 9);
+    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 7);
     return column;
   }
 

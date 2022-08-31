@@ -6,10 +6,12 @@ import java.util.List;
 import javafx.geometry.Pos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Based on https://edencoding.com/responsive-layouts/
  */
+@Slf4j
 public class BootstrapPane extends GridPane {
 
   private final List<BootstrapRow> rows = new ArrayList<>();
@@ -20,26 +22,23 @@ public class BootstrapPane extends GridPane {
     super();
     setAlignment(Pos.TOP_CENTER);
     setColumnConstraints();
-    setWidthEventHandlers();
   }
 
-  private void setWidthEventHandlers() {
-    this.widthProperty().addListener((observable, oldValue, newValue) -> {
+  public void notifyWidthChange(Number newValue) {
       Breakpoint newBreakpoint = Breakpoint.XSMALL;
-      if (newValue.doubleValue() > 576)
+      if (newValue.doubleValue() > 600)
         newBreakpoint = Breakpoint.SMALL;
-      if (newValue.doubleValue() > 768)
+      if (newValue.doubleValue() > 900)
         newBreakpoint = Breakpoint.MEDIUM;
-      if (newValue.doubleValue() > 992)
-        newBreakpoint = Breakpoint.LARGE;
       if (newValue.doubleValue() > 1200)
+        newBreakpoint = Breakpoint.LARGE;
+      if (newValue.doubleValue() > 1600)
         newBreakpoint = Breakpoint.XLARGE;
 
       if (newBreakpoint != currentWindowSize) {
         currentWindowSize = newBreakpoint;
         calculateNodePositions();
       }
-    });
   }
 
   private void setColumnConstraints() {

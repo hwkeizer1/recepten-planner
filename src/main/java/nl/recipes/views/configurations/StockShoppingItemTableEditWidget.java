@@ -87,6 +87,7 @@ public class StockShoppingItemTableEditWidget implements ListChangeListener<Meas
     shoppingItemTableView = new TableView<>();
     shoppingItemTableView.getStyleClass().add(RP_TABLE);
     shoppingItemTableView.setItems(stockShoppingItemService.getReadonlyShoppingItemList());
+    shoppingItemTableView.setMinHeight(200); // prevent table from collapsing
 
     TableColumn<ShoppingItem, Number> amountColumn = new TableColumn<>("Hoeveelheid");
     amountColumn.setCellValueFactory(

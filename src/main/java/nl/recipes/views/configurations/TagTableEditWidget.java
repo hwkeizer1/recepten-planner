@@ -82,6 +82,7 @@ public class TagTableEditWidget {
     rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
     rpWidget.getChildren().addAll(title, tagTableBox, tagEditBox);
     rpWidget.setPadding(new Insets(20));
+    rpWidget.setMinWidth(100);
   }
 
   public Node getTagTableEditWidget() {
@@ -135,7 +136,7 @@ public class TagTableEditWidget {
     inputForm.setHgap(20);
 
     ColumnConstraints column1 = new ColumnConstraints();
-    column1.setPercentWidth(40);
+    column1.setPercentWidth(50);
     column1.setHalignment(HPos.RIGHT);
     ColumnConstraints column2 = new ColumnConstraints();
     column2.setPercentWidth(50);
@@ -149,7 +150,7 @@ public class TagTableEditWidget {
 
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
     nameError.getStyleClass().add(VALIDATION);
-    inputForm.prefWidthProperty().bind(tagEditBox.prefWidthProperty());
+//    inputForm.prefWidthProperty().bind(tagEditBox.prefWidthProperty());
 
     return inputForm;
   }
