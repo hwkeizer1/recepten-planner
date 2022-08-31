@@ -64,6 +64,7 @@ public class StockShoppingItemTableEditWidget implements ListChangeListener<Meas
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
     TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
     measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
   }
 
   public Node getShoppingItemPanel() {
