@@ -54,15 +54,18 @@ public class GoogleSheetService {
   private int startRow;
 
   public boolean credentialsValid() {
+      boolean valid = true;
       NetHttpTransport httpTransport;
       try {
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        return validateCredentials(httpTransport);
+        valid &= validateCredentials(httpTransport);
+        
       } catch (GeneralSecurityException | IOException e) {
-        log.error("Fout tijdens benaderen Google sheets");
+        log.error("Fout bij het valideren van de credentials voor Google sheets");
         e.printStackTrace();
-        return false;
+        valid &= false;
       }
+      return valid;
   }
   
   private boolean validateCredentials(NetHttpTransport httpTransport) throws IOException {
@@ -114,7 +117,7 @@ public class GoogleSheetService {
   }
 
   // Keep for now to check if it will be needed when credentials are revoked
-  private boolean deleteStoredCredentials() {
+  public boolean deleteStoredCredentials() {
     Path rootPath = Path.of("").toAbsolutePath();
     Path storedCredentialsPath = Path.of(rootPath.toString(), TOKENS_DIRECTORY_PATH, "StoredCredential");
     File storedCredentials = storedCredentialsPath.toFile();
@@ -126,24 +129,18 @@ public class GoogleSheetService {
     return !storedCredentials.exists();
   }
 
-  public void setEkoShoppings(List<Ingredient> ekoIngredientList, List<ShoppingItem> ekoShoppingList) {
+  public void setEkoShoppings(List<ShoppingItem> ekoShoppingList) {
     startRow = 0;
 
-    int totalEkoItems = ekoIngredientList.size() + ekoShoppingList.size();
+    int totalEkoItems = ekoShoppingList.size();
     try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalEkoItems, startRow, 0);
 
       List<List<Object>> items = new ArrayList<>();
-      for (Ingredient ingredient : ekoIngredientList) {
-        items
-            .add(Arrays.asList((ingredient.getAmount() == null) ? "" : ingredient.getAmount().toString(),
-                (ingredient.getIngredientName().getMeasureUnit() == null) ? ""
-                    : ingredient.getIngredientName().getMeasureUnit().getName(),
-                ingredient.getIngredientName().getName()));
-      }
-
       for (ShoppingItem shoppingItem : ekoShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getName()));
+        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+            shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);
@@ -151,27 +148,21 @@ public class GoogleSheetService {
           .setValueInputOption("USER_ENTERED").execute();
       this.startRow = lastRow;
     } catch (IOException e) {
-      log.error("Fout tijdens benaderen Google sheets");
+      log.error("Check: Fout tijdens benaderen Google sheets");
       e.printStackTrace();
     }
   }
 
-  public void setDekaShoppings(List<Ingredient> dekaIngredientList, List<ShoppingItem> dekaShoppingList) {
-    int totalDekaItems = dekaIngredientList.size() + dekaShoppingList.size();
+  public void setDekaShoppings(List<ShoppingItem> dekaShoppingList) {
+    int totalDekaItems = dekaShoppingList.size();
     try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalDekaItems, startRow, 1);
 
       List<List<Object>> items = new ArrayList<>();
-      for (Ingredient ingredient : dekaIngredientList) {
-        items
-            .add(Arrays.asList((ingredient.getAmount() == null) ? "" : ingredient.getAmount().toString(),
-                (ingredient.getIngredientName().getMeasureUnit() == null) ? ""
-                    : ingredient.getIngredientName().getMeasureUnit().getName(),
-                ingredient.getIngredientName().getName()));
-      }
-
       for (ShoppingItem shoppingItem : dekaShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getName()));
+        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+            shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);
@@ -184,22 +175,16 @@ public class GoogleSheetService {
     }
   }
 
-  public void setMarktShoppings(List<Ingredient> marktIngredientList, List<ShoppingItem> marktShoppingList) {
-    int totalMarktItems = marktIngredientList.size() + marktShoppingList.size();
+  public void setMarktShoppings(List<ShoppingItem> marktShoppingList) {
+    int totalMarktItems = marktShoppingList.size();
     try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalMarktItems, startRow, 2);
 
       List<List<Object>> items = new ArrayList<>();
-      for (Ingredient ingredient : marktIngredientList) {
-        items
-            .add(Arrays.asList((ingredient.getAmount() == null) ? "" : ingredient.getAmount().toString(),
-                (ingredient.getIngredientName().getMeasureUnit() == null) ? ""
-                    : ingredient.getIngredientName().getMeasureUnit().getName(),
-                ingredient.getIngredientName().getName()));
-      }
-
       for (ShoppingItem shoppingItem : marktShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getName()));
+        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+            shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);
@@ -212,22 +197,16 @@ public class GoogleSheetService {
     }
   }
 
-  public void setOtherShoppings(List<Ingredient> otherIngredientList, List<ShoppingItem> otherShoppingList) {
-    int totalOtherItems = otherIngredientList.size() + otherShoppingList.size();
+  public void setOtherShoppings(List<ShoppingItem> otherShoppingList) {
+    int totalOtherItems = otherShoppingList.size();
     try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalOtherItems, startRow, 3);
 
       List<List<Object>> items = new ArrayList<>();
-      for (Ingredient ingredient : otherIngredientList) {
-        items
-            .add(Arrays.asList((ingredient.getAmount() == null) ? "" : ingredient.getAmount().toString(),
-                (ingredient.getIngredientName().getMeasureUnit() == null) ? ""
-                    : ingredient.getIngredientName().getMeasureUnit().getName(),
-                ingredient.getIngredientName().getName()));
-      }
-
       for (ShoppingItem shoppingItem : otherShoppingList) {
-        items.add(Arrays.asList("", "", shoppingItem.getName()));
+        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+            shoppingItem.getName()));
       }
 
       ValueRange body = new ValueRange().setValues(items);

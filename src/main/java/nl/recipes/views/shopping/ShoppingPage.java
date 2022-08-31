@@ -3,7 +3,6 @@ package nl.recipes.views.shopping;
 import static nl.recipes.views.ViewConstants.PLANNING_DATE;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -19,7 +18,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.ShopType;
@@ -27,13 +25,15 @@ import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.StandardShoppingItemService;
+import nl.recipes.services.StockShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 
 @Component
 public class ShoppingPage {
 
   private final PlanningService planningService;
-  private final StandardShoppingItemService shoppingItemService;
+  private final StandardShoppingItemService standardShoppingItemService;
+  private final StockShoppingItemService stockShoppingItemService;
   private final GoogleSheetService googleSheetService;
 
   AnchorPane shoppingView;
@@ -43,31 +43,22 @@ public class ShoppingPage {
   Button sendShoppingListToGoogle;
 
   ObservableList<Ingredient> ingredientList;
-  List<ShoppingItem> shoppingItems;
-  List<ShoppingItem> stockSelectionList;
 
-  public ShoppingPage(PlanningService planningService, StandardShoppingItemService shoppingItemService,
-      GoogleSheetService googleSheetService) {
+  List<ShoppingItem> finalShoppingList;
+
+  public ShoppingPage(PlanningService planningService, StandardShoppingItemService standardShoppingItemService,
+      GoogleSheetService googleSheetService, StockShoppingItemService stockShoppingItemService) {
     this.planningService = planningService;
-    this.shoppingItemService = shoppingItemService;
+    this.standardShoppingItemService = standardShoppingItemService;
+    this.stockShoppingItemService = stockShoppingItemService;
     this.googleSheetService = googleSheetService;
   }
 
   public AnchorPane getShoppingPage() {
     finalListBox.getChildren().clear();
     ingredientList = FXCollections.observableList(planningService.getIngredientList());
-//    List<ShoppingItem> ingredientShoppingItems = ingredientList
-//        .stream().filter(i -> i.getIngredientName().isStock()).map(i -> new ShoppingItem.ShoppingItemBuilder()
-//            .withName(i.getIngredientName().getName()).withIsStandard(false).withOnList(false).build())
-//        .collect(Collectors.toList());
-//    shoppingItems = new ArrayList<>();
-//    shoppingItems.addAll(ingredientShoppingItems);
-    shoppingItems = new ArrayList<>();
-    for (ShoppingItem shoppingItem : shoppingItemService.getReadonlyShoppingItemList()) {
-      if (shoppingItems.stream().noneMatch(s -> s.getName().equals(shoppingItem.getName()))) {
-        shoppingItems.add(shoppingItem);
-      }
-    }
+    
+    finalShoppingList = new ArrayList<>();
 
     shoppingView = new AnchorPane();
     shoppingView.getChildren().add(getShoppingPanel());
@@ -87,13 +78,15 @@ public class ShoppingPage {
     HBox shoppingBox = new HBox();
     shoppingBox.setPadding(new Insets(15));
     shoppingBox.setSpacing(30);
-    shoppingBox.getChildren().addAll(getNoStockList(), getStockList(), getStockSelectionList(), getStandardList());
+    shoppingBox.getChildren().addAll(getNoStockList(), getStockPane(), 
+        createShoppingPanel("Selecteer voorraad boodschappen", createRelevantStockList(), true),
+        createShoppingPanel("Selecteer standaard boodschappen", createStandardShoppingList(), true));
     return shoppingBox;
   }
 
   private HBox getButtonPanel() {
     Button generateShoppingList = new Button("Genereer boodschappenlijst");
-    generateShoppingList.setOnAction(this::generateShoppingList);
+    generateShoppingList.setOnAction(this::createFinalShoppingPanels);
 
     sendShoppingListToGoogle = new Button("Stuur boodschappenlijst naar Google sheets");
     sendShoppingListToGoogle.setOnAction(this::sendShoppingListToGoogle);
@@ -107,41 +100,37 @@ public class ShoppingPage {
   }
 
   private GridPane getNoStockList() {
-    GridPane noStockList = new GridPane();
-    noStockList.setHgap(20);
+    GridPane noStockPane = new GridPane();
+    noStockPane.setHgap(20);
 
     Label header = new Label("Boodschappen voor recepten");
     header.getStyleClass().add(PLANNING_DATE);
-    noStockList.add(header, 1, 0, 4, 1);
+    noStockPane.add(header, 1, 0, 4, 1);
 
-    int row = 1;
-    for (Ingredient ingredient : ingredientList.stream().filter(s -> !s.getIngredientName().isStock()).toList()) {
-      Label amountLabel = new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
-      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
-      ingredient.setOnList(true);
-      CheckBox onShoppingList = new CheckBox();
-      onShoppingList.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue,
-          Boolean newValue) -> ingredient.setOnList(newValue));
-      onShoppingList.setSelected(ingredient.isOnList());
-
-      noStockList.add(amountLabel, 1, row);
-      noStockList.add(measureUnitLabel, 2, row);
-      noStockList.add(ingredientName, 3, row);
-      noStockList.add(onShoppingList, 4, row);
-      row++;
-    }
-    return noStockList;
+    List<ShoppingItem> noStockList = ingredientList.stream().filter(i -> !i.getIngredientName().isStock())
+        .<ShoppingItem>map(i -> new ShoppingItem.ShoppingItemBuilder()
+          .withAmount(i.getAmount())
+          .withName(i.getIngredientName().getName())
+          .withPluralName(i.getIngredientName().getPluralName())
+          .withMeasureUnit(i.getIngredientName().getMeasureUnit())
+          .withShopType(i.getIngredientName().getShopType())
+          .withIngredientType(i.getIngredientName().getIngredientType())
+          .withOnList(true)
+          .build()).toList();
+    
+ // TODO: Also add to the final list for now => this probably needs refactoring to some sort of service
+    finalShoppingList.addAll(noStockList);
+      
+      return createShoppingPanel("Boodschappen voor recepten", noStockList, true);
   }
 
-  private GridPane getStockList() {
-    GridPane stockList = new GridPane();
-    stockList.setHgap(20);
+  private GridPane getStockPane() {
+    GridPane stockPane = new GridPane();
+    stockPane.setHgap(20);
 
     Label header = new Label("Benodigd uit voorraad");
     header.getStyleClass().add(PLANNING_DATE);
-    stockList.add(header, 1, 0, 4, 1);
+    stockPane.add(header, 1, 0, 4, 1);
 
     int row = 1;
     for (Ingredient ingredient : ingredientList.stream().filter(s -> s.getIngredientName().isStock()).toList()) {
@@ -150,86 +139,28 @@ public class ShoppingPage {
           ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
       Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
 
-      stockList.add(amountLabel, 1, row);
-      stockList.add(measureUnitLabel, 2, row);
-      stockList.add(ingredientName, 3, row);
+      stockPane.add(amountLabel, 1, row);
+      stockPane.add(measureUnitLabel, 2, row);
+      stockPane.add(ingredientName, 3, row);
       row++;
     }
-    return stockList;
-  }
-  
-  private GridPane getStockSelectionList() {
-    GridPane stockList = new GridPane();
-    stockList.setHgap(20);
-
-    Label header = new Label("Selecteer voorraad boodschappen");
-    header.getStyleClass().add(PLANNING_DATE);
-    stockList.add(header, 1, 0, 4, 1);
-    
-    stockSelectionList = new ArrayList<>();
-    // Haal lijst met niet standaard shopping items op
-    for (Ingredient ingredient : ingredientList.stream().filter(s -> s.getIngredientName().isStock()).toList()) {
-      // Voor elk ingredient check aanwezigheid op niet standaard shopping items
-    }
-
-//    int row = 1;
-//    for (Ingredient ingredient : ingredientList.stream().filter(s -> s.getIngredientName().isStock()).toList()) {
-//      Label amountLabel = new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
-//      Label measureUnitLabel = new Label(
-//          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
-//      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
-
-//      stockList.add(amountLabel, 1, row);
-//      stockList.add(measureUnitLabel, 2, row);
-//      stockList.add(ingredientName, 3, row);
-//      row++;
-//    }
-    return stockList;
+    return stockPane;
   }
 
-  private GridPane getStandardList() {
-    GridPane standardList = new GridPane();
-    standardList.setHgap(20);
-
-    Label header = new Label("Selecteer standaard boodschappen");
-    header.getStyleClass().add(PLANNING_DATE);
-    standardList.add(header, 1, 0, 4, 1);
-
-    int row = 1;
-    int col = 1;
-    for (ShoppingItem shoppingItem : shoppingItems) {
-      Label ingredientName = new Label(shoppingItem.getName());
-      ingredientName.setTextFill(Color.GREEN);
-      CheckBox onShoppingList = new CheckBox();
-      onShoppingList.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue,
-          Boolean newValue) -> shoppingItem.setOnList(newValue));
-      onShoppingList.setSelected(shoppingItem.isOnList());
-
-      if (col % 2 != 0) {
-        standardList.add(ingredientName, 2, row);
-        standardList.add(onShoppingList, 3, row);
-        col++;
-      } else {
-        standardList.add(ingredientName, 5, row);
-        standardList.add(onShoppingList, 6, row);
-        col++;
-        row++;
-      }
-
-    }
-    return standardList;
-  }
-
-  private void generateShoppingList(ActionEvent event) {
+  private void createFinalShoppingPanels(ActionEvent event) {
     finalListBox.getChildren().clear();
     finalListBox.setPadding(new Insets(15));
     finalListBox.setSpacing(30);
-    finalListBox.getChildren().addAll(getEkoListPanel(), getDekaListPanel(), getMarktListPanel(), getOtherListPanel());
+    finalListBox.getChildren().addAll(createShoppingPanel("Eko plaza", createEkoShoppingList(), false), 
+        createShoppingPanel("DEKA", createDekaShoppingList(), false), 
+        createShoppingPanel("Markt", createMarktShoppingList(), false), 
+        createShoppingPanel("Other", createOtherShoppingList(), false));
     sendShoppingListToGoogle.setVisible(true);
   }
 
   private void sendShoppingListToGoogle(ActionEvent event) {
     if (!googleSheetService.credentialsValid()) {
+      googleSheetService.deleteStoredCredentials();
       Alert a = new Alert(AlertType.WARNING);
       a.initModality(Modality.WINDOW_MODAL);
       a.setTitle("Waarschuwing");
@@ -239,176 +170,99 @@ public class ShoppingPage {
       a.showAndWait();
       googleSheetService.createSheetService();
     }
-    googleSheetService.setEkoShoppings(getEkoIngredientList(), getEkoShoppingList());
-    googleSheetService.setDekaShoppings(getDekaIngredientList(), getDekaShoppingList());
-    googleSheetService.setMarktShoppings(getMarktIngredientList(), getMarktShoppingList());
-    googleSheetService.setOtherShoppings(getOtherIngredientList(), getOtherShoppingList());
+    googleSheetService.setEkoShoppings(createEkoShoppingList());
+    googleSheetService.setDekaShoppings(createDekaShoppingList());
+    googleSheetService.setMarktShoppings(createMarktShoppingList());
+    googleSheetService.setOtherShoppings(createOtherShoppingList());
   }
+  
+  private GridPane createShoppingPanel(String header, List<ShoppingItem> shoppingItems, boolean showCheckBox) {
+    GridPane shoppingPanel = new GridPane();
+    shoppingPanel.setHgap(20);
 
-  private GridPane getEkoListPanel() {
-    GridPane ekoShoppingList = new GridPane();
-    ekoShoppingList.setHgap(20);
-
-    Label header = new Label("Eko plaza");
-    header.getStyleClass().add(PLANNING_DATE);
-    ekoShoppingList.add(header, 1, 0, 4, 1);
+    Label headerLabel = new Label(header);
+    headerLabel.getStyleClass().add(PLANNING_DATE);
+    shoppingPanel.add(headerLabel, 1, 0, 4, 1);
 
     int row = 1;
-    for (Ingredient ingredient : getEkoIngredientList()) {
-      Label amountLabel = new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
-      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
+    for (ShoppingItem shoppingItem : shoppingItems) {
+      Label amountLabel = new Label(shoppingItem.getAmount() == null ? "" : Utils.format(shoppingItem.getAmount()));
+      Label measureUnitLabel =
+          new Label(shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem));
+      Label shoppingItemName = new Label(getShoppingItemNameLabel(shoppingItem));
 
-      ekoShoppingList.add(amountLabel, 1, row);
-      ekoShoppingList.add(measureUnitLabel, 2, row);
-      ekoShoppingList.add(ingredientName, 3, row);
+      shoppingPanel.add(amountLabel, 1, row);
+      shoppingPanel.add(measureUnitLabel, 2, row);
+      shoppingPanel.add(shoppingItemName, 3, row);
+      
+      if (showCheckBox) {
+        CheckBox shoppingCheckBox = new CheckBox();
+        shoppingCheckBox.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue,
+            Boolean newValue) -> shoppingItem.setOnList(newValue));
+        shoppingCheckBox.setSelected(shoppingItem.isOnList());
+        shoppingPanel.add(shoppingCheckBox, 4, row);
+      } 
       row++;
     }
-
-    for (ShoppingItem shoppingItem : getEkoShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getName());
-      ingredientName.setTextFill(Color.GREEN);
-
-      ekoShoppingList.add(ingredientName, 3, row);
-      row++;
-    }
-    return ekoShoppingList;
+    return shoppingPanel;
   }
 
-  private GridPane getDekaListPanel() {
-    GridPane dekaShoppingList = new GridPane();
-    dekaShoppingList.setHgap(20);
-
-    Label header = new Label("DEKA");
-    header.getStyleClass().add(PLANNING_DATE);
-    dekaShoppingList.add(header, 1, 0, 4, 1);
-
-    int row = 1;
-    for (Ingredient ingredient : getDekaIngredientList()) {
-      Label amountLabel = new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
-      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
-
-      dekaShoppingList.add(amountLabel, 1, row);
-      dekaShoppingList.add(measureUnitLabel, 2, row);
-      dekaShoppingList.add(ingredientName, 3, row);
-      row++;
+  private List<ShoppingItem> createRelevantStockList() {
+    List<ShoppingItem> stockSelectionList = new ArrayList<>();
+    for (Ingredient ingredient : ingredientList.stream().filter(s -> s.getIngredientName().isStock()).toList()) {
+      stockShoppingItemService.findByName(ingredient.getIngredientName().getName()).ifPresent(stockSelectionList::add);
     }
-
-    for (ShoppingItem shoppingItem : getDekaShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getName());
-      ingredientName.setTextFill(Color.GREEN);
-
-      dekaShoppingList.add(ingredientName, 3, row);
-      row++;
-    }
-    return dekaShoppingList;
+// TODO: Also add to the final list for now => this probably needs refactoring to some sort of service
+    finalShoppingList.addAll(stockSelectionList);
+    return stockSelectionList;
   }
-
-  private GridPane getMarktListPanel() {
-    GridPane marktShoppingList = new GridPane();
-    marktShoppingList.setHgap(20);
-
-    Label header = new Label("Markt");
-    header.getStyleClass().add(PLANNING_DATE);
-    marktShoppingList.add(header, 1, 0, 4, 1);
-
-    int row = 1;
-    for (Ingredient ingredient : getMarktIngredientList()) {
-      Label amountLabel = new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
-      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
-
-      marktShoppingList.add(amountLabel, 1, row);
-      marktShoppingList.add(measureUnitLabel, 2, row);
-      marktShoppingList.add(ingredientName, 3, row);
-      row++;
+  
+//  TODO The lists can be used more efficiently, probably needs refactoring to some sort of service
+  private List<ShoppingItem> createStandardShoppingList() {
+    List<ShoppingItem> standardShoppingList = new ArrayList<>();
+    for (ShoppingItem shoppingItem : standardShoppingItemService.getReadonlyShoppingItemList()) {
+      if (standardShoppingList.stream().noneMatch(s -> s.getName().equals(shoppingItem.getName()))) {
+        standardShoppingList.add(shoppingItem);
+      }
     }
-
-    for (ShoppingItem shoppingItem : getMarktShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getName());
-      ingredientName.setTextFill(Color.GREEN);
-
-      marktShoppingList.add(ingredientName, 3, row);
-      row++;
-    }
-    return marktShoppingList;
+ // TODO: Also add to the final list for now => this probably needs refactoring to some sort of service
+    finalShoppingList.addAll(standardShoppingList);
+    return standardShoppingList;
   }
-
-  private GridPane getOtherListPanel() {
-    GridPane otherShoppingList = new GridPane();
-    otherShoppingList.setHgap(20);
-
-    Label header = new Label("Overig");
-    header.getStyleClass().add(PLANNING_DATE);
-    otherShoppingList.add(header, 1, 0, 4, 1);
-
-    int row = 1;
-    for (Ingredient ingredient : getOtherIngredientList()) {
-      Label amountLabel = new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
-      Label measureUnitLabel = new Label(
-          ingredient.getIngredientName().getMeasureUnit() == null ? "" : getIngredientMeasureUnitLabel(ingredient));
-      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
-
-      otherShoppingList.add(amountLabel, 1, row);
-      otherShoppingList.add(measureUnitLabel, 2, row);
-      otherShoppingList.add(ingredientName, 3, row);
-      row++;
-    }
-
-    for (ShoppingItem shoppingItem : getOtherShoppingList()) {
-      Label ingredientName = new Label(shoppingItem.getName());
-      ingredientName.setTextFill(Color.GREEN);
-
-      otherShoppingList.add(ingredientName, 3, row);
-      row++;
-    }
-    return otherShoppingList;
-  }
-
-  private List<Ingredient> getEkoIngredientList() {
-    return ingredientList.stream().filter(Ingredient::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.EKO)).toList();
-  }
-
-  private List<ShoppingItem> getEkoShoppingList() {
-    return shoppingItems.stream().filter(ShoppingItem::isOnList)
+  
+  private List<ShoppingItem> createEkoShoppingList() {
+    return finalShoppingList.stream().filter(ShoppingItem::isOnList)
         .filter(s -> s.getShopType().equals(ShopType.EKO)).toList();
   }
 
-  private List<Ingredient> getDekaIngredientList() {
-    return ingredientList.stream().filter(Ingredient::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.DEKA)).toList();
-  }
-
-  private List<ShoppingItem> getDekaShoppingList() {
-    return shoppingItems.stream().filter(ShoppingItem::isOnList)
+  private List<ShoppingItem> createDekaShoppingList() {
+    return finalShoppingList.stream().filter(ShoppingItem::isOnList)
         .filter(s -> s.getShopType().equals(ShopType.DEKA)).toList();
   }
 
-  private List<Ingredient> getMarktIngredientList() {
-    return ingredientList.stream().filter(Ingredient::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.MARKT)).toList();
-  }
-
-  private List<ShoppingItem> getMarktShoppingList() {
-    return shoppingItems.stream().filter(ShoppingItem::isOnList)
+  private List<ShoppingItem> createMarktShoppingList() {
+    return finalShoppingList.stream().filter(ShoppingItem::isOnList)
         .filter(s -> s.getShopType().equals(ShopType.MARKT)).toList();
   }
 
-  private List<Ingredient> getOtherIngredientList() {
-    return ingredientList.stream().filter(Ingredient::isOnList)
-        .filter(s -> s.getIngredientName().getShopType().equals(ShopType.OVERIG)).toList();
-  }
-
-  private List<ShoppingItem> getOtherShoppingList() {
-    return shoppingItems.stream().filter(ShoppingItem::isOnList)
+  private List<ShoppingItem> createOtherShoppingList() {
+    return finalShoppingList.stream().filter(ShoppingItem::isOnList)
         .filter(s -> s.getShopType().equals(ShopType.OVERIG)).toList();
   }
-
+  
+  private String getMeasureUnitLabel(ShoppingItem shoppingItem) {
+    return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
+        ? shoppingItem.getMeasureUnit().getName()
+        : shoppingItem.getMeasureUnit().getPluralName();
+  }
+  
+  private String getShoppingItemNameLabel(ShoppingItem shoppingItem) {
+    if (shoppingItem.getPluralName() == null) return shoppingItem.getName();
+    return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
+        ? shoppingItem.getName()
+        : shoppingItem.getPluralName();
+  }
+  
   private String getIngredientMeasureUnitLabel(Ingredient ingredient) {
     return (ingredient.getAmount() == null || ingredient.getAmount() <= 1)
         ? ingredient.getIngredientName().getMeasureUnit().getName()

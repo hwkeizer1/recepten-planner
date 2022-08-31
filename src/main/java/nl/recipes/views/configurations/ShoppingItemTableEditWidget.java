@@ -28,7 +28,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
@@ -38,7 +37,6 @@ import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.MeasureUnitService;
 import nl.recipes.services.StandardShoppingItemService;
-import nl.recipes.services.StockShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
 
