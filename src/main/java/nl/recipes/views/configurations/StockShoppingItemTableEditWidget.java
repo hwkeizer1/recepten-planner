@@ -152,7 +152,6 @@ public class StockShoppingItemTableEditWidget implements ListChangeListener<Meas
     
     Label measureUnitLabel = new Label("Maateenheid:");
     form.add(measureUnitLabel, 0, 2);
-    measureUnitComboBox.setMinWidth(150);
     measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     form.add(measureUnitComboBox, 1, 2);
 

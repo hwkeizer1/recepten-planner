@@ -76,7 +76,7 @@ public class ConfigurationView {
     column.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
     column.setBreakpointColumnWidth(Breakpoint.SMALL, 9);
     column.setBreakpointColumnWidth(Breakpoint.LARGE, 6);
-    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 3);
+    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 4);
     return column;
   }
 
@@ -85,7 +85,7 @@ public class ConfigurationView {
     column.setBreakpointColumnWidth(Breakpoint.XSMALL, 12);
     column.setBreakpointColumnWidth(Breakpoint.SMALL, 10);
     column.setBreakpointColumnWidth(Breakpoint.LARGE, 9);
-    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 7);
+    column.setBreakpointColumnWidth(Breakpoint.XLARGE, 6);
     return column;
   }
 
