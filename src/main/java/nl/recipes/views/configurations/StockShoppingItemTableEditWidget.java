@@ -165,6 +165,7 @@ public class StockShoppingItemTableEditWidget implements ListChangeListener<Meas
                 : Utils.format(selectedShoppingItem.getAmount()));
             measureUnitComboBox.setValue(selectedShoppingItem.getMeasureUnit());
           } else {
+            nameText.setText(null);
             amountTextField.setText(null);
             measureUnitComboBox.setValue(null);
           }
