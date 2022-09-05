@@ -86,9 +86,9 @@ public class MeasureUnitTableEditWidget {
     initializeMeasureUnitEditBox();
 
     Label title = new Label("Maateenheden bewerken");
-    title.getStyleClass().add(TITLE);
+    title.getStyleClass().add(CSS_TITLE);
 
-    rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+    rpWidget.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
     rpWidget.getChildren().addAll(title, measureUnitTableBox, measureUnitEditBox);
     rpWidget.setPadding(new Insets(20));
   }
@@ -116,7 +116,7 @@ public class MeasureUnitTableEditWidget {
         .addListener(measureUnitChangeListener);
 
     measureUnitTableBox.getChildren().add(measureUnitTableView);
-    measureUnitTableBox.getStyleClass().add(RP_TABLE);
+    measureUnitTableBox.getStyleClass().add(CSS_BASIC_TABLE);
   }
 
   private void initializeMeasureUnitEditBox() {
@@ -171,9 +171,9 @@ public class MeasureUnitTableEditWidget {
     inputForm.add(pluralNameError, 1, 3);
 
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    nameError.getStyleClass().add(VALIDATION);
+    nameError.getStyleClass().add(CSS_VALIDATION);
     pluralNameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    pluralNameError.getStyleClass().add(VALIDATION);
+    pluralNameError.getStyleClass().add(CSS_VALIDATION);
     inputForm.prefWidthProperty().bind(measureUnitEditBox.prefWidthProperty());
 
     return inputForm;

@@ -161,7 +161,7 @@ public class RecipeSingleView {
 
     recipeName = new Label();
     recipeName.setWrapText(true);
-    recipeName.getStyleClass().addAll(RECIPE_TITLE, DROP_SHADOW);
+    recipeName.getStyleClass().addAll(CSS_RECIPE_TITLE, CSS_DROP_SHADOW);
 
     VBox buttonPanel = new VBox();
     buttonPanel.setSpacing(20);
@@ -214,10 +214,10 @@ public class RecipeSingleView {
   private Node createFeaturesWidget(String title) {
     VBox widget = new VBox();
     widget.setSpacing(10);
-    widget.getStyleClass().addAll(WIDGET, DROP_SHADOW);
+    widget.getStyleClass().addAll(CSS_WIDGET, CSS_DROP_SHADOW);
 
     Label titleLabel = new Label(title);
-    titleLabel.getStyleClass().add(TITLE);
+    titleLabel.getStyleClass().add(CSS_TITLE);
     widget.getChildren().add(titleLabel);
 
     widget.getChildren().add(new Separator(Orientation.HORIZONTAL));
@@ -235,10 +235,10 @@ public class RecipeSingleView {
   private Node createIngredientTableWidget(String title) {
     VBox widget = new VBox();
     widget.setSpacing(10);
-    widget.getStyleClass().addAll(WIDGET, DROP_SHADOW);
+    widget.getStyleClass().addAll(CSS_WIDGET, CSS_DROP_SHADOW);
 
     Label titleLabel = new Label(title);
-    titleLabel.getStyleClass().add(TITLE);
+    titleLabel.getStyleClass().add(CSS_TITLE);
     widget.getChildren().add(titleLabel);
 
     widget.getChildren().add(new Separator(Orientation.HORIZONTAL));
@@ -255,7 +255,7 @@ public class RecipeSingleView {
         .bind(ingredientTableView.widthProperty().multiply(0.45));
     stockColumn.prefWidthProperty().bind(ingredientTableView.widthProperty().multiply(0.1));
 
-    ingredientTableView.getStyleClass().add(INGREDIENT_TABLE);
+    ingredientTableView.getStyleClass().add(CSS_INGREDIENT_TABLE);
 
     amountColumn.setCellValueFactory(
         c -> (c.getValue().getAmount() != null && (10 * c.getValue().getAmount() % 10) == 0)
@@ -289,10 +289,10 @@ public class RecipeSingleView {
     VBox widget = new VBox();
     VBox.setVgrow(widget, Priority.ALWAYS);
     widget.setSpacing(10);
-    widget.getStyleClass().addAll(WIDGET, DROP_SHADOW);
+    widget.getStyleClass().addAll(CSS_WIDGET, CSS_DROP_SHADOW);
 
     Label titleLabel = new Label(title);
-    titleLabel.getStyleClass().add(TITLE);
+    titleLabel.getStyleClass().add(CSS_TITLE);
     widget.getChildren().add(titleLabel);
 
     widget.getChildren().add(new Separator(Orientation.HORIZONTAL));
@@ -324,7 +324,7 @@ public class RecipeSingleView {
   private ImageView setRoundedImage(String imageLocation) {
     Image image = new Image(imageLocation, 300, 300, true, false);
     imageView.setImage(image);
-    imageView.getStyleClass().add(DROP_SHADOW);
+    imageView.getStyleClass().add(CSS_DROP_SHADOW);
 
     Rectangle clip = new Rectangle();
     clip.setWidth(300.0);

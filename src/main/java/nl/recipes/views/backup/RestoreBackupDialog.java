@@ -1,6 +1,6 @@
 package nl.recipes.views.backup;
 
-import static nl.recipes.views.ViewConstants.BACKUP_FOLDER;
+import static nl.recipes.views.ViewConstants.CSS_BACKUP_FOLDER;
 
 import java.io.File;
 
@@ -102,7 +102,7 @@ public class RestoreBackupDialog {
 
   public void selectRestoreFolder(ActionEvent actionEvent) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setInitialDirectory(new File(configService.getConfigProperty(BACKUP_FOLDER)));
+    directoryChooser.setInitialDirectory(new File(configService.getConfigProperty(CSS_BACKUP_FOLDER)));
     File directory = directoryChooser.showDialog(dialog);
 
     if (directory != null) {

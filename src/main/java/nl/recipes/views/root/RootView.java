@@ -77,7 +77,7 @@ public class RootView {
   }
 
   private void initializeRootWindow() {
-    rootWindow.getStyleClass().add(BACKGROUND);
+    rootWindow.getStyleClass().add(CSS_BACKGROUND);
     rootWindow.setCenter(recipeListView.getRecipeListPanel());
     rootWindow.setTop(menuBar);
   }

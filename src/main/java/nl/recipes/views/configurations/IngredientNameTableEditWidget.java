@@ -1,10 +1,10 @@
 package nl.recipes.views.configurations;
 
-import static nl.recipes.views.ViewConstants.DROP_SHADOW;
-import static nl.recipes.views.ViewConstants.RP_TABLE;
-import static nl.recipes.views.ViewConstants.TITLE;
-import static nl.recipes.views.ViewConstants.VALIDATION;
-import static nl.recipes.views.ViewConstants.WIDGET;
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_TITLE;
+import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
@@ -30,6 +30,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
@@ -41,6 +42,7 @@ import nl.recipes.services.IngredientNameService;
 import nl.recipes.services.MeasureUnitService;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
 
+@Slf4j
 @Component
 public class IngredientNameTableEditWidget implements  ListChangeListener<MeasureUnit>{
 
@@ -107,7 +109,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
     TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
     measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
-    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
+//    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
 
     ingredientNameChangeListener = (observable, oldValue, newValue) -> {
       selectedIngredientName = newValue;
@@ -135,9 +137,9 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     initializeIngredientNameEditBox();
 
     Label title = new Label("Ingrediënten bewerken");
-    title.getStyleClass().add(TITLE);
+    title.getStyleClass().add(CSS_TITLE);
 
-    rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+    rpWidget.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
     rpWidget.getChildren().addAll(title, ingredientNameTableBox, ingredientNameEditBox);
     rpWidget.setPadding(new Insets(20));
   }
@@ -183,7 +185,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
         .addListener(ingredientNameChangeListener);
 
     ingredientNameTableBox.getChildren().add(ingredientNameTableView);
-    ingredientNameTableBox.getStyleClass().add(RP_TABLE);
+    ingredientNameTableBox.getStyleClass().add(CSS_BASIC_TABLE);
   }
 
   private void initializeIngredientNameEditBox() {
@@ -263,9 +265,9 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     inputForm.add(ingredientTypeComboBox, 3, 4);
 
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    nameError.getStyleClass().add(VALIDATION);
+    nameError.getStyleClass().add(CSS_VALIDATION);
     pluralNameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    pluralNameError.getStyleClass().add(VALIDATION);
+    pluralNameError.getStyleClass().add(CSS_VALIDATION);
     measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     shopTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
     ingredientTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
@@ -322,6 +324,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
+    log.debug("{}", c);
     measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 }

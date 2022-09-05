@@ -24,8 +24,8 @@ public class CreateBackupDialog {
   }
 
   public void createBackup() {
-    if (configService.getConfigProperty(BACKUP_FOLDER) != null) {
-      backupService.backup(configService.getConfigProperty(BACKUP_FOLDER));
+    if (configService.getConfigProperty(CSS_BACKUP_FOLDER) != null) {
+      backupService.backup(configService.getConfigProperty(CSS_BACKUP_FOLDER));
     } else {
       showNoBackupLocationError();
     }

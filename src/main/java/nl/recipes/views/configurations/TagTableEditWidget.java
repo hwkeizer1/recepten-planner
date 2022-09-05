@@ -77,9 +77,9 @@ public class TagTableEditWidget {
     initializeTagEditBox();
 
     Label title = new Label("Categoriëen bewerken");
-    title.getStyleClass().add(TITLE);
+    title.getStyleClass().add(CSS_TITLE);
 
-    rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+    rpWidget.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
     rpWidget.getChildren().addAll(title, tagTableBox, tagEditBox);
     rpWidget.setPadding(new Insets(20));
     rpWidget.setMinWidth(100);
@@ -100,7 +100,7 @@ public class TagTableEditWidget {
     tagTableView.getSelectionModel().selectedItemProperty().addListener(tagChangeListener);
 
     tagTableBox.getChildren().add(tagTableView);
-    tagTableView.getStyleClass().add(RP_TABLE);
+    tagTableView.getStyleClass().add(CSS_BASIC_TABLE);
   }
 
   private void initializeTagEditBox() {
@@ -149,7 +149,7 @@ public class TagTableEditWidget {
     inputForm.add(nameError, 1, 1);
 
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    nameError.getStyleClass().add(VALIDATION);
+    nameError.getStyleClass().add(CSS_VALIDATION);
 //    inputForm.prefWidthProperty().bind(tagEditBox.prefWidthProperty());
 
     return inputForm;

@@ -1,6 +1,6 @@
 package nl.recipes.views.shopping;
 
-import static nl.recipes.views.ViewConstants.PLANNING_DATE;
+import static nl.recipes.views.ViewConstants.CSS_PLANNING_DATE;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -104,7 +104,7 @@ public class ShoppingPage {
     noStockPane.setHgap(20);
 
     Label header = new Label("Boodschappen voor recepten");
-    header.getStyleClass().add(PLANNING_DATE);
+    header.getStyleClass().add(CSS_PLANNING_DATE);
     noStockPane.add(header, 1, 0, 4, 1);
 
     List<ShoppingItem> noStockList = ingredientList.stream().filter(i -> !i.getIngredientName().isStock())
@@ -129,7 +129,7 @@ public class ShoppingPage {
     stockPane.setHgap(20);
 
     Label header = new Label("Benodigd uit voorraad");
-    header.getStyleClass().add(PLANNING_DATE);
+    header.getStyleClass().add(CSS_PLANNING_DATE);
     stockPane.add(header, 1, 0, 4, 1);
 
     int row = 1;
@@ -181,7 +181,7 @@ public class ShoppingPage {
     shoppingPanel.setHgap(20);
 
     Label headerLabel = new Label(header);
-    headerLabel.getStyleClass().add(PLANNING_DATE);
+    headerLabel.getStyleClass().add(CSS_PLANNING_DATE);
     shoppingPanel.add(headerLabel, 1, 0, 4, 1);
 
     int row = 1;

@@ -1,10 +1,10 @@
 package nl.recipes.views.configurations;
 
-import static nl.recipes.views.ViewConstants.DROP_SHADOW;
-import static nl.recipes.views.ViewConstants.RP_TABLE;
-import static nl.recipes.views.ViewConstants.TITLE;
-import static nl.recipes.views.ViewConstants.VALIDATION;
-import static nl.recipes.views.ViewConstants.WIDGET;
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_TITLE;
+import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
@@ -75,13 +75,13 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
     TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
     measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
-    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
+//    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
   }
 
   public Node getShoppingItemPanel() {
     VBox shoppingItemPanel = new VBox();
     shoppingItemPanel.setPadding(new Insets(20));
-    shoppingItemPanel.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+    shoppingItemPanel.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
 
     shoppingItemPanel.getChildren().addAll(createHeader(), createTable(), createForm(),
         createButtonBar());
@@ -91,13 +91,13 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
 
   private Label createHeader() {
     Label title = new Label("Standaard boodschappen bewerken");
-    title.getStyleClass().add(TITLE);
+    title.getStyleClass().add(CSS_TITLE);
     return title;
   }
 
   private VBox createTable() {
     shoppingItemTableView = new TableView<>();
-    shoppingItemTableView.getStyleClass().add(RP_TABLE);
+    shoppingItemTableView.getStyleClass().add(CSS_BASIC_TABLE);
     shoppingItemTableView.setItems(shoppingItemService.getReadonlyShoppingItemList());
     shoppingItemTableView.setMinHeight(200); // prevent table from collapsing
 
@@ -186,7 +186,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     GridPane.setValignment(nameLabel, VPos.TOP);
     nameField.setOnKeyReleased(this::handleKeyReleasedAction);
     VBox nameWithValidation = new VBox();
-    nameError.getStyleClass().add(VALIDATION);
+    nameError.getStyleClass().add(CSS_VALIDATION);
     nameWithValidation.getChildren().addAll(nameField, nameError);
     form.add(nameLabel, 0, 2);
     form.add(nameWithValidation, 1, 2);
