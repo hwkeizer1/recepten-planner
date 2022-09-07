@@ -42,12 +42,12 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
   private final StockShoppingItemService stockShoppingItemService;
   private final MeasureUnitService measureUnitService;
 
-  TableView<ShoppingItem> shoppingItemTableView;
-  TextField amountTextField;
-  SearchableComboBox<MeasureUnit> measureUnitComboBox;
+  private TableView<ShoppingItem> shoppingTableView;
+  private TextField amountField;
+  private SearchableComboBox<MeasureUnit> measureUnitComboBox;
 
-  private ShoppingItem selectedShoppingItem;
-  private final BooleanProperty modifiedProperty = new SimpleBooleanProperty(false);
+  private ShoppingItem selectedShopping;
+  private BooleanProperty modifiedProperty;
 
   public StockShoppingEditPanel(StockShoppingItemService stockShoppingItemService,
       MeasureUnitService measureUnitService) {
@@ -55,29 +55,37 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
     this.measureUnitService = measureUnitService;
 
     this.measureUnitService.addListener(this);
-    
-    measureUnitComboBox = new SearchableComboBox<>();
-    measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
-    TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
-    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
-//    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
+
+    initComponents();
   }
 
   public Node getStockShoppingEditPanel() {
     VBox stockShoppingEditPanel = new VBox();
     stockShoppingEditPanel.setPadding(new Insets(20));
     stockShoppingEditPanel.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
-    stockShoppingEditPanel.getChildren().addAll(createHeader(), createTable(), createForm(),
-        createButtonBar());
+    stockShoppingEditPanel.getChildren().addAll(createHeader(), createTable(), createForm(), createButtonBar());
     return stockShoppingEditPanel;
   }
-  
+
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
-    shoppingItemTableView.getSelectionModel().clearSelection();
+    shoppingTableView.getSelectionModel().clearSelection();
     measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 
+  private void initComponents() {
+    shoppingTableView = new TableView<>();
+    amountField = new TextField();
+
+    measureUnitComboBox = new SearchableComboBox<>();
+    measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
+    TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(),
+        measureUnitComboBox.getConverter());
+    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
+
+    modifiedProperty = new SimpleBooleanProperty(false);
+  }
+  
   private Label createHeader() {
     Label title = new Label(EDIT_STOCK_SHOPPING);
     title.getStyleClass().add(CSS_TITLE);
@@ -85,49 +93,45 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
   }
 
   private VBox createTable() {
-    shoppingItemTableView = new TableView<>();
-    shoppingItemTableView.getStyleClass().add(CSS_BASIC_TABLE);
-    shoppingItemTableView.setItems(stockShoppingItemService.getReadonlyShoppingItemList());
-    shoppingItemTableView.setMinHeight(200); // prevent table from collapsing
-    shoppingItemTableView.getSelectionModel().clearSelection();
+    shoppingTableView.getStyleClass().add(CSS_BASIC_TABLE);
+    shoppingTableView.setItems(stockShoppingItemService.getReadonlyShoppingItemList());
+    shoppingTableView.setMinHeight(200); // prevent table from collapsing
+    shoppingTableView.getSelectionModel().clearSelection();
 
     TableColumn<ShoppingItem, Number> amountColumn = new TableColumn<>(AMOUNT);
-    amountColumn.setCellValueFactory(
-        c -> (c.getValue().getAmount() != null && (10 * c.getValue().getAmount() % 10) == 0)
-        ? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
-        : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
- 
+    amountColumn
+        .setCellValueFactory(c -> (c.getValue().getAmount() != null && (10 * c.getValue().getAmount() % 10) == 0)
+            ? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
+            : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
+
     TableColumn<ShoppingItem, String> measureUnitColumn = new TableColumn<>(MEASURE_UNIT);
     measureUnitColumn.setCellValueFactory(c -> {
       if (c.getValue().getMeasureUnit() == null) {
         return new ReadOnlyObjectWrapper<>();
       } else {
-        return new ReadOnlyObjectWrapper<>(
-            c.getValue().getMeasureUnit().getName());
+        return new ReadOnlyObjectWrapper<>(c.getValue().getMeasureUnit().getName());
       }
     });
-    
+
     TableColumn<ShoppingItem, String> nameColumn = new TableColumn<>(NAME);
-    nameColumn.setCellValueFactory(
-        c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
+    nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
 
-    nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.40));
-    amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.30));
-    measureUnitColumn.prefWidthProperty()
-        .bind(shoppingItemTableView.widthProperty().multiply(0.30));
-    
+    nameColumn.prefWidthProperty().bind(shoppingTableView.widthProperty().multiply(0.40));
+    amountColumn.prefWidthProperty().bind(shoppingTableView.widthProperty().multiply(0.30));
+    measureUnitColumn.prefWidthProperty().bind(shoppingTableView.widthProperty().multiply(0.30));
 
-    shoppingItemTableView.getColumns().add(nameColumn);
-    shoppingItemTableView.getColumns().add(amountColumn);
-    shoppingItemTableView.getColumns().add(measureUnitColumn);
-    
-    shoppingItemTableView.setRowFactory(callback -> {
+
+    shoppingTableView.getColumns().add(nameColumn);
+    shoppingTableView.getColumns().add(amountColumn);
+    shoppingTableView.getColumns().add(measureUnitColumn);
+
+    shoppingTableView.setRowFactory(callback -> {
       final TableRow<ShoppingItem> row = new TableRow<>();
       row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
         final int index = row.getIndex();
-        if (index >= 0 && index < shoppingItemTableView.getItems().size()
-            && shoppingItemTableView.getSelectionModel().isSelected(index)) {
-          shoppingItemTableView.getSelectionModel().clearSelection();
+        if (index >= 0 && index < shoppingTableView.getItems().size()
+            && shoppingTableView.getSelectionModel().isSelected(index)) {
+          shoppingTableView.getSelectionModel().clearSelection();
           event.consume();
         }
       });
@@ -135,7 +139,7 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
     });
 
     VBox shoppingItemTableBox = new VBox();
-    shoppingItemTableBox.getChildren().add(shoppingItemTableView);
+    shoppingItemTableBox.getChildren().add(shoppingTableView);
     return shoppingItemTableBox;
   }
 
@@ -150,35 +154,33 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
     column0.setHalignment(HPos.RIGHT);
     ColumnConstraints column1 = new ColumnConstraints();
     column1.setPercentWidth(65);
-    
+
     form.getColumnConstraints().addAll(column0, column1);
 
     Label nameLabel = new Label(NAME);
     Label nameText = new Label();
     form.add(nameLabel, 0, 0);
     form.add(nameText, 1, 0);
-    
+
     Label amountLabel = new Label(AMOUNT);
-    amountTextField = new TextField();
     form.add(amountLabel, 0, 1);
-    form.add(amountTextField, 1, 1);
-    amountTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    
+    form.add(amountField, 1, 1);
+    amountField.setOnKeyReleased(this::handleKeyReleasedAction);
+
     Label measureUnitLabel = new Label(MEASURE_UNIT);
     form.add(measureUnitLabel, 0, 2);
     measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     form.add(measureUnitComboBox, 1, 2);
 
-    shoppingItemTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      selectedShoppingItem = newValue;
+    shoppingTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+      selectedShopping = newValue;
       if (newValue != null) {
-        nameText.setText(selectedShoppingItem.getName());
-        amountTextField
-            .setText(selectedShoppingItem.getAmount() == null ? null : Utils.format(selectedShoppingItem.getAmount()));
-        measureUnitComboBox.setValue(selectedShoppingItem.getMeasureUnit());
+        nameText.setText(selectedShopping.getName());
+        amountField.setText(selectedShopping.getAmount() == null ? null : Utils.format(selectedShopping.getAmount()));
+        measureUnitComboBox.setValue(selectedShopping.getMeasureUnit());
       } else {
         nameText.setText(null);
-        amountTextField.setText(null);
+        amountField.setText(null);
         measureUnitComboBox.setValue(null);
       }
       modifiedProperty.set(false);
@@ -190,8 +192,8 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
   private ButtonBar createButtonBar() {
     Button updateButton = new Button(UPDATE);
 
-    updateButton.disableProperty().bind(shoppingItemTableView.getSelectionModel()
-        .selectedItemProperty().isNull().or(modifiedProperty.not()));
+    updateButton.disableProperty()
+        .bind(shoppingTableView.getSelectionModel().selectedItemProperty().isNull().or(modifiedProperty.not()));
     updateButton.setOnAction(this::updateShoppingItem);
 
     ButtonBar buttonBar = new ButtonBar();
@@ -200,24 +202,23 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
 
     return buttonBar;
   }
-  
+
   private void handleKeyReleasedAction(KeyEvent keyEvent) {
     modifiedProperty.set(true);
   }
 
   private void updateShoppingItem(ActionEvent actionEvent) {
     ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
-        .withAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
-            : Float.valueOf(amountTextField.getText()))
-        .withMeasureUnit(measureUnitComboBox.getValue())
-        .build();
- 
+        .withAmount((amountField.getText() == null || amountField.getText().isEmpty()) ? null
+            : Float.valueOf(amountField.getText()))
+        .withMeasureUnit(measureUnitComboBox.getValue()).build();
+
     try {
-      stockShoppingItemService.update(selectedShoppingItem, update);
+      stockShoppingItemService.update(selectedShopping, update);
     } catch (NotFoundException e) {
-      log.debug("stockShoppingItem not found");
+      log.error("stockShoppingItem not found");
     }
-    shoppingItemTableView.getSelectionModel().clearSelection();
+    shoppingTableView.getSelectionModel().clearSelection();
     modifiedProperty.set(false);
   }
 }
