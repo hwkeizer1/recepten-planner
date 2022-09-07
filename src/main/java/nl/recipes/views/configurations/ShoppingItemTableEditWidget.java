@@ -175,13 +175,11 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     
     Label measureUnitLabel = new Label("Maateenheid:");
     form.add(measureUnitLabel, 0, 1);
-//    measureUnitComboBox.setMinWidth(150);
     measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     form.add(measureUnitComboBox, 1, 1);
     
     Label nameLabel = new Label("Naam:");
     nameField = new TextField();
-//    nameField.setMinWidth(150);
     nameField.setOnAction(e -> modifiedProperty.set(true));
     GridPane.setValignment(nameLabel, VPos.TOP);
     nameField.setOnKeyReleased(this::handleKeyReleasedAction);
@@ -195,7 +193,6 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     form.add(shopTypeLabel, 2, 1);
     shopTypeComboBox = new ComboBox<>();
     shopTypeComboBox.getItems().setAll(ShopType.values());
-//    shopTypeComboBox.setMinWidth(150);
     shopTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
     form.add(shopTypeComboBox, 3, 1);
 

@@ -249,19 +249,16 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
     Label measureUnitLabel = new Label("Maateenheid:");
     inputForm.add(measureUnitLabel, 2, 0);
-    measureUnitComboBox.setMinWidth(150);
     inputForm.add(measureUnitComboBox, 3, 0);
 
     Label shopTypeLabel = new Label("Winkel:");
     inputForm.add(shopTypeLabel, 2, 2);
     shopTypeComboBox.getItems().setAll(ShopType.values());
-    shopTypeComboBox.setMinWidth(150);
     inputForm.add(shopTypeComboBox, 3, 2);
 
     Label ingredientTypeLabel = new Label("Ingrediënt type:");
     inputForm.add(ingredientTypeLabel, 2, 4);
     ingredientTypeComboBox.getItems().setAll(IngredientType.values());
-    ingredientTypeComboBox.setMinWidth(150);
     inputForm.add(ingredientTypeComboBox, 3, 4);
 
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
