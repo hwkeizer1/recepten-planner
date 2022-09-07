@@ -1,9 +1,9 @@
 package nl.recipes.views.planning;
 
-import static nl.recipes.views.ViewConstants.DROP_SHADOW;
-import static nl.recipes.views.ViewConstants.PLANNING_DATE;
-import static nl.recipes.views.ViewConstants.PLANNING_RECIPE_LINK;
-import static nl.recipes.views.ViewConstants.WIDGET;
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.CSS_PLANNING_DATE;
+import static nl.recipes.views.ViewConstants.CSS_PLANNING_RECIPE_LINK;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 
 import java.time.format.DateTimeFormatter;
 
@@ -42,7 +42,7 @@ public class PlanningView {
   public VBox getPlanningView(Planning planning) {
     DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("cccc dd MMMM yyyy");
     Label dateLabel = new Label(customFormatter.format(planning.getDate()));
-    dateLabel.getStyleClass().add(PLANNING_DATE);
+    dateLabel.getStyleClass().add(CSS_PLANNING_DATE);
 
     Region regionHeader = new Region();
     HBox.setHgrow(regionHeader, Priority.ALWAYS);
@@ -56,7 +56,7 @@ public class PlanningView {
 
     planningBox = new VBox();
 
-    planningBox.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+    planningBox.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
     planningBox.getChildren().add(headerBox);
 
     Region regionFooter = new Region();
@@ -80,7 +80,7 @@ public class PlanningView {
       recipeTypeLabel.setMinWidth(120);
       recipeList.add(recipeTypeLabel, 0, row);
       Label recipeNameLabel = new Label(recipe.getName());
-      recipeNameLabel.getStyleClass().add(PLANNING_RECIPE_LINK);
+      recipeNameLabel.getStyleClass().add(CSS_PLANNING_RECIPE_LINK);
       recipeNameLabel.setOnMouseClicked(event -> showRecipeSingleView(recipe));
       recipeList.add(recipeNameLabel, 1, row);
       row++;

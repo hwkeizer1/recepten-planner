@@ -4,6 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .attach_pid*
+.gradle/
+build/
+bin/
+gradle*
+credentials.json
+StoredCredential
 
 ### STS ###
 .apt_generated

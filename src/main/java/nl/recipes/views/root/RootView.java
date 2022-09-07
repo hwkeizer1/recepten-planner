@@ -16,11 +16,10 @@ import nl.recipes.views.backup.RestoreBackupDialog;
 import nl.recipes.views.configurations.ConfigurationView;
 import nl.recipes.views.configurations.SettingsDialog;
 import nl.recipes.views.planning.PlanningListView;
-import nl.recipes.views.planning.ShoppingListView;
 import nl.recipes.views.recipes.RecipeEditView;
 import nl.recipes.views.recipes.RecipeListView;
 import nl.recipes.views.recipes.RecipeSingleView;
-
+import nl.recipes.views.shopping.ShoppingPage;
 import static nl.recipes.views.ViewConstants.*;
 
 @Component
@@ -42,7 +41,7 @@ public class RootView {
 
   private final PlanningListView planningView;
 
-  private final ShoppingListView shoppingListView;
+  private final ShoppingPage shoppingPage;
 
   private BorderPane rootWindow = new BorderPane();
 
@@ -52,7 +51,7 @@ public class RootView {
       RecipeEditView recipeEditView, ConfigurationView configurationView,
       RestoreBackupDialog restoreBackupDialog, CreateBackupDialog createBackupDialog,
       SettingsDialog settingsDialog, PlanningListView planningListView,
-      ShoppingListView shoppingListView) {
+      ShoppingPage shoppingPage) {
 
     this.configurationView = configurationView;
     this.recipeListView = recipeListView;
@@ -62,7 +61,7 @@ public class RootView {
     this.createBackupDialog = createBackupDialog;
     this.settingsDialog = settingsDialog;
     this.planningView = planningListView;
-    this.shoppingListView = shoppingListView;
+    this.shoppingPage = shoppingPage;
 
     recipeListView.setRootView(this);
     recipeSingleView.setRootView(this);
@@ -78,7 +77,7 @@ public class RootView {
   }
 
   private void initializeRootWindow() {
-    rootWindow.getStyleClass().add(BACKGROUND);
+    rootWindow.getStyleClass().add(CSS_BACKGROUND);
     rootWindow.setCenter(recipeListView.getRecipeListPanel());
     rootWindow.setTop(menuBar);
   }
@@ -158,8 +157,8 @@ public class RootView {
     rootWindow.setCenter(planningView.getPlanningPanel());
   }
 
-  public void showShoppingPanel(ActionEvent actionEvent) {
-    rootWindow.setCenter(shoppingListView.getShoppingView());
+  public void showShoppingPage(ActionEvent actionEvent) {
+    rootWindow.setCenter(shoppingPage.getShoppingPage());
   }
 
 }

@@ -1,5 +1,6 @@
 package nl.recipes.services;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
@@ -55,14 +56,9 @@ public class IngredientNameService {
       throw new AlreadyExistsException(INGREDIENT_NAAM + update.getName()
           + getMeasureUnitSuffix(update) + " bestaat al");
     }
-    ingredientName.setName(update.getName());
-    ingredientName.setPluralName(update.getPluralName());
-    ingredientName.setStock(update.isStock());
-    ingredientName.setShopType(update.getShopType());
-    ingredientName.setIngredientType(update.getIngredientType());
-    ingredientName.setMeasureUnit(update.getMeasureUnit());
 
-    IngredientName updatedIngredientName = ingredientNameRepository.save(ingredientName);
+    update.setId(ingredientName.getId());
+    IngredientName updatedIngredientName = ingredientNameRepository.save(update);
 
     observableIngredientNameList.set(observableIngredientNameList.lastIndexOf(ingredientName),
         updatedIngredientName);
@@ -79,13 +75,15 @@ public class IngredientNameService {
   }
 
   public Optional<IngredientName> findByName(String name) {
-    return observableIngredientNameList.stream()
-        .filter(ingredientName -> name.equals(ingredientName.getName())).findAny();
+    return ingredientNameRepository.findByName(name);
   }
 
   public Optional<IngredientName> findById(Long id) {
-    return observableIngredientNameList.stream()
-        .filter(ingredientname -> id.equals(ingredientname.getId())).findAny();
+    return ingredientNameRepository.findById(id);
+  }
+  
+  public List<IngredientName> findAllStockItems() {
+    return getReadonlyIngredientNameList().stream().filter(IngredientName::isStock).toList();
   }
 
   public void addListener(ListChangeListener<IngredientName> listener) {

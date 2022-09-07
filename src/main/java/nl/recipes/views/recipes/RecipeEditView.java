@@ -1,7 +1,7 @@
 package nl.recipes.views.recipes;
 
-import static nl.recipes.views.ViewConstants.VALIDATION;
-import static nl.recipes.views.ViewConstants.WIDGET;
+import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -91,7 +91,7 @@ public class RecipeEditView {
     initialiseFormControls(recipeForm);
 
     VBox panel = new VBox();
-    panel.getStyleClass().add(WIDGET);
+    panel.getStyleClass().add(CSS_WIDGET);
     panel.getChildren().addAll(recipeForm, initialiseButtons());
 
     scrollPanel = new ScrollPane(panel);
@@ -158,7 +158,7 @@ public class RecipeEditView {
     recipeForm.add(nameLabel, 0, 0);
     recipeForm.add(recipeNameWithValidation, 1, 0);
     recipeName.setOnKeyReleased(this::handleKeyReleasedAction);
-    recipeNameError.getStyleClass().add(VALIDATION);
+    recipeNameError.getStyleClass().add(CSS_VALIDATION);
 
     Label preparationTimeLabel = new Label("Voorbereidingstijd:");
     preparationTime = new TextField();

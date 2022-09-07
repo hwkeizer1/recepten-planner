@@ -55,9 +55,9 @@ public class ConfigService {
   }
 
   private void setDefaultConfiguration() {
-    if (getConfigProperty(BACKUPS_TO_KEEP) == null
-        || getConfigProperty(BACKUPS_TO_KEEP).isBlank()) {
-      setConfigProperty(BACKUPS_TO_KEEP, "5");
+    if (getConfigProperty(CSS_BACKUPS_TO_KEEP) == null
+        || getConfigProperty(CSS_BACKUPS_TO_KEEP).isBlank()) {
+      setConfigProperty(CSS_BACKUPS_TO_KEEP, "5");
     }
   }
 

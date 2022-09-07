@@ -70,7 +70,7 @@ public class BackupService {
 
   private final RecipeService recipeService;
   
-  private final ShoppingItemService shoppingItemService;
+  private final StandardShoppingItemService shoppingItemService;
 
   private final ConfigService configService;
 
@@ -78,7 +78,7 @@ public class BackupService {
 
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
       MeasureUnitService measureUnitService, RecipeService recipeService,
-      ConfigService configService, ShoppingItemService shoppingItemService) {
+      ConfigService configService, StandardShoppingItemService shoppingItemService) {
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     this.tagService = tagService;
@@ -399,7 +399,7 @@ public class BackupService {
   }
   
   private String backupShoppingItems() {
-    List<ShoppingItem> shoppingItemList = shoppingItemService.getShoppingItemList();
+    List<ShoppingItem> shoppingItemList = shoppingItemService.getReadonlyShoppingItemList();
     try {
       return objectMapper.writeValueAsString(shoppingItemList);
     } catch (JsonProcessingException e) {
@@ -438,7 +438,7 @@ public class BackupService {
         createShoppingItem(shoppingItem);
       }
     } catch (JsonProcessingException ex) {
-      log.error(FOUT_BIJ_HET_VERWERKEN_VAN_DE_BACKUP_FILE + TAGS_PLAN);
+      log.error(FOUT_BIJ_HET_VERWERKEN_VAN_DE_BACKUP_FILE + SHOPPINGITEMS_PLAN);
     }
   }
 
@@ -446,12 +446,12 @@ public class BackupService {
     try {
       shoppingItemService.create(shoppingItem);
     } catch (AlreadyExistsException | IllegalValueException ex) {
-      log.error("Tag {} already exists", shoppingItem.getIngredientName().getName());
+      log.error("Tag {} already exists", shoppingItem.getName());
     }
   }
 
   private void removeOldBackups(String directoryPath) {
-    Integer backupsToKeep = Integer.valueOf(configService.getConfigProperty(BACKUPS_TO_KEEP));
+    Integer backupsToKeep = Integer.valueOf(configService.getConfigProperty(CSS_BACKUPS_TO_KEEP));
     try (Stream<Path> folders = Files.walk(Path.of(directoryPath))) {
       folders.filter(Files::isDirectory)
           .filter(p -> p.toString().length() != directoryPath.length())

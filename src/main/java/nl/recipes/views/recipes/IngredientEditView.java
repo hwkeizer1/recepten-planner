@@ -1,10 +1,10 @@
 package nl.recipes.views.recipes;
 
-import static nl.recipes.views.ViewConstants.DROP_SHADOW;
-import static nl.recipes.views.ViewConstants.EMPTY_INGREDIENT_TABLE;
-import static nl.recipes.views.ViewConstants.INGREDIENT_EDIT_TABLE;
-import static nl.recipes.views.ViewConstants.RP_TABLE;
-import static nl.recipes.views.ViewConstants.WIDGET;
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.CSS_EMPTY_INGREDIENT_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_INGREDIENT_EDIT_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 import java.util.ArrayList;
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
@@ -34,6 +34,7 @@ import javafx.scene.layout.VBox;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.services.IngredientNameService;
+import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.converters.IngredientNameStringConverter;
 
 @Component
@@ -62,7 +63,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
 
     ingredientPanel = new VBox();
     ingredientPanel.setPadding(new Insets(10, 0, 0, 0));
-    ingredientPanel.getStyleClass().addAll(WIDGET, DROP_SHADOW);
+    ingredientPanel.getStyleClass().addAll(CSS_WIDGET, CSS_DROP_SHADOW);
     amountTextField = new TextField();
     ingredientNameComboBox = new SearchableComboBox<>();
     ingredientNameComboBox.setConverter(new IngredientNameStringConverter());
@@ -87,7 +88,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
 
     ingredientTable.setItems(ingredientList);
     Label ingredientTableEmpty = new Label("Nog geen ingredienten toegevoegd");
-    ingredientTableEmpty.getStyleClass().add(EMPTY_INGREDIENT_TABLE);
+    ingredientTableEmpty.getStyleClass().add(CSS_EMPTY_INGREDIENT_TABLE);
     ingredientTable.setPlaceholder(ingredientTableEmpty);
     ingredientTable.setFixedCellSize(25);
 
@@ -105,7 +106,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
     VBox ingredientTableViewPanel = new VBox();
 
     ingredientTable = new TableView<>();
-    ingredientTable.getStyleClass().addAll(RP_TABLE, INGREDIENT_EDIT_TABLE);
+    ingredientTable.getStyleClass().addAll(CSS_BASIC_TABLE, CSS_INGREDIENT_EDIT_TABLE);
     TableColumn<Ingredient, Number> amountColumn = new TableColumn<>();
     TableColumn<Ingredient, String> measureUnitColumn = new TableColumn<>();
     TableColumn<Ingredient, String> ingredientNameColumn = new TableColumn<>();
@@ -118,7 +119,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
       selectedIngredient = newValue;
       if (newValue != null) {
         amountTextField.setText(selectedIngredient.getAmount() == null ? null
-            : selectedIngredient.getAmount().toString());
+            : Utils.format(selectedIngredient.getAmount()));
         ingredientNameComboBox.setValue(selectedIngredient.getIngredientName());
       } else {
         amountTextField.setText(null);

@@ -1,10 +1,10 @@
 package nl.recipes.views.configurations;
 
-import static nl.recipes.views.ViewConstants.DROP_SHADOW;
-import static nl.recipes.views.ViewConstants.RP_TABLE;
-import static nl.recipes.views.ViewConstants.TITLE;
-import static nl.recipes.views.ViewConstants.VALIDATION;
-import static nl.recipes.views.ViewConstants.WIDGET;
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_TITLE;
+import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
@@ -23,17 +23,21 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
+import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
@@ -41,6 +45,7 @@ import nl.recipes.services.IngredientNameService;
 import nl.recipes.services.MeasureUnitService;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
 
+@Slf4j
 @Component
 public class IngredientNameTableEditWidget implements  ListChangeListener<MeasureUnit>{
 
@@ -107,6 +112,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
     TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
     measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
+//    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
 
     ingredientNameChangeListener = (observable, oldValue, newValue) -> {
       selectedIngredientName = newValue;
@@ -134,9 +140,9 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     initializeIngredientNameEditBox();
 
     Label title = new Label("Ingrediënten bewerken");
-    title.getStyleClass().add(TITLE);
+    title.getStyleClass().add(CSS_TITLE);
 
-    rpWidget.getStyleClass().addAll(DROP_SHADOW, WIDGET);
+    rpWidget.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
     rpWidget.getChildren().addAll(title, ingredientNameTableBox, ingredientNameEditBox);
     rpWidget.setPadding(new Insets(20));
   }
@@ -148,6 +154,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
   private void initializeIngredientNameTableBox() {
     ingredientNameTableView.setItems(ingredientNameService.getReadonlyIngredientNameList());
     ingredientNameTableView.setMinHeight(200); // prevent table from collapsing
+    ingredientNameTableView.getSelectionModel().clearSelection();
 
     nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
     nameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.20));
@@ -180,9 +187,22 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     ingredientNameTableView.getColumns().add(ingredientTypeColumn);
     ingredientNameTableView.getSelectionModel().selectedItemProperty()
         .addListener(ingredientNameChangeListener);
+    
+    ingredientNameTableView.setRowFactory(callback -> {
+      final TableRow<IngredientName> row = new TableRow<>();
+      row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        final int index = row.getIndex();
+        if (index >= 0 && index < ingredientNameTableView.getItems().size()
+            && ingredientNameTableView.getSelectionModel().isSelected(index)) {
+          ingredientNameTableView.getSelectionModel().clearSelection();
+          event.consume();
+        }
+      });
+      return row;
+    });
 
     ingredientNameTableBox.getChildren().add(ingredientNameTableView);
-    ingredientNameTableBox.getStyleClass().add(RP_TABLE);
+    ingredientNameTableBox.getStyleClass().add(CSS_BASIC_TABLE);
   }
 
   private void initializeIngredientNameEditBox() {
@@ -246,25 +266,22 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
     Label measureUnitLabel = new Label("Maateenheid:");
     inputForm.add(measureUnitLabel, 2, 0);
-    measureUnitComboBox.setMinWidth(150);
     inputForm.add(measureUnitComboBox, 3, 0);
 
     Label shopTypeLabel = new Label("Winkel:");
     inputForm.add(shopTypeLabel, 2, 2);
     shopTypeComboBox.getItems().setAll(ShopType.values());
-    shopTypeComboBox.setMinWidth(150);
     inputForm.add(shopTypeComboBox, 3, 2);
 
     Label ingredientTypeLabel = new Label("Ingrediënt type:");
     inputForm.add(ingredientTypeLabel, 2, 4);
     ingredientTypeComboBox.getItems().setAll(IngredientType.values());
-    ingredientTypeComboBox.setMinWidth(150);
     inputForm.add(ingredientTypeComboBox, 3, 4);
 
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    nameError.getStyleClass().add(VALIDATION);
+    nameError.getStyleClass().add(CSS_VALIDATION);
     pluralNameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    pluralNameError.getStyleClass().add(VALIDATION);
+    pluralNameError.getStyleClass().add(CSS_VALIDATION);
     measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     shopTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
     ingredientTypeComboBox.setOnAction(e -> modifiedProperty.set(true));
@@ -296,8 +313,10 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
   private void updateIngredientName(ActionEvent actionEvent) {
     IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withName(nameTextField.getText()).withPluralName(pluralNameTextField.getText())
-        .withStock(stockCheckBox.isSelected()).withMeasureUnit(measureUnitComboBox.getValue())
+        .withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText())
+        .withStock(stockCheckBox.isSelected())
+        .withMeasureUnit(measureUnitComboBox.getValue())
         .withShopType(shopTypeComboBox.getValue())
         .withIngredientType(ingredientTypeComboBox.getValue()).build();
 
@@ -319,6 +338,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
+    ingredientNameTableView.getSelectionModel().clearSelection();
     measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 }

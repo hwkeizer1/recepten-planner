@@ -112,6 +112,7 @@ public class IngredientName {
     return name + (measureUnit == null ? "" : " (" + measureUnit.getName() + ")");
   }
   
+  
   public static class IngredientNameBuilder {
     private MeasureUnit measureUnit;
     private String name;

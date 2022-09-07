@@ -90,7 +90,7 @@ public class SettingsDialog {
 
     Label backupFolderLabel = new Label("Backup folder:");
     inputForm.add(backupFolderLabel, 0, 0);
-    backupFolderTextField.setText(configService.getConfigProperty(BACKUP_FOLDER));
+    backupFolderTextField.setText(configService.getConfigProperty(CSS_BACKUP_FOLDER));
     inputForm.add(backupFolderTextField, 1, 0);
     inputForm.add(select, 2, 0);
 
@@ -102,7 +102,7 @@ public class SettingsDialog {
       backupsToKeepTextField.setText(newValue.replaceAll("[^\\d]", ""));
     });
     backupsToKeepTextField.setMaxWidth(50);
-    backupsToKeepTextField.setText(configService.getConfigProperty(BACKUPS_TO_KEEP));
+    backupsToKeepTextField.setText(configService.getConfigProperty(CSS_BACKUPS_TO_KEEP));
     inputForm.add(backupsToKeepTextField, 1, 1);
 
     GridPane.setHgrow(backupFolderLabel, Priority.ALWAYS);
@@ -113,10 +113,10 @@ public class SettingsDialog {
 
   public void selectBackupFolder(ActionEvent actionEvent) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (configService.getConfigProperty(BACKUP_FOLDER) != null
-        && !configService.getConfigProperty(BACKUP_FOLDER).isBlank()) {
+    if (configService.getConfigProperty(CSS_BACKUP_FOLDER) != null
+        && !configService.getConfigProperty(CSS_BACKUP_FOLDER).isBlank()) {
       directoryChooser
-          .setInitialDirectory(new File(configService.getConfigProperty(BACKUP_FOLDER)));
+          .setInitialDirectory(new File(configService.getConfigProperty(CSS_BACKUP_FOLDER)));
     }
     File directory = directoryChooser.showDialog(dialog);
 
@@ -126,8 +126,8 @@ public class SettingsDialog {
   }
 
   public void save(ActionEvent actionEvent) {
-    configService.setConfigProperty(BACKUP_FOLDER, backupFolderTextField.getText());
-    configService.setConfigProperty(BACKUPS_TO_KEEP, backupsToKeepTextField.getText());
+    configService.setConfigProperty(CSS_BACKUP_FOLDER, backupFolderTextField.getText());
+    configService.setConfigProperty(CSS_BACKUPS_TO_KEEP, backupsToKeepTextField.getText());
     dialog.close();
   }
 

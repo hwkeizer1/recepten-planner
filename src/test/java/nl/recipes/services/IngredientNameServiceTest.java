@@ -59,6 +59,8 @@ class IngredientNameServiceTest {
         .withIngredientType(IngredientType.GROENTE)
         .build(3L));
 
+    when(ingredientNameRepository.findByName("prei")).thenReturn(expectedIngredientName);
+    
     assertEquals(expectedIngredientName, ingredientNameService.findByName("prei"));
   }
 
@@ -80,6 +82,8 @@ class IngredientNameServiceTest {
         .withIngredientType(IngredientType.GROENTE)
         .build(3L));
 
+    when(ingredientNameRepository.findById(3L)).thenReturn(expectedIngredientName);
+    
     assertEquals(expectedIngredientName, ingredientNameService.findById(3L));
   }
 
@@ -113,8 +117,8 @@ class IngredientNameServiceTest {
 
     assertEquals(savedIngredientName, ingredientNameService.create(ingredientName));
     assertEquals(5, ingredientNameService.getReadonlyIngredientNameList().size());
-    assertEquals(Optional.of(savedIngredientName),
-        ingredientNameService.findByName(NEW_INGREDIENTNAME));
+    assertEquals(savedIngredientName,
+        ingredientNameService.getReadonlyIngredientNameList().get(4));
   }
 
   @Test
@@ -143,8 +147,9 @@ class IngredientNameServiceTest {
 
   @Test
   void testUpdate_HappyPath() throws Exception {
-    IngredientName originalIngredientName = ingredientNameService.findByName("ui").get();
+    IngredientName originalIngredientName = mockIngredientNames.getIngredientNameList().get(1);
     IngredientName update = new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
         .withName("wortel")
         .withPluralName("wortels")
         .withStock(false)
@@ -162,15 +167,20 @@ class IngredientNameServiceTest {
         .build(2L);
 
     when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
+    when(ingredientNameService.findByName("wortel")).thenReturn(Optional.of(originalIngredientName));
+    when(ingredientNameRepository.findById(2L)).thenReturn(Optional.of(originalIngredientName));
 
     assertEquals(expectedIngredientName,
         ingredientNameService.update(originalIngredientName, update));
     assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
-    assertEquals(Optional.of(expectedIngredientName), ingredientNameService.findById(2L));
+    assertEquals(expectedIngredientName, ingredientNameService.getReadonlyIngredientNameList().get(1));
   }
   
   @Test
   void testUpdate_HappyPathOnlyUpdateMeasureUnit() throws Exception {
+    when(ingredientNameRepository.findByName("ui")).thenReturn(Optional.of(mockIngredientNames.getIngredientNameList().get(1)));
+    when(ingredientNameRepository.findById(2L)).thenReturn(Optional.of(mockIngredientNames.getIngredientNameList().get(1)));
+    
     IngredientName originalIngredientName = ingredientNameService.findByName("ui").get();
     IngredientName update = new IngredientName.IngredientNameBuilder()
         .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("netje"). build(60L))
@@ -195,7 +205,7 @@ class IngredientNameServiceTest {
     assertEquals(expectedIngredientName,
         ingredientNameService.update(originalIngredientName, update));
     assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
-    assertEquals(Optional.of(expectedIngredientName), ingredientNameService.findById(2L));
+    assertEquals(expectedIngredientName, ingredientNameService.getReadonlyIngredientNameList().get(1));
   }
 
   @Test
@@ -238,6 +248,8 @@ class IngredientNameServiceTest {
         .withPluralName("mozzarella")
         .build();
 
+    when (ingredientNameRepository.findById(1L)).thenReturn(Optional.of(ingredientNameService.getReadonlyIngredientNameList().get(0)));
+    
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       ingredientNameService.update(originalIngredientName, update);
     });
@@ -248,13 +260,17 @@ class IngredientNameServiceTest {
 
   @Test
   void testRemove_HappyPath() throws Exception {
+    when (ingredientNameRepository.findByName("ui")).thenReturn(Optional.of(ingredientNameService.getReadonlyIngredientNameList().get(1)));
+    when (ingredientNameRepository.findById(2L)).thenReturn(Optional.of(ingredientNameService.getReadonlyIngredientNameList().get(1)));
+    
     IngredientName originalIngredientName = ingredientNameService.findByName("ui").get();
-
+    IngredientName secondListItemAfterRemove = ingredientNameService.getReadonlyIngredientNameList().get(2);
+    
     assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
     ingredientNameService.remove(originalIngredientName);
     assertEquals(3, ingredientNameService.getReadonlyIngredientNameList().size());
-    assertEquals(Optional.empty(),
-        ingredientNameService.findByName(originalIngredientName.getName()));
+    assertEquals(secondListItemAfterRemove,
+        ingredientNameService.getReadonlyIngredientNameList().get(1));
   }
 
   @Test

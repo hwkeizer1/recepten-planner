@@ -1,6 +1,6 @@
 package nl.recipes.views.recipes;
 
-import static nl.recipes.views.ViewConstants.RP_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -98,7 +98,7 @@ public class RecipeListView {
     recipeListTableView.getColumns().add(tagColumn);
     recipeListTableView.getColumns().add(lastServedColumn);
     recipeListTableView.getColumns().add(timesServedColumn);
-    recipeListTableView.getStyleClass().add(RP_TABLE);
+    recipeListTableView.getStyleClass().add(CSS_BASIC_TABLE);
 
     ChangeListener<Recipe> recipeChangeListener =
         (observable, oldValue, newValue) -> selectedRecipe = newValue;
