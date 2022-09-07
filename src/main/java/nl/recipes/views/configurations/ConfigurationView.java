@@ -16,7 +16,7 @@ import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 public class ConfigurationView {
 
   private final TagTableEditWidget tagTableEditWidget;
-  private final MeasureUnitTableEditWidget measureUnitTableEditWidget;
+  private final MeasureUnitEditPanel measureUnitEditPanel;
   private final ShoppingItemTableEditWidget shoppingItemTableEditWidget;
   private final StockShoppingEditPanel stockShoppingEditPanel;
   private final IngredientNameTableEditWidget ingredientNameTableEditWidget;
@@ -24,13 +24,13 @@ public class ConfigurationView {
   ScrollPane scrollPane;
 
   public ConfigurationView(TagTableEditWidget tagListEditWidget,
-      MeasureUnitTableEditWidget measureUnitTableEditWidget,
+      MeasureUnitEditPanel measureUnitEditPanel,
       IngredientNameTableEditWidget ingredientNameTableEditWidget,
       ShoppingItemTableEditWidget shoppingItemTableEditWidget, 
       StockShoppingEditPanel stockShoppingEditPanel) {
 
     this.tagTableEditWidget = tagListEditWidget;
-    this.measureUnitTableEditWidget = measureUnitTableEditWidget;
+    this.measureUnitEditPanel = measureUnitEditPanel;
     this.shoppingItemTableEditWidget = shoppingItemTableEditWidget;
     this.stockShoppingEditPanel = stockShoppingEditPanel;
     this.ingredientNameTableEditWidget = ingredientNameTableEditWidget;
@@ -58,7 +58,7 @@ public class ConfigurationView {
 
     BootstrapRow row = new BootstrapRow();
     row.addColumn(createColumn(tagTableEditWidget.getTagTableEditWidget()));
-    row.addColumn(createColumn(measureUnitTableEditWidget.getMeasureUnitTableEditWidget()));
+    row.addColumn(createColumn(measureUnitEditPanel.getMeasureUnitEditPanel()));
     row.addColumn(createColumn(stockShoppingEditPanel.getStockShoppingEditPanel()));
     row.addColumn(createLargeColumn(shoppingItemTableEditWidget.getShoppingItemPanel()));
     row.addColumn(

@@ -324,7 +324,6 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
-    log.debug("{}", c);
     measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 }
