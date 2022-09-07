@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
@@ -78,8 +80,8 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     measureUnitComboBox = new SearchableComboBox<>();
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
     TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
-    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
-//    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
+    
+    updateMeasureUnitComboBox();
   }
 
   public Node getShoppingItemPanel() {
@@ -93,6 +95,19 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     return shoppingItemPanel;
   }
 
+  @Override
+  public void onChanged(Change<? extends MeasureUnit> c) {
+    shoppingItemTableView.getSelectionModel().clearSelection();
+    updateMeasureUnitComboBox();
+  }
+  
+  private void updateMeasureUnitComboBox() {
+    ObservableList<MeasureUnit> measureUnitsWithNull = FXCollections.observableArrayList();
+    measureUnitsWithNull.add(null);
+    measureUnitsWithNull.addAll(measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitComboBox.setItems(measureUnitsWithNull);
+  }
+  
   private Label createHeader() {
     Label title = new Label("Standaard boodschappen bewerken");
     title.getStyleClass().add(CSS_TITLE);
@@ -287,7 +302,8 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     
     try {
       shoppingItemService.create(shoppingItem);
-      shoppingItemTableView.getSelectionModel().select(shoppingItem);
+      shoppingItemTableView.scrollTo(shoppingItem);
+      shoppingItemTableView.getSelectionModel().clearSelection();
     } catch (AlreadyExistsException | IllegalValueException e) {
       nameError.setText(e.getMessage());
     }
@@ -305,6 +321,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
  
     try {
       shoppingItemService.update(selectedShoppingItem, update);
+      shoppingItemTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException | AlreadyExistsException e) {
       nameError.setText(e.getMessage());
     }
@@ -314,14 +331,9 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
   private void removeShoppingItem(ActionEvent actionEvent) {
     try {
       shoppingItemService.remove(selectedShoppingItem);
+      shoppingItemTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException e) {
       nameError.setText(e.getMessage());
     }
-  }
-
-  @Override
-  public void onChanged(Change<? extends MeasureUnit> c) {
-    shoppingItemTableView.getSelectionModel().clearSelection();
-    measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 }

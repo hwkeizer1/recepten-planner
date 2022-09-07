@@ -186,8 +186,8 @@ public class MeasureUnitEditPanel {
         .build();
     try {
       measureUnitService.create(measureUnit);
-      measureUnitTableView.getSelectionModel().select(measureUnit);
       measureUnitTableView.scrollTo(measureUnit);
+      measureUnitTableView.getSelectionModel().clearSelection();
     } catch (AlreadyExistsException | IllegalValueException e) {
       nameError.setText(e.getMessage());
     }
@@ -200,6 +200,7 @@ public class MeasureUnitEditPanel {
         .build();
     try {
       measureUnitService.update(selectedMeasureUnit, update);
+      measureUnitTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException | AlreadyExistsException e) {
       nameError.setText(e.getMessage());
     }
@@ -209,6 +210,7 @@ public class MeasureUnitEditPanel {
   private void removeMeasureUnit(ActionEvent actionEvent) {
     try {
       measureUnitService.remove(selectedMeasureUnit);
+      measureUnitTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException e) {
       nameError.setText(e.getMessage());
     }

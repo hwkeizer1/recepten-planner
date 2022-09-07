@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -34,6 +36,7 @@ import nl.recipes.views.converters.MeasureUnitStringConverter;
 
 import static nl.recipes.views.ViewConstants.*;
 import static nl.recipes.views.ViewMessages.*;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -71,7 +74,7 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
     shoppingTableView.getSelectionModel().clearSelection();
-    measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
+    updateMeasureUnitComboBox();
   }
 
   private void initComponents() {
@@ -83,9 +86,16 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
     TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(),
         measureUnitComboBox.getConverter());
-    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
-
+    
+    updateMeasureUnitComboBox();
     modifiedProperty = new SimpleBooleanProperty(false);
+  }
+  
+  private void updateMeasureUnitComboBox() {
+    ObservableList<MeasureUnit> measureUnitsWithNull = FXCollections.observableArrayList();
+    measureUnitsWithNull.add(null);
+    measureUnitsWithNull.addAll(measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitComboBox.setItems(measureUnitsWithNull);
   }
   
   private Label createHeader() {
@@ -214,10 +224,11 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
 
     try {
       stockShoppingItemService.update(selectedShopping, update);
+      shoppingTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException e) {
       log.error("stockShoppingItem not found");
     }
-    shoppingTableView.getSelectionModel().clearSelection();
+    
     modifiedProperty.set(false);
   }
 }

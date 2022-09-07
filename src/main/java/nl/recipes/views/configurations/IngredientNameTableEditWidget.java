@@ -12,7 +12,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -111,8 +113,8 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     measureUnitComboBox = new SearchableComboBox<>();
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
     TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
-    measureUnitComboBox.getItems().setAll(this.measureUnitService.getReadonlyMeasureUnitList());
-//    measureUnitComboBox.getItems().add(null); // Added to enable clearing the measure unit field
+    
+    updateMeasureUnitComboBox();
 
     ingredientNameChangeListener = (observable, oldValue, newValue) -> {
       selectedIngredientName = newValue;
@@ -150,7 +152,20 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
   public Node getIngredientNameTableEditWidget() {
     return rpWidget;
   }
+  
+  @Override
+  public void onChanged(Change<? extends MeasureUnit> c) {
+    ingredientNameTableView.getSelectionModel().clearSelection();
+    updateMeasureUnitComboBox();
+  }
 
+  private void updateMeasureUnitComboBox() {
+    ObservableList<MeasureUnit> measureUnitsWithNull = FXCollections.observableArrayList();
+    measureUnitsWithNull.add(null);
+    measureUnitsWithNull.addAll(measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitComboBox.setItems(measureUnitsWithNull);
+  }
+  
   private void initializeIngredientNameTableBox() {
     ingredientNameTableView.setItems(ingredientNameService.getReadonlyIngredientNameList());
     ingredientNameTableView.setMinHeight(200); // prevent table from collapsing
@@ -304,8 +319,8 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
     try {
       ingredientNameService.create(ingredientName);
-      ingredientNameTableView.getSelectionModel().select(ingredientName);
       ingredientNameTableView.scrollTo(ingredientName);
+      ingredientNameTableView.getSelectionModel().clearSelection();
     } catch (AlreadyExistsException | IllegalValueException e) {
       nameError.setText(e.getMessage());
     }
@@ -322,6 +337,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
     try {
       ingredientNameService.update(selectedIngredientName, update);
+      ingredientNameTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException | AlreadyExistsException e) {
       nameError.setText(e.getMessage());
     }
@@ -331,14 +347,9 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
   private void removeIngredientName(ActionEvent actionEvent) {
     try {
       ingredientNameService.remove(selectedIngredientName);
+      ingredientNameTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException e) {
       nameError.setText(e.getMessage());
     }
-  }
-
-  @Override
-  public void onChanged(Change<? extends MeasureUnit> c) {
-    ingredientNameTableView.getSelectionModel().clearSelection();
-    measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 }
