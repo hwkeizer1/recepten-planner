@@ -303,6 +303,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     try {
       shoppingItemService.create(shoppingItem);
       shoppingItemTableView.scrollTo(shoppingItem);
+      shoppingItemTableView.getSelectionModel().select(shoppingItem);
       shoppingItemTableView.getSelectionModel().clearSelection();
     } catch (AlreadyExistsException | IllegalValueException e) {
       nameError.setText(e.getMessage());

@@ -1,7 +1,6 @@
 package nl.recipes.views.configurations;
 
 import org.springframework.stereotype.Component;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -187,6 +186,7 @@ public class MeasureUnitEditPanel {
     try {
       measureUnitService.create(measureUnit);
       measureUnitTableView.scrollTo(measureUnit);
+      measureUnitTableView.getSelectionModel().select(measureUnit);
       measureUnitTableView.getSelectionModel().clearSelection();
     } catch (AlreadyExistsException | IllegalValueException e) {
       nameError.setText(e.getMessage());

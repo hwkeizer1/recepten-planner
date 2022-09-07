@@ -1,10 +1,6 @@
 package nl.recipes.views.configurations;
 
-import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
-import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
-import static nl.recipes.views.ViewConstants.CSS_TITLE;
-import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
-import static nl.recipes.views.ViewConstants.CSS_WIDGET;
+
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
@@ -39,13 +35,14 @@ import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
-import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.IngredientNameService;
 import nl.recipes.services.MeasureUnitService;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
+
+import static nl.recipes.views.ViewConstants.*;
 
 @Slf4j
 @Component
@@ -320,6 +317,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     try {
       ingredientNameService.create(ingredientName);
       ingredientNameTableView.scrollTo(ingredientName);
+      ingredientNameTableView.getSelectionModel().select(ingredientName);
       ingredientNameTableView.getSelectionModel().clearSelection();
     } catch (AlreadyExistsException | IllegalValueException e) {
       nameError.setText(e.getMessage());
