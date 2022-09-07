@@ -23,10 +23,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -35,6 +37,7 @@ import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
+import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
@@ -151,6 +154,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
   private void initializeIngredientNameTableBox() {
     ingredientNameTableView.setItems(ingredientNameService.getReadonlyIngredientNameList());
     ingredientNameTableView.setMinHeight(200); // prevent table from collapsing
+    ingredientNameTableView.getSelectionModel().clearSelection();
 
     nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
     nameColumn.prefWidthProperty().bind(ingredientNameTableView.widthProperty().multiply(0.20));
@@ -183,6 +187,19 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     ingredientNameTableView.getColumns().add(ingredientTypeColumn);
     ingredientNameTableView.getSelectionModel().selectedItemProperty()
         .addListener(ingredientNameChangeListener);
+    
+    ingredientNameTableView.setRowFactory(callback -> {
+      final TableRow<IngredientName> row = new TableRow<>();
+      row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        final int index = row.getIndex();
+        if (index >= 0 && index < ingredientNameTableView.getItems().size()
+            && ingredientNameTableView.getSelectionModel().isSelected(index)) {
+          ingredientNameTableView.getSelectionModel().clearSelection();
+          event.consume();
+        }
+      });
+      return row;
+    });
 
     ingredientNameTableBox.getChildren().add(ingredientNameTableView);
     ingredientNameTableBox.getStyleClass().add(CSS_BASIC_TABLE);

@@ -22,12 +22,15 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
@@ -100,6 +103,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     shoppingItemTableView.getStyleClass().add(CSS_BASIC_TABLE);
     shoppingItemTableView.setItems(shoppingItemService.getReadonlyShoppingItemList());
     shoppingItemTableView.setMinHeight(200); // prevent table from collapsing
+    shoppingItemTableView.getSelectionModel().clearSelection();
 
     TableColumn<ShoppingItem, Number> amountColumn = new TableColumn<>("Hoeveelheid");
     amountColumn.setCellValueFactory(
@@ -142,6 +146,19 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     shoppingItemTableView.getColumns().add(nameColumn);
     shoppingItemTableView.getColumns().add(shopTypeColumn);
     shoppingItemTableView.getColumns().add(ingredientTypeColumn);
+    
+    shoppingItemTableView.setRowFactory(callback -> {
+      final TableRow<ShoppingItem> row = new TableRow<>();
+      row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        final int index = row.getIndex();
+        if (index >= 0 && index < shoppingItemTableView.getItems().size()
+            && shoppingItemTableView.getSelectionModel().isSelected(index)) {
+          shoppingItemTableView.getSelectionModel().clearSelection();
+          event.consume();
+        }
+      });
+      return row;
+    });
 
     VBox shoppingItemTableBox = new VBox();
     shoppingItemTableBox.getChildren().add(shoppingItemTableView);
