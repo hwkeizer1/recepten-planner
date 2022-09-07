@@ -137,13 +137,13 @@ public class MeasureUnitEditPanel {
 
     form.getColumnConstraints().addAll(column0, column1);
 
-    form.add(new Label(MEASURE_UNIT), 0, 0);
+    form.add(new Label(MEASURE_UNIT+COLON), 0, 0);
     form.add(nameTextField, 1, 0);
     form.add(nameError, 1, 1);
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
     nameError.getStyleClass().add(CSS_VALIDATION);
 
-    form.add(new Label(PLURAL_NAME), 0, 2);
+    form.add(new Label(PLURAL_NAME+COLON), 0, 2);
     form.add(pluralNameTextField, 1, 2);
     pluralNameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
 

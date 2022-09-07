@@ -174,14 +174,14 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
 
     form.getColumnConstraints().addAll(column0, column1);
 
-    form.add(new Label(NAME), 0, 0);
+    form.add(new Label(NAME+COLON), 0, 0);
     form.add(nameLabel, 1, 0);
 
-    form.add(new Label(AMOUNT), 0, 1);
+    form.add(new Label(AMOUNT+COLON), 0, 1);
     form.add(amountField, 1, 1);
     amountField.setOnKeyReleased(this::handleKeyReleasedAction);
 
-    form.add(new Label(MEASURE_UNIT), 0, 2);
+    form.add(new Label(MEASURE_UNIT+COLON), 0, 2);
     measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     form.add(measureUnitComboBox, 1, 2);
 
