@@ -338,6 +338,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
+    ingredientNameTableView.getSelectionModel().clearSelection();
     measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
 }

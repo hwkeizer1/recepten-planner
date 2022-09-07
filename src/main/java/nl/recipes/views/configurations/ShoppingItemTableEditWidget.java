@@ -12,6 +12,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ListChangeListener.Change;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -320,7 +321,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
 
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
+    shoppingItemTableView.getSelectionModel().clearSelection();
     measureUnitComboBox.getItems().setAll(measureUnitService.getReadonlyMeasureUnitList());
   }
-
 }
