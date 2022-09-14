@@ -217,13 +217,11 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
   }
 
   private void updateShoppingItem(ActionEvent actionEvent) {
-    ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
-        .withAmount((amountField.getText() == null || amountField.getText().isEmpty()) ? null
-            : Float.valueOf(amountField.getText()))
-        .withMeasureUnit(measureUnitComboBox.getValue()).build();
-
+    selectedShopping.setAmount((amountField.getText() == null || amountField.getText().isEmpty()) ? null
+            : Float.valueOf(amountField.getText()));
+    selectedShopping.setMeasureUnit(measureUnitComboBox.getValue());
     try {
-      stockShoppingItemService.update(selectedShopping, update);
+      stockShoppingItemService.update(selectedShopping);
       shoppingTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException e) {
       log.error("stockShoppingItem not found");

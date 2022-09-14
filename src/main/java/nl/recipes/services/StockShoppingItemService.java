@@ -67,20 +67,17 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
     
     return createdShoppingItem;
   }
-
-  public ShoppingItem update(ShoppingItem shoppingItem, ShoppingItem update)
-      throws NotFoundException {
-    if (!findById(shoppingItem.getId()).isPresent()) {
+  
+  public void update(ShoppingItem shoppingItem) {
+    Optional<ShoppingItem> opt = findById(shoppingItem.getId());
+    if (opt.isPresent()) {
+      ShoppingItem updatedShoppingItem = shoppingItemRepository.save(shoppingItem);
+      stockShoppingItemList.set(stockShoppingItemList.lastIndexOf(shoppingItem),
+          updatedShoppingItem);
+    } else {
       throw new NotFoundException(
-          "Naam " + shoppingItem.getName() + " niet gevonden");
+          "Boodschap artikel met id " + shoppingItem.getId() + " niet gevonden");
     }
-    shoppingItem.setAmount(update.getAmount());
-    shoppingItem.setMeasureUnit(update.getMeasureUnit());
-
-    ShoppingItem updatedShoppingItem = shoppingItemRepository.save(shoppingItem);
-    stockShoppingItemList.set(stockShoppingItemList.lastIndexOf(shoppingItem),
-        updatedShoppingItem);
-    return updatedShoppingItem;
   }
   
   protected void removeByName(String name) throws NotFoundException {
@@ -135,8 +132,18 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
           return;
         }
         
+        // Single replacement
         if (c.getRemoved().get(0).isStock() == c.getAddedSubList().get(0).isStock()) {
-          /* No mutation on stock field so no further action required */ 
+          /* No mutation on stock field but some other fields might have changed */
+          if (c.getAddedSubList().get(0).isStock()) {
+            findByName(c.getRemoved().get(0).getName()).ifPresent((s) -> {
+              s.setName(c.getAddedSubList().get(0).getName());
+              s.setPluralName(c.getAddedSubList().get(0).getPluralName());
+              s.setShopType(c.getAddedSubList().get(0).getShopType());
+              s.setIngredientType(c.getAddedSubList().get(0).getIngredientType());
+              update(s);
+            });
+          }
           return;
         }
         
