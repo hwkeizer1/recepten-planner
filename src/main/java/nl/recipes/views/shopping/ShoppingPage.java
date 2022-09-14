@@ -1,6 +1,7 @@
 package nl.recipes.views.shopping;
 
 import static nl.recipes.views.ViewConstants.CSS_PLANNING_DATE;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
@@ -28,6 +30,7 @@ import nl.recipes.services.StandardShoppingItemService;
 import nl.recipes.services.StockShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 
+@Slf4j
 @Component
 public class ShoppingPage {
 
@@ -159,21 +162,31 @@ public class ShoppingPage {
   }
 
   private void sendShoppingListToGoogle(ActionEvent event) {
+    try {
+      googleSheetService.setEkoShoppings(createEkoShoppingList());
+      googleSheetService.setDekaShoppings(createDekaShoppingList());
+      googleSheetService.setMarktShoppings(createMarktShoppingList());
+      googleSheetService.setOtherShoppings(createOtherShoppingList());
+    } catch(IOException ex) {
+      log.debug("Catched {}", ex.getMessage());
+      googleSheetService.deleteStoredCredentials();
+    }
     if (!googleSheetService.credentialsValid()) {
       googleSheetService.deleteStoredCredentials();
-      Alert a = new Alert(AlertType.WARNING);
-      a.initModality(Modality.WINDOW_MODAL);
-      a.setTitle("Waarschuwing");
-      a.setHeaderText("Google credentials niet gevonden of verlopen");
-      a.setContentText("Sluit eerst dit waarschuwingsvenster, open je browser, ga naar 'inloggen met Google account', "
-          + "selecteer het juiste account en bevestig dat je wilt doorgaan.");
-      a.showAndWait();
+      showCredentialsAlert();
       googleSheetService.createSheetService();
     }
-    googleSheetService.setEkoShoppings(createEkoShoppingList());
-    googleSheetService.setDekaShoppings(createDekaShoppingList());
-    googleSheetService.setMarktShoppings(createMarktShoppingList());
-    googleSheetService.setOtherShoppings(createOtherShoppingList());
+    
+  }
+  
+  private void showCredentialsAlert() {
+    Alert a = new Alert(AlertType.WARNING);
+    a.initModality(Modality.WINDOW_MODAL);
+    a.setTitle("Waarschuwing");
+    a.setHeaderText("Google credentials niet gevonden of verlopen");
+    a.setContentText("Sluit eerst dit waarschuwingsvenster, open je browser, ga naar 'inloggen met Google account', "
+        + "selecteer het juiste account en bevestig dat je wilt doorgaan.");
+    a.showAndWait();
   }
   
   private GridPane createShoppingPanel(String header, List<ShoppingItem> shoppingItems, boolean showCheckBox) {

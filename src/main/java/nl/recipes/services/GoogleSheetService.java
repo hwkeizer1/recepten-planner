@@ -31,7 +31,6 @@ import com.google.api.services.sheets.v4.model.GridRange;
 import com.google.api.services.sheets.v4.model.Request;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.extern.slf4j.Slf4j;
-import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.ShoppingItem;
 
 @Slf4j
@@ -129,11 +128,10 @@ public class GoogleSheetService {
     return !storedCredentials.exists();
   }
 
-  public void setEkoShoppings(List<ShoppingItem> ekoShoppingList) {
+  public void setEkoShoppings(List<ShoppingItem> ekoShoppingList) throws IOException {
     startRow = 0;
 
     int totalEkoItems = ekoShoppingList.size();
-    try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalEkoItems, startRow, 0);
 
       List<List<Object>> items = new ArrayList<>();
@@ -147,15 +145,10 @@ public class GoogleSheetService {
       getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
           .setValueInputOption("USER_ENTERED").execute();
       this.startRow = lastRow;
-    } catch (IOException e) {
-      log.error("Check: Fout tijdens benaderen Google sheets");
-      e.printStackTrace();
-    }
   }
 
-  public void setDekaShoppings(List<ShoppingItem> dekaShoppingList) {
+  public void setDekaShoppings(List<ShoppingItem> dekaShoppingList) throws IOException {
     int totalDekaItems = dekaShoppingList.size();
-    try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalDekaItems, startRow, 1);
 
       List<List<Object>> items = new ArrayList<>();
@@ -169,15 +162,10 @@ public class GoogleSheetService {
       getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
           .setValueInputOption("USER_ENTERED").execute();
       this.startRow = lastRow;
-    } catch (IOException e) {
-      log.error("Fout tijdens benaderen Google sheets");
-      e.printStackTrace();
-    }
   }
 
-  public void setMarktShoppings(List<ShoppingItem> marktShoppingList) {
+  public void setMarktShoppings(List<ShoppingItem> marktShoppingList) throws IOException  {
     int totalMarktItems = marktShoppingList.size();
-    try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalMarktItems, startRow, 2);
 
       List<List<Object>> items = new ArrayList<>();
@@ -191,15 +179,10 @@ public class GoogleSheetService {
       getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
           .setValueInputOption("USER_ENTERED").execute();
       this.startRow = lastRow;
-    } catch (IOException e) {
-      log.error("Fout tijdens benaderen Google sheets");
-      e.printStackTrace();
-    }
   }
 
-  public void setOtherShoppings(List<ShoppingItem> otherShoppingList) {
+  public void setOtherShoppings(List<ShoppingItem> otherShoppingList) throws IOException  {
     int totalOtherItems = otherShoppingList.size();
-    try {
       int lastRow = prepareSpreadsheet(spreadsheetId, totalOtherItems, startRow, 3);
 
       List<List<Object>> items = new ArrayList<>();
@@ -216,11 +199,6 @@ public class GoogleSheetService {
 
       // This is the last shoppinglist part, clear possible data below this part
       clearSheetBelowShoppingList();
-
-    } catch (IOException e) {
-      log.error("Fout tijdens benaderen Google sheets");
-      e.printStackTrace();
-    }
   }
 
   private Sheets getSheetService() {
