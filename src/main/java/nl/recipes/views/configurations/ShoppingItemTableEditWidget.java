@@ -57,6 +57,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
   TextField amountTextField;
 
   TextField nameField;
+  TextField pluralNameField;
   
   SearchableComboBox<MeasureUnit> measureUnitComboBox;
   
@@ -140,26 +141,31 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     TableColumn<ShoppingItem, String> nameColumn = new TableColumn<>("Naam");
     nameColumn.setCellValueFactory(
         c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
-
-    amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
-    measureUnitColumn.prefWidthProperty()
-        .bind(shoppingItemTableView.widthProperty().multiply(0.25));
-    nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.30));
+    
+    TableColumn<ShoppingItem, String> pluralNameColumn = new TableColumn<>("Meervoud");
+    pluralNameColumn.setCellValueFactory(
+        c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
     
     TableColumn<ShoppingItem, ShopType> shopTypeColumn = new TableColumn<>("Winkel");
     shopTypeColumn
     .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
-    shopTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
 
     TableColumn<ShoppingItem, IngredientType> ingredientTypeColumn = new TableColumn<>("Type");
     ingredientTypeColumn
     .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientType()));
-    ingredientTypeColumn.prefWidthProperty()
-    .bind(shoppingItemTableView.widthProperty().multiply(0.15));
+    
+    
+    amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
+    measureUnitColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
+    nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.25));
+    pluralNameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.25));
+    shopTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.10));
+    ingredientTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.10));
 
     shoppingItemTableView.getColumns().add(amountColumn);
     shoppingItemTableView.getColumns().add(measureUnitColumn);
     shoppingItemTableView.getColumns().add(nameColumn);
+    shoppingItemTableView.getColumns().add(pluralNameColumn);
     shoppingItemTableView.getColumns().add(shopTypeColumn);
     shoppingItemTableView.getColumns().add(ingredientTypeColumn);
     
@@ -222,6 +228,13 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     form.add(nameLabel, 0, 2);
     form.add(nameWithValidation, 1, 2);
     
+    Label pluralNameLabel = new Label("Meervoud:");
+    pluralNameField = new TextField();
+    pluralNameField.setOnAction(e -> modifiedProperty.set(true));
+    pluralNameField.setOnKeyReleased(this::handleKeyReleasedAction);
+    form.add(pluralNameLabel, 2, 0);
+    form.add(pluralNameField, 3, 0);
+    
     Label shopTypeLabel = new Label("Winkel:");
     form.add(shopTypeLabel, 2, 1);
     shopTypeComboBox = new ComboBox<>();
@@ -245,6 +258,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
                 : Utils.format(selectedShoppingItem.getAmount()));
             nameField.setText(selectedShoppingItem.getName());
             nameError.setText("");
+            pluralNameField.setText(selectedShoppingItem.getPluralName());
             measureUnitComboBox.setValue(selectedShoppingItem.getMeasureUnit());
             shopTypeComboBox.setValue(selectedShoppingItem.getShopType());
             ingredientTypeComboBox.setValue(selectedShoppingItem.getIngredientType());
@@ -252,6 +266,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
             amountTextField.setText(null);
             nameField.setText(null);
             nameError.setText("");
+            pluralNameField.setText(null);
             measureUnitComboBox.setValue(null);
             shopTypeComboBox.setValue(null);
             ingredientTypeComboBox.setValue(null);
@@ -296,6 +311,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
                 : Float.valueOf(amountTextField.getText()))
         .withMeasureUnit(measureUnitComboBox.getValue())
         .withName(nameField.getText())
+        .withPluralName(pluralNameField.getText())
         .withShopType(shopTypeComboBox.getValue())
         .withIngredientType(ingredientTypeComboBox.getValue())
         .build();
@@ -316,6 +332,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
             : Float.valueOf(amountTextField.getText()))
         .withMeasureUnit(measureUnitComboBox.getValue())
         .withName(nameField.getText())
+        .withPluralName(pluralNameField.getText())
         .withShopType(shopTypeComboBox.getValue())
         .withIngredientType(ingredientTypeComboBox.getValue())
         .build();

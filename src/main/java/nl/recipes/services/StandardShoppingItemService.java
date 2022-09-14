@@ -10,17 +10,21 @@ import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
+import nl.recipes.repositories.IngredientNameRepository;
 import nl.recipes.repositories.ShoppingItemRepository;
 
 @Service
 public class StandardShoppingItemService {
 
   private final ShoppingItemRepository shoppingItemRepository;
+  private final IngredientNameRepository ingredientNameRepository;
 
   private ObservableList<ShoppingItem> standardShoppingItemList;
 
-  public StandardShoppingItemService(ShoppingItemRepository shoppingItemRepository) {
+  public StandardShoppingItemService(ShoppingItemRepository shoppingItemRepository,
+      IngredientNameRepository ingredientNameRepository) {
     this.shoppingItemRepository = shoppingItemRepository;
+    this.ingredientNameRepository = ingredientNameRepository;
     standardShoppingItemList = getShoppingItemList();
   }
 
@@ -37,6 +41,13 @@ public class StandardShoppingItemService {
       throw new AlreadyExistsException(
           "Naam " + shoppingItem.getName() + " bestaat al");
     }
+
+    // TODO: Need repository here to prevent circular referencing, needs fix
+    if (ingredientNameRepository.findAll().stream().anyMatch(
+        i -> i.getName().equals(shoppingItem.getName()) || i.getPluralName().equals(shoppingItem.getName()))) {
+      throw new AlreadyExistsException(shoppingItem.getName() + " bestaat al als ingredient");
+    }
+
     shoppingItem.setStandard(true);
     ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
     standardShoppingItemList.add(createdShoppingItem);
@@ -54,9 +65,15 @@ public class StandardShoppingItemService {
       throw new AlreadyExistsException(
           "Naam " + update.getName() + " bestaat al");
     }
+    // TODO: Need repository here to prevent circular referencing, needs fix
+    if (ingredientNameRepository.findAll().stream().anyMatch(
+        i -> i.getName().equals(update.getName()) || i.getPluralName().equals(update.getName()))) {
+      throw new AlreadyExistsException(update.getName() + " bestaat al als ingredient");
+    }
     shoppingItem.setAmount(update.getAmount());
     shoppingItem.setMeasureUnit(update.getMeasureUnit());
     shoppingItem.setName(update.getName());
+    shoppingItem.setPluralName(update.getPluralName());
     shoppingItem.setShopType(update.getShopType());
     shoppingItem.setIngredientType(update.getIngredientType());
 
@@ -83,6 +100,10 @@ public class StandardShoppingItemService {
   public Optional<ShoppingItem> findById(Long id) {
     return standardShoppingItemList.stream()
         .filter(shoppingItem -> id.equals(shoppingItem.getId())).findAny();
+  }
+  
+  public boolean isShoppingItemName(String name) {
+    return standardShoppingItemList.stream().anyMatch(i -> name.equals(i.getName()) || name.equals(i.getPluralName()));
   }
 
   public void addListener(ListChangeListener<ShoppingItem> listener) {

@@ -265,7 +265,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     Label nameLabel = new Label("Ingrediënt naam:");
     inputForm.add(nameLabel, 0, 0);
     inputForm.add(nameTextField, 1, 0);
-    inputForm.add(nameError, 1, 1);
+    inputForm.add(nameError, 1, 1, 2, 1); // allow some overflow
 
     Label pluralNameLabel = new Label("Meervoud:");
     inputForm.add(pluralNameLabel, 0, 2);
