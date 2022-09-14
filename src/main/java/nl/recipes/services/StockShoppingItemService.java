@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
-import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.ShoppingItemRepository;
 
@@ -50,6 +49,18 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
         .withShopType(ingredientName.getShopType())
         .withIsStandard(false)
         .build();
+    
+    ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
+    stockShoppingItemList.add(createdShoppingItem);
+    
+    return createdShoppingItem;
+  }
+  
+  protected ShoppingItem create(ShoppingItem shoppingItem) throws AlreadyExistsException {
+    if (findByName(shoppingItem.getName()).isPresent()) {
+      throw new AlreadyExistsException(
+          "Naam " + shoppingItem.getName() + " bestaat al");
+    }
     
     ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
     stockShoppingItemList.add(createdShoppingItem);

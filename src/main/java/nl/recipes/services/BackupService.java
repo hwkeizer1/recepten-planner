@@ -35,6 +35,11 @@ import nl.recipes.domain.ShoppingItem;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
+import nl.recipes.repositories.IngredientNameRepository;
+import nl.recipes.repositories.MeasureUnitRepository;
+import nl.recipes.repositories.RecipeRepository;
+import nl.recipes.repositories.ShoppingItemRepository;
+import nl.recipes.repositories.TagRepository;
 
 @Slf4j
 @Service
@@ -63,29 +68,39 @@ public class BackupService {
   private static final String SHOPPINGITEMS_PLAN = "shoppingitems.plan";
 
   private final TagService tagService;
-
+  private final TagRepository tagRepository;
   private final IngredientNameService ingredientNameService;
-
+  private final IngredientNameRepository ingredientNameRepository;
   private final MeasureUnitService measureUnitService;
-
+  private final MeasureUnitRepository measureUnitRepository;
   private final RecipeService recipeService;
-  
-  private final StandardShoppingItemService shoppingItemService;
-
+  private final RecipeRepository recipeRepository;
+  private final StandardShoppingItemService standardShoppingItemService;
+  private final StockShoppingItemService stockShoppingItemService;
+  private final ShoppingItemRepository shoppingItemRepository;
   private final ConfigService configService;
 
   private final ObjectMapper objectMapper;
 
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
-      MeasureUnitService measureUnitService, RecipeService recipeService,
-      ConfigService configService, StandardShoppingItemService shoppingItemService) {
+      MeasureUnitService measureUnitService, RecipeService recipeService, ConfigService configService,
+      StandardShoppingItemService standardShoppingItemService, TagRepository tagRepository,
+      ShoppingItemRepository shoppingItemRepository, RecipeRepository recipeRepository,
+      MeasureUnitRepository measureUnitRepository, IngredientNameRepository ingredientNameRepository,
+      StockShoppingItemService stockShoppingItemService) {
+    this.tagRepository = tagRepository;
+    this.ingredientNameRepository = ingredientNameRepository;
+    this.measureUnitRepository = measureUnitRepository;
+    this.recipeRepository = recipeRepository;
+    this.stockShoppingItemService = stockShoppingItemService;
+    this.shoppingItemRepository = shoppingItemRepository;
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     this.tagService = tagService;
     this.ingredientNameService = ingredientNameService;
     this.measureUnitService = measureUnitService;
     this.recipeService = recipeService;
-    this.shoppingItemService = shoppingItemService;
+    this.standardShoppingItemService = standardShoppingItemService;
     this.configService = configService;
   }
 
@@ -149,7 +164,7 @@ public class BackupService {
   }
 
   private String backupTags() {
-    List<Tag> tagList = tagService.getReadonlyTagList();
+    List<Tag> tagList = tagRepository.findAll();
     try {
       return objectMapper.writeValueAsString(tagList);
     } catch (JsonProcessingException e) {
@@ -201,7 +216,7 @@ public class BackupService {
   }
 
   private String backupIngredientNames() {
-    List<IngredientName> ingredientNameList = ingredientNameService.getReadonlyIngredientNameList();
+    List<IngredientName> ingredientNameList = ingredientNameRepository.findAll();
     try {
       return objectMapper.writeValueAsString(ingredientNameList);
     } catch (JsonProcessingException e) {
@@ -254,7 +269,7 @@ public class BackupService {
   }
 
   private String backupMeasureUnits() {
-    List<MeasureUnit> measureUnitList = measureUnitService.getReadonlyMeasureUnitList();
+    List<MeasureUnit> measureUnitList = measureUnitRepository.findAll();
     try {
       return objectMapper.writeValueAsString(measureUnitList);
     } catch (JsonProcessingException e) {
@@ -307,7 +322,7 @@ public class BackupService {
   }
 
   private String backupRecipes() {
-    List<Recipe> recipeList = recipeService.getReadonlyRecipeList();
+    List<Recipe> recipeList = recipeRepository.findAll();
     try {
       return objectMapper.writeValueAsString(recipeList);
     } catch (JsonProcessingException e) {
@@ -399,7 +414,7 @@ public class BackupService {
   }
   
   private String backupShoppingItems() {
-    List<ShoppingItem> shoppingItemList = shoppingItemService.getReadonlyShoppingItemList();
+    List<ShoppingItem> shoppingItemList = shoppingItemRepository.findAll();
     try {
       return objectMapper.writeValueAsString(shoppingItemList);
     } catch (JsonProcessingException e) {
@@ -444,7 +459,11 @@ public class BackupService {
 
   private void createShoppingItem(ShoppingItem shoppingItem) {
     try {
-      shoppingItemService.create(shoppingItem);
+      if (shoppingItem.isStandard()) {
+        standardShoppingItemService.create(shoppingItem);
+      } else {
+        stockShoppingItemService.create(shoppingItem);
+      }
     } catch (AlreadyExistsException | IllegalValueException ex) {
       log.error("Tag {} already exists", shoppingItem.getName());
     }
