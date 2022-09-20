@@ -1,17 +1,14 @@
 package nl.recipes.views.configurations;
 
 import org.springframework.stereotype.Component;
-
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.views.components.pane.bootstrap.BootstrapColumn;
 import nl.recipes.views.components.pane.bootstrap.BootstrapPane;
 import nl.recipes.views.components.pane.bootstrap.BootstrapRow;
 import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 
-@Slf4j
 @Component
 public class ConfigurationView {
 

@@ -1,7 +1,7 @@
 package nl.recipes.views.configurations;
 
-import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
 import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
 import static nl.recipes.views.ViewConstants.CSS_TITLE;
 import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
 import static nl.recipes.views.ViewConstants.CSS_WIDGET;
@@ -14,7 +14,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ListChangeListener.Change;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -33,7 +32,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;

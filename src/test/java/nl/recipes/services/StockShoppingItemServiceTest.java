@@ -1,20 +1,9 @@
 package nl.recipes.services;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-import java.util.List;
-import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import nl.recipes.domain.MeasureUnit;
-import nl.recipes.domain.ShoppingItem;
-import nl.recipes.exceptions.AlreadyExistsException;
-import nl.recipes.exceptions.IllegalValueException;
-import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.ShoppingItemRepository;
 import nl.recipes.util.testdata.MockShoppingItems;
 

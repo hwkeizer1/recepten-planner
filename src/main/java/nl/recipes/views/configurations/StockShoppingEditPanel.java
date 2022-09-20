@@ -1,5 +1,15 @@
 package nl.recipes.views.configurations;
 
+import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.CSS_TITLE;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
+import static nl.recipes.views.ViewMessages.AMOUNT;
+import static nl.recipes.views.ViewMessages.COLON;
+import static nl.recipes.views.ViewMessages.EDIT_STOCK_SHOPPINGS;
+import static nl.recipes.views.ViewMessages.MEASURE_UNIT;
+import static nl.recipes.views.ViewMessages.NAME;
+import static nl.recipes.views.ViewMessages.UPDATE;
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
@@ -33,10 +43,6 @@ import nl.recipes.services.MeasureUnitService;
 import nl.recipes.services.StockShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
-
-import static nl.recipes.views.ViewConstants.*;
-import static nl.recipes.views.ViewMessages.*;
-import java.util.List;
 
 @Slf4j
 @Component

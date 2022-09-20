@@ -2,16 +2,13 @@ package nl.recipes.views.components.pane.bootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javafx.geometry.Pos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Based on https://edencoding.com/responsive-layouts/
  */
-@Slf4j
 public class BootstrapPane extends GridPane {
 
   private final List<BootstrapRow> rows = new ArrayList<>();
