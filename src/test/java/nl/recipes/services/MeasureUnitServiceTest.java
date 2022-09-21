@@ -38,14 +38,14 @@ class MeasureUnitServiceTest {
   public void setup() {
     MockitoAnnotations.openMocks(this);
     mockMeasureUnits = new MockMeasureUnits();
-    measureUnitService.setObservableMeasureUnitList(mockMeasureUnits.getMeasureUnitList());
+    measureUnitService.setObservableList(mockMeasureUnits.getMeasureUnitList());
   }
 
   @Test
   void testGetReadonlyMeasureUnitList() {
     List<MeasureUnit> expectedList = mockMeasureUnits.getMeasureUnitList();
 
-    assertEquals(expectedList, measureUnitService.getReadonlyMeasureUnitList());
+    assertEquals(expectedList, measureUnitService.getList());
   }
 
   @Test
@@ -99,7 +99,7 @@ class MeasureUnitServiceTest {
     when(measureUnitRepository.save(measureUnit)).thenReturn(savedMeasureUnit);
 
     assertEquals(savedMeasureUnit, measureUnitService.create(measureUnit));
-    assertEquals(5, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(5, measureUnitService.getList().size());
     assertEquals(Optional.of(savedMeasureUnit), measureUnitService.findByName(NEW_MEASUREUNIT));
   }
 
@@ -115,7 +115,7 @@ class MeasureUnitServiceTest {
     });
 
     Assertions.assertEquals("Maateenheid theelepel bestaat al", exception.getMessage());
-    assertEquals(4, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(4, measureUnitService.getList().size());
   }
 
   @Test
@@ -128,8 +128,8 @@ class MeasureUnitServiceTest {
       measureUnitService.create(measureUnit);
     });
 
-    Assertions.assertEquals("Maateenheid naam mag niet leeg zijn", exception.getMessage());
-    assertEquals(4, measureUnitService.getReadonlyMeasureUnitList().size());
+    Assertions.assertEquals("Maateenheid mag niet leeg zijn", exception.getMessage());
+    assertEquals(4, measureUnitService.getList().size());
   }
 
   @Test
@@ -148,7 +148,7 @@ class MeasureUnitServiceTest {
     when(measureUnitRepository.save(expectedMeasureUnit)).thenReturn(expectedMeasureUnit);
 
     assertEquals(expectedMeasureUnit, measureUnitService.update(originalMeasureUnit, update));
-    assertEquals(4, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(4, measureUnitService.getList().size());
     assertEquals(Optional.of(expectedMeasureUnit), measureUnitService.findById(2L));
   }
 
@@ -169,7 +169,7 @@ class MeasureUnitServiceTest {
     });
 
     Assertions.assertEquals("Maateenheid onbekend niet gevonden", exception.getMessage());
-    assertEquals(4, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(4, measureUnitService.getList().size());
   }
 
   @Test
@@ -189,16 +189,16 @@ class MeasureUnitServiceTest {
     });
 
     Assertions.assertEquals("Maateenheid theelepel bestaat al", exception.getMessage());
-    assertEquals(4, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(4, measureUnitService.getList().size());
   }
 
   @Test
   void testRemove_HappyPath() throws Exception {
     MeasureUnit originalMeasureUnit = measureUnitService.findByName("eetlepel").get();
 
-    assertEquals(4, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(4, measureUnitService.getList().size());
     measureUnitService.remove(originalMeasureUnit);
-    assertEquals(3, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(3, measureUnitService.getList().size());
     assertEquals(Optional.empty(), measureUnitService.findByName(originalMeasureUnit.getName()));
   }
 
@@ -214,7 +214,7 @@ class MeasureUnitServiceTest {
     });
 
     Assertions.assertEquals("Maateenheid onbekend niet gevonden", exception.getMessage());
-    assertEquals(4, measureUnitService.getReadonlyMeasureUnitList().size());
+    assertEquals(4, measureUnitService.getList().size());
   }
 
 }

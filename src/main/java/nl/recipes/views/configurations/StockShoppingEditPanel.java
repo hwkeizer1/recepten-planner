@@ -100,7 +100,7 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
   private void updateMeasureUnitComboBox() {
     ObservableList<MeasureUnit> measureUnitsWithNull = FXCollections.observableArrayList();
     measureUnitsWithNull.add(null);
-    measureUnitsWithNull.addAll(measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitsWithNull.addAll(measureUnitService.getList());
     measureUnitComboBox.setItems(measureUnitsWithNull);
   }
   

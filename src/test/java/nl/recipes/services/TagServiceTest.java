@@ -33,7 +33,7 @@ class TagServiceTest {
   public void setup() {
     MockitoAnnotations.openMocks(this);
     mockTags = new MockTags();
-    tagService.setObservableList(mockTags.getTagList());
+    tagService.setObservableList(mockTags.getOrderedTagList());
   }
 
   @Test

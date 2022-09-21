@@ -76,7 +76,7 @@ public class MeasureUnitEditPanel {
     VBox tableBox = new VBox();
 
     measureUnitTableView.getStyleClass().add(CSS_BASIC_TABLE);
-    measureUnitTableView.setItems(measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitTableView.setItems(measureUnitService.getList());
     measureUnitTableView.setMinHeight(200); // prevent table from collapsing
     measureUnitTableView.getSelectionModel().clearSelection();
     

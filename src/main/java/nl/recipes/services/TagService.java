@@ -1,6 +1,11 @@
 package nl.recipes.services;
 
+import static nl.recipes.views.ViewMessages.TAG_;
+import static nl.recipes.views.ViewMessages.TAG_NAME_CANNOT_BE_EMPTY;
+import static nl.recipes.views.ViewMessages._ALREADY_EXISTS;
+import static nl.recipes.views.ViewMessages._NOT_FOUND;
 import java.util.Optional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +20,8 @@ public class TagService extends ListService<Tag> {
 
   public TagService(TagRepository tagRepository) {
     repository = tagRepository;
-    observableList = FXCollections.observableList(repository.findAll());
+    Sort sort = Sort.by("name").ascending();
+    observableList = FXCollections.observableList(repository.findAll(sort));
     comparator = (t1, t2)-> t1.getName().compareTo(t2.getName());
   }
   
@@ -29,29 +35,29 @@ public class TagService extends ListService<Tag> {
   
   public Tag create(Tag tag) throws AlreadyExistsException, IllegalValueException {
     if (tag == null || tag.getName().isEmpty()) {
-      throw new IllegalValueException("Categorie naam mag niet leeg zijn");
+      throw new IllegalValueException(TAG_NAME_CANNOT_BE_EMPTY);
     }
     if (findByName(tag.getName()).isPresent()) {
-      throw new AlreadyExistsException("Categorie " + tag.getName() + " bestaat al");
+      throw new AlreadyExistsException(TAG_ + tag.getName() + _ALREADY_EXISTS);
     }
     return save(tag);
   }
 
   public Tag edit(Tag tag, String name) throws NotFoundException, AlreadyExistsException {
     if (!findById(tag.getId()).isPresent()) {
-      throw new NotFoundException("Categorie " + tag.getName() + " niet gevonden");
+      throw new NotFoundException(TAG_ + tag.getName() + _NOT_FOUND);
     }
     if (findByName(name).isPresent()) {
-      throw new AlreadyExistsException("Categorie " + name + " bestaat al");
+      throw new AlreadyExistsException(TAG_ + name + _ALREADY_EXISTS);
     }
+    
     tag.setName(name);
-    Tag updatedTag = update(tag);
-    return updatedTag;
+    return update(tag);
   }
 
   public void remove(Tag tag) throws NotFoundException {
     if (!findById(tag.getId()).isPresent()) {
-      throw new NotFoundException("Categorie " + tag.getName() + " niet gevonden");
+      throw new NotFoundException(TAG_ + tag.getName() + _NOT_FOUND);
     }
     delete(tag);
   }

@@ -17,7 +17,6 @@ public class ListService<T> {
   protected Comparator<T> comparator;
   
   public ObservableList<T> getList() {
-    observableList.sort(comparator);
     return FXCollections.unmodifiableObservableList(observableList);
   }
   
@@ -36,14 +35,14 @@ public class ListService<T> {
   T save(T o) {
     T createdObject = repository.save(o);
     observableList.add(createdObject);
-    observableList.sort(comparator);
+    FXCollections.sort(observableList, comparator);
     return createdObject;
   }
   
   T update(T o) {
     T updatedTag = repository.save(o);
     observableList.set(observableList.lastIndexOf(o), o);
-    observableList.sort(comparator);
+    FXCollections.sort(observableList, comparator);
     return updatedTag;
   }
   

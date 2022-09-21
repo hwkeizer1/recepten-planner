@@ -32,6 +32,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
@@ -44,6 +46,7 @@ import nl.recipes.services.StandardShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
 
+@Slf4j
 @Component
 public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUnit> {
 
@@ -96,6 +99,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
 
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
+    log.debug("{}", c);
     shoppingItemTableView.getSelectionModel().clearSelection();
     updateMeasureUnitComboBox();
   }
@@ -103,7 +107,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
   private void updateMeasureUnitComboBox() {
     ObservableList<MeasureUnit> measureUnitsWithNull = FXCollections.observableArrayList();
     measureUnitsWithNull.add(null);
-    measureUnitsWithNull.addAll(measureUnitService.getReadonlyMeasureUnitList());
+    measureUnitsWithNull.addAll(measureUnitService.getList());
     measureUnitComboBox.setItems(measureUnitsWithNull);
   }
   
