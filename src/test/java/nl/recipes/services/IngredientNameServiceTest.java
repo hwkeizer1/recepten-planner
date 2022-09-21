@@ -28,6 +28,8 @@ class IngredientNameServiceTest {
 
   @Mock
   IngredientNameRepository ingredientNameRepository;
+  @Mock
+  StandardShoppingItemService standardShoppingItemService;
 
   @InjectMocks
   IngredientNameService ingredientNameService;
