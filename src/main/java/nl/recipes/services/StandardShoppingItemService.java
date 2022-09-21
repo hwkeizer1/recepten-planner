@@ -17,14 +17,11 @@ import nl.recipes.repositories.ShoppingItemRepository;
 public class StandardShoppingItemService {
 
   private final ShoppingItemRepository shoppingItemRepository;
-  private final IngredientNameRepository ingredientNameRepository;
 
   private ObservableList<ShoppingItem> standardShoppingItemList;
 
-  public StandardShoppingItemService(ShoppingItemRepository shoppingItemRepository,
-      IngredientNameRepository ingredientNameRepository) {
+  public StandardShoppingItemService(ShoppingItemRepository shoppingItemRepository) {
     this.shoppingItemRepository = shoppingItemRepository;
-    this.ingredientNameRepository = ingredientNameRepository;
     standardShoppingItemList = getShoppingItemList();
   }
 
@@ -40,12 +37,6 @@ public class StandardShoppingItemService {
     if (findByName(shoppingItem.getName()).isPresent()) {
       throw new AlreadyExistsException(
           "Naam " + shoppingItem.getName() + " bestaat al");
-    }
-
-    // TODO: Need repository here to prevent circular referencing, needs fix
-    if (ingredientNameRepository.findAll().stream().anyMatch(
-        i -> i.getName().equals(shoppingItem.getName()) || i.getPluralName().equals(shoppingItem.getName()))) {
-      throw new AlreadyExistsException(shoppingItem.getName() + " bestaat al als ingredient");
     }
 
     shoppingItem.setStandard(true);
@@ -64,11 +55,6 @@ public class StandardShoppingItemService {
         && findByName(update.getName()).isPresent()) {
       throw new AlreadyExistsException(
           "Naam " + update.getName() + " bestaat al");
-    }
-    // TODO: Need repository here to prevent circular referencing, needs fix
-    if (ingredientNameRepository.findAll().stream().anyMatch(
-        i -> i.getName().equals(update.getName()) || i.getPluralName().equals(update.getName()))) {
-      throw new AlreadyExistsException(update.getName() + " bestaat al als ingredient");
     }
     shoppingItem.setAmount(update.getAmount());
     shoppingItem.setMeasureUnit(update.getMeasureUnit());

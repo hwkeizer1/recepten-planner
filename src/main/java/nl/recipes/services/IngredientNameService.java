@@ -18,14 +18,11 @@ public class IngredientNameService {
   private static final String INGREDIENT_NAAM = "Ingrediënt ";
 
   private final IngredientNameRepository ingredientNameRepository;
-  private final StandardShoppingItemService standardShoppingItemService;
 
   private ObservableList<IngredientName> observableIngredientNameList;
 
-  public IngredientNameService(IngredientNameRepository ingredientNameRepository,
-      StandardShoppingItemService standardShoppingItemService) {
+  public IngredientNameService(IngredientNameRepository ingredientNameRepository) {
     this.ingredientNameRepository = ingredientNameRepository;
-    this.standardShoppingItemService = standardShoppingItemService;
     observableIngredientNameList = FXCollections.observableList(ingredientNameRepository.findByOrderByNameAsc());
   }
 
@@ -43,9 +40,6 @@ public class IngredientNameService {
       throw new AlreadyExistsException(INGREDIENT_NAAM + ingredientName.getName()
           + getMeasureUnitSuffix(ingredientName) + " bestaat al");
     }
-    if (standardShoppingItemService.isShoppingItemName(ingredientName.getName())) {
-      throw new AlreadyExistsException(ingredientName.getName() + " bestaat al als standaard boodschap");
-    }
     IngredientName createdIngredientName = ingredientNameRepository.save(ingredientName);
     observableIngredientNameList.add(createdIngredientName);
     return createdIngredientName;
@@ -61,9 +55,6 @@ public class IngredientNameService {
       throw new AlreadyExistsException(INGREDIENT_NAAM + update.getName()
           + getMeasureUnitSuffix(update) + " bestaat al");
     }
-    if (standardShoppingItemService.isShoppingItemName(update.getName())) {
-      throw new AlreadyExistsException(update.getName() + " bestaat al als standaard boodschap");
-    }
 
     update.setId(ingredientName.getId());
     IngredientName updatedIngredientName = ingredientNameRepository.save(update);
@@ -74,7 +65,6 @@ public class IngredientNameService {
   }
 
   public void remove(IngredientName ingredientName) throws NotFoundException {
-    // TODO add check for removing measureUnits that are in use
     if (!findById(ingredientName.getId()).isPresent()) {
       throw new NotFoundException(INGREDIENT_NAAM + ingredientName.getName() + " niet gevonden");
     }
