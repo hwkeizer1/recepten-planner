@@ -273,7 +273,7 @@ public class RecipeEditView {
     int tagCol = 0;
     int tagRow = 0;
     tagCheckBoxes = new ArrayList<>();
-    for (Tag tag : tagService.getReadonlyTagList()) {
+    for (Tag tag : tagService.getList()) {
       CheckBox checkBox = new CheckBox(tag.getName());
       checkBox.setId(tag.getName());
       tagCheckBoxes.add(checkBox);

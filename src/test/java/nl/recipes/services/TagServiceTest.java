@@ -16,6 +16,7 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.TagRepository;
+import nl.recipes.services.TagService;
 import nl.recipes.util.testdata.MockTags;
 
 class TagServiceTest {
@@ -32,14 +33,14 @@ class TagServiceTest {
   public void setup() {
     MockitoAnnotations.openMocks(this);
     mockTags = new MockTags();
-    tagService.setObservableTagList(mockTags.getTagList());
+    tagService.setObservableList(mockTags.getTagList());
   }
 
   @Test
   void testGetReadonlyTagList() {
-    List<Tag> expectedList = mockTags.getTagList();
+    List<Tag> expectedList = mockTags.getOrderedTagList();
 
-    assertEquals(expectedList, tagService.getReadonlyTagList());
+    assertEquals(expectedList, tagService.getList());
   }
 
   @Test
@@ -78,7 +79,7 @@ class TagServiceTest {
     when(tagRepository.save(tag)).thenReturn(savedTag);
 
     assertEquals(savedTag, tagService.create(tag));
-    assertEquals(5, tagService.getReadonlyTagList().size());
+    assertEquals(5, tagService.getList().size());
     assertEquals(Optional.of(savedTag), tagService.findByName(NEWTAG));
   }
 
@@ -92,7 +93,7 @@ class TagServiceTest {
     });
 
     Assertions.assertEquals("Categorie Pasta bestaat al", exception.getMessage());
-    assertEquals(4, tagService.getReadonlyTagList().size());
+    assertEquals(4, tagService.getList().size());
   }
 
   @Test
@@ -105,7 +106,7 @@ class TagServiceTest {
     });
 
     Assertions.assertEquals("Categorie naam mag niet leeg zijn", exception.getMessage());
-    assertEquals(4, tagService.getReadonlyTagList().size());
+    assertEquals(4, tagService.getList().size());
   }
 
   @Test
@@ -115,8 +116,8 @@ class TagServiceTest {
     Tag expectedTag = mockTags.getTag(2L, "Moeilijk");
     when(tagRepository.save(expectedTag)).thenReturn(expectedTag);
 
-    assertEquals(expectedTag, tagService.update(originalTag, "Moeilijk"));
-    assertEquals(4, tagService.getReadonlyTagList().size());
+    assertEquals(expectedTag, tagService.edit(originalTag, "Moeilijk"));
+    assertEquals(4, tagService.getList().size());
     assertEquals(Optional.of(expectedTag), tagService.findById(2L));
   }
 
@@ -125,11 +126,11 @@ class TagServiceTest {
     Tag originalTag = mockTags.getTag(3000L, "onbekend");
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
-      tagService.update(originalTag, "bekend");
+      tagService.edit(originalTag, "bekend");
     });
 
     Assertions.assertEquals("Categorie onbekend niet gevonden", exception.getMessage());
-    assertEquals(4, tagService.getReadonlyTagList().size());
+    assertEquals(4, tagService.getList().size());
   }
 
   @Test
@@ -137,20 +138,20 @@ class TagServiceTest {
     Tag originalTag = mockTags.getTag(1L, "Vegetarisch");
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
-      tagService.update(originalTag, "Feestelijk");
+      tagService.edit(originalTag, "Feestelijk");
     });
 
     Assertions.assertEquals("Categorie Feestelijk bestaat al", exception.getMessage());
-    assertEquals(4, tagService.getReadonlyTagList().size());
+    assertEquals(4, tagService.getList().size());
   }
 
   @Test
   void testRemove_HappyPath() throws Exception {
     Tag originalTag = tagService.findByName("Makkelijk").get();
 
-    assertEquals(4, tagService.getReadonlyTagList().size());
+    assertEquals(4, tagService.getList().size());
     tagService.remove(originalTag);
-    assertEquals(3, tagService.getReadonlyTagList().size());
+    assertEquals(3, tagService.getList().size());
     assertEquals(Optional.empty(), tagService.findByName(originalTag.getName()));
   }
 
@@ -163,7 +164,7 @@ class TagServiceTest {
     });
 
     Assertions.assertEquals("Categorie Onbekend niet gevonden", exception.getMessage());
-    assertEquals(4, tagService.getReadonlyTagList().size());
+    assertEquals(4, tagService.getList().size());
   }
 
 }

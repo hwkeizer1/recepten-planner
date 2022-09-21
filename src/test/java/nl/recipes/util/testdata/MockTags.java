@@ -19,6 +19,12 @@ public class MockTags {
     return FXCollections.observableList(tagList);
   }
   
+  public ObservableList<Tag> getOrderedTagList() {
+    ObservableList<Tag> tagList = getTagList();
+    tagList.sort((t1, t2)-> t1.getName().compareTo(t2.getName()));
+    return FXCollections.observableList(tagList);
+  }
+  
   public Tag getTag(Long id, String name) {
     return new Tag(id, name);
   }

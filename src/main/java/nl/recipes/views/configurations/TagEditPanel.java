@@ -26,7 +26,6 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.services.TagService;
-
 import static nl.recipes.views.ViewConstants.*;
 import static nl.recipes.views.ViewMessages.*;
 
@@ -74,7 +73,7 @@ public class TagEditPanel {
     VBox tableBox = new VBox();
 
     tagTableView.getStyleClass().add(CSS_BASIC_TABLE);
-    tagTableView.setItems(tagService.getReadonlyTagList());
+    tagTableView.setItems(tagService.getList());
     tagTableView.setMinHeight(200); // prevent table from collapsing
     tagTableView.getSelectionModel().clearSelection();
     
@@ -175,7 +174,7 @@ public class TagEditPanel {
 
   private void updateTag(ActionEvent actionEvent) {
     try {
-      tagService.update(selectedTag, nameTextField.getText());
+      tagService.edit(selectedTag, nameTextField.getText());
     } catch (NotFoundException | AlreadyExistsException e) {
       nameError.setText(e.getMessage());
     }

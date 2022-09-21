@@ -68,7 +68,6 @@ public class BackupService {
   private static final String SHOPPINGITEMS_PLAN = "shoppingitems.plan";
 
   private final TagService tagService;
-  private final TagRepository tagRepository;
   private final IngredientNameService ingredientNameService;
   private final IngredientNameRepository ingredientNameRepository;
   private final MeasureUnitService measureUnitService;
@@ -84,11 +83,10 @@ public class BackupService {
 
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
       MeasureUnitService measureUnitService, RecipeService recipeService, ConfigService configService,
-      StandardShoppingItemService standardShoppingItemService, TagRepository tagRepository,
+      StandardShoppingItemService standardShoppingItemService,
       ShoppingItemRepository shoppingItemRepository, RecipeRepository recipeRepository,
       MeasureUnitRepository measureUnitRepository, IngredientNameRepository ingredientNameRepository,
       StockShoppingItemService stockShoppingItemService) {
-    this.tagRepository = tagRepository;
     this.ingredientNameRepository = ingredientNameRepository;
     this.measureUnitRepository = measureUnitRepository;
     this.recipeRepository = recipeRepository;
@@ -164,7 +162,7 @@ public class BackupService {
   }
 
   private String backupTags() {
-    List<Tag> tagList = tagRepository.findAll();
+    List<Tag> tagList = tagService.getBackupList();
     try {
       return objectMapper.writeValueAsString(tagList);
     } catch (JsonProcessingException e) {
