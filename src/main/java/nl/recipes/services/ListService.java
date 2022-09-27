@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class ListService<T> {
 
@@ -40,10 +42,10 @@ public class ListService<T> {
   }
   
   T update(T o) {
-    T updatedTag = repository.save(o);
-    observableList.set(observableList.lastIndexOf(o), o);
+    T update = repository.save(o);
+    observableList.set(observableList.lastIndexOf(o), update);
     FXCollections.sort(observableList, comparator);
-    return updatedTag;
+    return update;
   }
   
   void delete(T o) {

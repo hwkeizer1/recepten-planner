@@ -69,7 +69,6 @@ public class BackupService {
 
   private final TagService tagService;
   private final IngredientNameService ingredientNameService;
-  private final IngredientNameRepository ingredientNameRepository;
   private final MeasureUnitService measureUnitService;
   private final RecipeService recipeService;
   private final RecipeRepository recipeRepository;
@@ -84,9 +83,7 @@ public class BackupService {
       MeasureUnitService measureUnitService, RecipeService recipeService, ConfigService configService,
       StandardShoppingItemService standardShoppingItemService,
       ShoppingItemRepository shoppingItemRepository, RecipeRepository recipeRepository,
-      IngredientNameRepository ingredientNameRepository,
       StockShoppingItemService stockShoppingItemService) {
-    this.ingredientNameRepository = ingredientNameRepository;
     this.recipeRepository = recipeRepository;
     this.stockShoppingItemService = stockShoppingItemService;
     this.shoppingItemRepository = shoppingItemRepository;
@@ -212,7 +209,7 @@ public class BackupService {
   }
 
   private String backupIngredientNames() {
-    List<IngredientName> ingredientNameList = ingredientNameRepository.findAll();
+    List<IngredientName> ingredientNameList = ingredientNameService.getBackupList();
     try {
       return objectMapper.writeValueAsString(ingredientNameList);
     } catch (JsonProcessingException e) {

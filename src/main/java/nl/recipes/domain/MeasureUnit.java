@@ -85,7 +85,7 @@ public class MeasureUnit {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(id);
   }
 
   @Override
@@ -97,6 +97,6 @@ public class MeasureUnit {
     if (getClass() != obj.getClass())
       return false;
     MeasureUnit other = (MeasureUnit) obj;
-    return Objects.equals(name, other.name);
+    return Objects.equals(id, other.id);
   }
 }

@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.IngredientType;
+import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
 
 public class MockIngredientNames {
@@ -38,10 +39,13 @@ public class MockIngredientNames {
         .withIngredientType(IngredientType.GROENTE)
         .build(3L));
     ingredientNameList.add(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
+        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder()
+            .withName("bol")
+            .withPluralName("bollen")
+            .build(3L))
         .withName("mozzarella")
         .withPluralName("mozzarella")
-        .withStock(false)
+        .withStock(true)
         .withShopType(ShopType.DEKA)
         .withIngredientType(IngredientType.ZUIVEL)
         .build(4L));

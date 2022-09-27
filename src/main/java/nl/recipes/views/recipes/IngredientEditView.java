@@ -70,7 +70,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
     TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(),
         ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
     ingredientNameComboBox.getItems()
-        .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
+        .setAll(this.ingredientNameService.getList());
 
     ingredientPanel.getChildren().addAll(getIngredientTableViewPanel(), getIngredientEditPanel());
   }
@@ -258,6 +258,6 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
   @Override
   public void onChanged(Change<? extends IngredientName> c) {
     ingredientNameComboBox.getItems()
-        .setAll(this.ingredientNameService.getReadonlyIngredientNameList());
+        .setAll(this.ingredientNameService.getList());
   }
 }

@@ -166,7 +166,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
   }
   
   private void initializeIngredientNameTableBox() {
-    ingredientNameTableView.setItems(ingredientNameService.getReadonlyIngredientNameList());
+    ingredientNameTableView.setItems(ingredientNameService.getList());
     ingredientNameTableView.setMinHeight(200); // prevent table from collapsing
     ingredientNameTableView.getSelectionModel().clearSelection();
 

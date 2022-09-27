@@ -27,4 +27,8 @@ public final class ViewMessages {
   public static final String MEASURE_UNIT_ = "Maateenheid ";
   public static final String EDIT_MEASURE_UNITS = "Maateenheden bewerken";
   public static final String MEASURE_UNIT_NAME_CANNOT_BE_EMPTY = "Maateenheid mag niet leeg zijn";
+  
+  public static final String INGREDIENT_NAME = "Ingrediënt";
+  public static final String INGREDIENT_NAME_ = "Ingrediënt ";
+  public static final String INGREDIENT_NAME_NAME_CANNOT_BE_EMPTY = "Ingrediënt naam mag niet leeg zijn";
 }

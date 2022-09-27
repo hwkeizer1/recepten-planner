@@ -22,14 +22,12 @@ import nl.recipes.util.testdata.MockIngredientNames;
 
 class IngredientNameServiceTest {
 
-  private static final String NEW_INGREDIENTNAME = "NewIngredientName";
+  private static final String NEW_INGREDIENTNAME = "new ingredient name";
 
-  private static final String NEW_INGREDIENTNAMES = "NewIngredientNames";
+  private static final String NEW_INGREDIENTNAMES = "new ingredient names";
 
   @Mock
   IngredientNameRepository ingredientNameRepository;
-  @Mock
-  StandardShoppingItemService standardShoppingItemService;
 
   @InjectMocks
   IngredientNameService ingredientNameService;
@@ -40,14 +38,14 @@ class IngredientNameServiceTest {
   public void setup() {
     MockitoAnnotations.openMocks(this);
     mockIngredientNames = new MockIngredientNames();
-    ingredientNameService.setObservableIngredientNameList(mockIngredientNames.getIngredientNameList());
+    ingredientNameService.setObservableList(mockIngredientNames.getIngredientNameList());
   }
 
   @Test
   void testGetReadonlyIngredientNameList() {
     List<IngredientName> expectedList = mockIngredientNames.getIngredientNameList();
 
-    assertEquals(expectedList, ingredientNameService.getReadonlyIngredientNameList());
+    assertEquals(expectedList, ingredientNameService.getList());
   }
 
   @Test
@@ -118,9 +116,36 @@ class IngredientNameServiceTest {
     when(ingredientNameRepository.save(ingredientName)).thenReturn(savedIngredientName);
 
     assertEquals(savedIngredientName, ingredientNameService.create(ingredientName));
-    assertEquals(5, ingredientNameService.getReadonlyIngredientNameList().size());
+    assertEquals(5, ingredientNameService.getList().size());
     assertEquals(savedIngredientName,
-        ingredientNameService.getReadonlyIngredientNameList().get(4));
+        ingredientNameService.getList().get(1));
+  }
+  
+  @Test
+  void testCreate_HappyPath_SameNameDifferentMeasureUnit() throws Exception {
+    IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
+        .withName("mozzarella")
+        .withPluralName("mozzarella")
+        .withStock(true)
+        .withShopType(ShopType.DEKA)
+        .withIngredientType(IngredientType.ZUIVEL)
+        .build();
+
+    IngredientName savedIngredientName = new IngredientName.IngredientNameBuilder()
+        .withName("mozzarella")
+        .withPluralName("mozzarella")
+        .withMeasureUnit(null)
+        .withStock(true)
+        .withShopType(ShopType.DEKA)
+        .withIngredientType(IngredientType.ZUIVEL)
+        .build(5L);
+        
+    when(ingredientNameRepository.save(ingredientName)).thenReturn(savedIngredientName);
+
+    assertEquals(savedIngredientName, ingredientNameService.create(ingredientName));
+    assertEquals(5, ingredientNameService.getList().size());
+    assertEquals(savedIngredientName,
+        ingredientNameService.getList().get(1));
   }
 
   @Test
@@ -132,7 +157,7 @@ class IngredientNameServiceTest {
     });
 
     Assertions.assertEquals("Ingrediënt water bestaat al", exception.getMessage());
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
+    assertEquals(4, ingredientNameService.getList().size());
   }
 
   @Test
@@ -144,7 +169,7 @@ class IngredientNameServiceTest {
     });
 
     Assertions.assertEquals("Ingrediënt naam mag niet leeg zijn", exception.getMessage());
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
+    assertEquals(4, ingredientNameService.getList().size());
   }
 
   @Test
@@ -169,13 +194,9 @@ class IngredientNameServiceTest {
         .build(2L);
 
     when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
-    when(ingredientNameService.findByName("wortel")).thenReturn(Optional.of(originalIngredientName));
-    when(ingredientNameRepository.findById(2L)).thenReturn(Optional.of(originalIngredientName));
 
     assertEquals(expectedIngredientName,
         ingredientNameService.update(originalIngredientName, update));
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
-    assertEquals(expectedIngredientName, ingredientNameService.getReadonlyIngredientNameList().get(1));
   }
   
   @Test
@@ -206,8 +227,8 @@ class IngredientNameServiceTest {
 
     assertEquals(expectedIngredientName,
         ingredientNameService.update(originalIngredientName, update));
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
-    assertEquals(expectedIngredientName, ingredientNameService.getReadonlyIngredientNameList().get(1));
+    assertEquals(4, ingredientNameService.getList().size());
+    assertEquals(expectedIngredientName, ingredientNameService.getList().get(2));
   }
 
   @Test
@@ -231,7 +252,7 @@ class IngredientNameServiceTest {
     });
 
     Assertions.assertEquals("Ingrediënt onbekend niet gevonden", exception.getMessage());
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
+    assertEquals(4, ingredientNameService.getList().size());
   }
 
   @Test
@@ -246,33 +267,33 @@ class IngredientNameServiceTest {
         .build(1L);
 
     IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withName("mozzarella")
-        .withPluralName("mozzarella")
+        .withName("prei")
+        .withPluralName("preien")
         .build();
 
-    when (ingredientNameRepository.findById(1L)).thenReturn(Optional.of(ingredientNameService.getReadonlyIngredientNameList().get(0)));
+    when (ingredientNameRepository.findById(1L)).thenReturn(Optional.of(ingredientNameService.getList().get(0)));
     
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       ingredientNameService.update(originalIngredientName, update);
     });
 
-    Assertions.assertEquals("Ingrediënt mozzarella bestaat al", exception.getMessage());
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
+    Assertions.assertEquals("Ingrediënt prei bestaat al", exception.getMessage());
+    assertEquals(4, ingredientNameService.getList().size());
   }
 
   @Test
   void testRemove_HappyPath() throws Exception {
-    when (ingredientNameRepository.findByName("ui")).thenReturn(Optional.of(ingredientNameService.getReadonlyIngredientNameList().get(1)));
-    when (ingredientNameRepository.findById(2L)).thenReturn(Optional.of(ingredientNameService.getReadonlyIngredientNameList().get(1)));
+    when (ingredientNameRepository.findByName("ui")).thenReturn(Optional.of(ingredientNameService.getList().get(1)));
+    when (ingredientNameRepository.findById(2L)).thenReturn(Optional.of(ingredientNameService.getList().get(1)));
     
     IngredientName originalIngredientName = ingredientNameService.findByName("ui").get();
-    IngredientName secondListItemAfterRemove = ingredientNameService.getReadonlyIngredientNameList().get(2);
+    IngredientName secondListItemAfterRemove = ingredientNameService.getList().get(2);
     
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
+    assertEquals(4, ingredientNameService.getList().size());
     ingredientNameService.remove(originalIngredientName);
-    assertEquals(3, ingredientNameService.getReadonlyIngredientNameList().size());
+    assertEquals(3, ingredientNameService.getList().size());
     assertEquals(secondListItemAfterRemove,
-        ingredientNameService.getReadonlyIngredientNameList().get(1));
+        ingredientNameService.getList().get(1));
   }
 
   @Test
@@ -291,7 +312,7 @@ class IngredientNameServiceTest {
     });
 
     Assertions.assertEquals("Ingrediënt onbekend niet gevonden", exception.getMessage());
-    assertEquals(4, ingredientNameService.getReadonlyIngredientNameList().size());
+    assertEquals(4, ingredientNameService.getList().size());
   }
 
   @Test
@@ -332,5 +353,21 @@ class IngredientNameServiceTest {
         .withShopType(null)
         .withIngredientType(IngredientType.OVERIG)
         .build(1L)));
+    
+    assertEquals(false, ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
+        .withMeasureUnit(null)
+        .withName("mozzarella")
+        .withPluralName("mozzarella")
+        .withStock(true)
+        .withShopType(null)
+        .withIngredientType(IngredientType.OVERIG)
+        .build(1L)));
+  }
+  
+  @Test
+  void testFindAllStockItems() {
+    List<IngredientName> list = ingredientNameService.findAllStockItems();
+    assertEquals(3, list.size());
+    assertEquals(false, list.stream().anyMatch(i -> i.getName().equals("prei")));
   }
 }
