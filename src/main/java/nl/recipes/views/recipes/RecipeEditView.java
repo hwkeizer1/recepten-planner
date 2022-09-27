@@ -302,12 +302,9 @@ public class RecipeEditView {
 
   private void updateRecipe(ActionEvent event) {
     Recipe update = formFieldsToRecipe();
-    Optional<Recipe> updatedRecipe;
     try {
-      updatedRecipe = recipeService.update(selectedRecipe, update);
-      if (updatedRecipe.isPresent()) {
-        rootView.showRecipeSingleViewPanel(updatedRecipe.get());
-      }
+      Recipe updatedRecipe = recipeService.update(selectedRecipe, update);
+        rootView.showRecipeSingleViewPanel(updatedRecipe);
     } catch (NotFoundException | AlreadyExistsException e) {
       // Fix this error message
       e.printStackTrace();

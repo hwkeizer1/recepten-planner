@@ -44,7 +44,7 @@ class RecipeServiceTest {
   
   @Test 
   void testGetReadonlyRecipeList() {
-    assertEquals(recipeService.getReadonlyRecipeList(), mockRecipes.getRecipeListBasic());
+    assertEquals(recipeService.getList(), mockRecipes.getRecipeListBasic());
   }
   
   @Test
@@ -62,7 +62,7 @@ class RecipeServiceTest {
     when(recipeRepository.save(recipe)).thenReturn(savedRecipe);
     
     assertEquals(savedRecipe, recipeService.create(recipe));
-    assertEquals(5, recipeService.getReadonlyRecipeList().size());
+    assertEquals(5, recipeService.getList().size());
     assertEquals(Optional.of(savedRecipe), recipeService.findByName("Last recipe"));
   }
   
@@ -78,7 +78,7 @@ class RecipeServiceTest {
     });
 
     Assertions.assertEquals("Recept First recipe bestaat al", exception.getMessage());
-    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    assertEquals(4, recipeService.getList().size());
   }
   
   @Test
@@ -90,8 +90,8 @@ class RecipeServiceTest {
 
     when(recipeRepository.save(expectedRecipe)).thenReturn(expectedRecipe);
 
-    assertEquals(Optional.of(expectedRecipe), recipeService.update(originalRecipe, update));
-    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    assertEquals(expectedRecipe, recipeService.update(originalRecipe, update));
+    assertEquals(4, recipeService.getList().size());
     assertEquals(Optional.of(expectedRecipe), recipeService.findById(2L));
   }
   
@@ -110,7 +110,7 @@ class RecipeServiceTest {
     });
 
     Assertions.assertEquals("Recept onbekend recept niet gevonden", exception.getMessage());
-    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    assertEquals(4, recipeService.getList().size());
   }
   
   @Test
@@ -128,16 +128,16 @@ class RecipeServiceTest {
     });
 
     Assertions.assertEquals("Recept Fourth recipe bestaat al", exception.getMessage());
-    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    assertEquals(4, recipeService.getList().size());
   }
   
   @Test
   void testRemove_HappyPath() throws Exception {
     Recipe originalRecipe = recipeService.findByName("Third recipe").get();
 
-    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    assertEquals(4, recipeService.getList().size());
     recipeService.remove(originalRecipe);
-    assertEquals(3, recipeService.getReadonlyRecipeList().size());
+    assertEquals(3, recipeService.getList().size());
     assertEquals(Optional.empty(),
         recipeService.findByName(originalRecipe.getName()));
   }
@@ -153,7 +153,7 @@ class RecipeServiceTest {
     });
 
     Assertions.assertEquals("Recept onbekend recept niet gevonden", exception.getMessage());
-    assertEquals(4, recipeService.getReadonlyRecipeList().size());
+    assertEquals(4, recipeService.getList().size());
   }
   
   @Test

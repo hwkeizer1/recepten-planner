@@ -8,7 +8,6 @@ public final class ViewMessages {
   
   
   public static final String AMOUNT = "Hoeveelheid";
-
   public static final String PLURAL_NAME = "Meervoud";
   public static final String NAME = "Naam";
   public static final String UPDATE = "Wijzigen";
@@ -31,4 +30,7 @@ public final class ViewMessages {
   public static final String INGREDIENT_NAME = "Ingrediënt";
   public static final String INGREDIENT_NAME_ = "Ingrediënt ";
   public static final String INGREDIENT_NAME_NAME_CANNOT_BE_EMPTY = "Ingrediënt naam mag niet leeg zijn";
+  
+  public static final String RECIPE = "Recept";
+  public static final String RECIPE_ = "Recept ";
 }

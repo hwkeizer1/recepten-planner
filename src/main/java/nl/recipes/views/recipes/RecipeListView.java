@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -77,7 +78,7 @@ public class RecipeListView {
   }
 
   public AnchorPane getRecipeListPanel() {
-    recipeList = recipeService.getReadonlyRecipeList();
+    recipeList = new FilteredList<>(recipeService.getList());
     recipeListTableView.setItems(recipeList);
     recipeListTableView.setFixedCellSize(25);
     recipeListTableView.prefHeightProperty().bind(recipeListTableView.fixedCellSizeProperty()

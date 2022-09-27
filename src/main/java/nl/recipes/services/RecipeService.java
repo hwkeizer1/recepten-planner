@@ -1,13 +1,15 @@
 package nl.recipes.services;
 
+import static nl.recipes.views.ViewMessages.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.exceptions.AlreadyExistsException;
@@ -15,35 +17,37 @@ import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.RecipeRepository;
 
 @Service
-public class RecipeService {
-
-  private final RecipeRepository recipeRepository;
-
-  private ObservableList<Recipe> observableRecipeList;
+public class RecipeService extends ListService<Recipe> {
 
   private ObservableList<Ingredient> observableIngredientList;
 
   public RecipeService(RecipeRepository recipeRepository) {
-    this.recipeRepository = recipeRepository;
-    observableRecipeList = FXCollections.observableList(recipeRepository.findByOrderByNameAsc());
+    repository = recipeRepository;
+    Sort sort = Sort.by("name").ascending();
+    observableList = FXCollections.observableList(repository.findAll(sort));
+    comparator = (t1, t2)-> t1.getName().compareTo(t2.getName());
   }
 
-  public FilteredList<Recipe> getReadonlyRecipeList() {
-    return new FilteredList<>(FXCollections.unmodifiableObservableList(observableRecipeList));
-  }
+	public Optional<Recipe> findByName(String name) {
+		return observableList.stream().filter(tag -> name.equals(tag.getName())).findAny();
+	}
 
+	public Optional<Recipe> findById(Long id) {
+		return observableList.stream().filter(tag -> id.equals(tag.getId())).findAny();
+	}
+	  
   public ObservableList<Ingredient> getReadonlyIngredientList(Long recipeId) {
-    return allIngredients(recipeId, true);
+    return getAllIngredients(recipeId, true);
   }
 
   public ObservableList<Ingredient> getEditableIngredientList(Long recipeId) {
-    return allIngredients(recipeId, false);
+    return getAllIngredients(recipeId, false);
   }
 
-  private ObservableList<Ingredient> allIngredients(Long recipeId, boolean readonly) {
+  private ObservableList<Ingredient> getAllIngredients(Long recipeId, boolean readonly) {
     if (recipeId == null)
       return FXCollections.emptyObservableList();
-    Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeId);
+    Optional<Recipe> optionalRecipe = findById(recipeId);
     if (optionalRecipe.isPresent()) {
       List<Ingredient> ingredientList = new ArrayList<>(optionalRecipe.get().getIngredients());
       observableIngredientList = FXCollections.observableList(ingredientList);
@@ -58,53 +62,30 @@ public class RecipeService {
 
   public Recipe create(Recipe recipe) throws AlreadyExistsException {
     if (findByName(recipe.getName()).isPresent()) {
-      throw new AlreadyExistsException("Recept " + recipe.getName() + " bestaat al");
+      throw new AlreadyExistsException(RECIPE_ + recipe.getName() + _ALREADY_EXISTS);
     }
-    Recipe createdRecipe = recipeRepository.save(recipe);
-    observableRecipeList.add(createdRecipe);
-    return createdRecipe;
+    return save(recipe);
   }
 
-  public Optional<Recipe> update(Recipe recipe, Recipe update)
+  public Recipe update(Recipe recipe, Recipe update)
       throws NotFoundException, AlreadyExistsException {
     if (!findById(recipe.getId()).isPresent()) {
-      throw new NotFoundException("Recept " + recipe.getName() + " niet gevonden");
+      throw new NotFoundException(RECIPE_ + recipe.getName() + _NOT_FOUND);
     }
     if (!recipe.getName().equals(update.getName()) && findByName(update.getName()).isPresent()) {
-      throw new AlreadyExistsException("Recept " + update.getName() + " bestaat al");
+      throw new AlreadyExistsException(RECIPE_ + update.getName() + _ALREADY_EXISTS);
     }
-    // Assume update object is complete but the id field might be empty
+    
     update.setId(recipe.getId());
-
-    Recipe updatedRecipe = recipeRepository.save(update);
-    observableRecipeList.set(observableRecipeList.lastIndexOf(recipe), update);
-    return Optional.of(updatedRecipe);
-
+    return update(update);
   }
 
   public void remove(Recipe recipe) throws NotFoundException {
-    // TODO add check for removing recipe that is in use (planning)
     if (!findById(recipe.getId()).isPresent()) {
-      throw new NotFoundException("Recept " + recipe.getName() + " niet gevonden");
+      throw new NotFoundException(RECIPE_ + recipe.getName() + _NOT_FOUND);
     }
-    recipeRepository.delete(recipe);
-    observableRecipeList.remove(recipe);
-  }
-
-  public Optional<Recipe> findByName(String name) {
-    return observableRecipeList.stream().filter(recipe -> name.equals(recipe.getName())).findAny();
-  }
-
-  public Optional<Recipe> findById(Long id) {
-    return observableRecipeList.stream().filter(recipe -> id.equals(recipe.getId())).findAny();
-  }
-
-  public void addRecipeListListener(ListChangeListener<Recipe> listener) {
-    observableRecipeList.addListener(listener);
-  }
-
-  public void removeRecipeListListener(ListChangeListener<Recipe> listener) {
-    observableRecipeList.removeListener(listener);
+    
+    delete(recipe);
   }
 
   public void addIngredientListListener(ListChangeListener<Ingredient> listener) {
@@ -116,7 +97,7 @@ public class RecipeService {
   }
 
   // Setter for JUnit testing only
-  void setObservableRecipeList(ObservableList<Recipe> observableRecipeList) {
-    this.observableRecipeList = observableRecipeList;
+  void setObservableRecipeList(ObservableList<Recipe> observableList) {
+	  this.observableList = observableList;
   }
 }

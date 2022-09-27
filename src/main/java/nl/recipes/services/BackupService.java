@@ -1,6 +1,6 @@
 package nl.recipes.services;
 
-import static nl.recipes.views.ViewConstants.*;
+import static nl.recipes.views.ViewConstants.CSS_BACKUPS_TO_KEEP;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -35,11 +35,7 @@ import nl.recipes.domain.ShoppingItem;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
-import nl.recipes.repositories.IngredientNameRepository;
-import nl.recipes.repositories.MeasureUnitRepository;
-import nl.recipes.repositories.RecipeRepository;
 import nl.recipes.repositories.ShoppingItemRepository;
-import nl.recipes.repositories.TagRepository;
 
 @Slf4j
 @Service
@@ -71,7 +67,6 @@ public class BackupService {
   private final IngredientNameService ingredientNameService;
   private final MeasureUnitService measureUnitService;
   private final RecipeService recipeService;
-  private final RecipeRepository recipeRepository;
   private final StandardShoppingItemService standardShoppingItemService;
   private final StockShoppingItemService stockShoppingItemService;
   private final ShoppingItemRepository shoppingItemRepository;
@@ -82,9 +77,7 @@ public class BackupService {
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
       MeasureUnitService measureUnitService, RecipeService recipeService, ConfigService configService,
       StandardShoppingItemService standardShoppingItemService,
-      ShoppingItemRepository shoppingItemRepository, RecipeRepository recipeRepository,
-      StockShoppingItemService stockShoppingItemService) {
-    this.recipeRepository = recipeRepository;
+      ShoppingItemRepository shoppingItemRepository, StockShoppingItemService stockShoppingItemService) {
     this.stockShoppingItemService = stockShoppingItemService;
     this.shoppingItemRepository = shoppingItemRepository;
     objectMapper = new ObjectMapper();
@@ -315,7 +308,7 @@ public class BackupService {
   }
 
   private String backupRecipes() {
-    List<Recipe> recipeList = recipeRepository.findAll();
+    List<Recipe> recipeList = recipeService.getBackupList();
     try {
       return objectMapper.writeValueAsString(recipeList);
     } catch (JsonProcessingException e) {
