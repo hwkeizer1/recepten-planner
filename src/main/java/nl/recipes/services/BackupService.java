@@ -1,6 +1,6 @@
 package nl.recipes.services;
 
-import static nl.recipes.views.ViewConstants.CSS_BACKUPS_TO_KEEP;
+import static nl.recipes.views.ViewMessages.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -456,7 +456,7 @@ public class BackupService {
   }
 
   private void removeOldBackups(String directoryPath) {
-    Integer backupsToKeep = Integer.valueOf(configService.getConfigProperty(CSS_BACKUPS_TO_KEEP));
+    Integer backupsToKeep = Integer.valueOf(configService.getConfigProperty(BACKUPS_TO_KEEP));
     try (Stream<Path> folders = Files.walk(Path.of(directoryPath))) {
       folders.filter(Files::isDirectory)
           .filter(p -> p.toString().length() != directoryPath.length())

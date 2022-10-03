@@ -1,5 +1,6 @@
 package nl.recipes.services;
 
+import static nl.recipes.views.ViewMessages.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,223 +38,229 @@ import nl.recipes.domain.ShoppingItem;
 @Service
 public class GoogleSheetService {
 
-  private static final String APPLICATION_NAME = "Recipe planner";
-  private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-  private static final String TOKENS_DIRECTORY_PATH = "tokens";
-  private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
-  private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+	private final ConfigService configService;
 
-  // TODO: make this configurable
-  final String spreadsheetId = "1xjI9CqMGhfebUDOFEezvcVYlLnW7gAGj4THiskdtkQ0";
-  final Integer shoppingSheetId = 2025323414;
-  final Integer templateSheetId = 1929719991;
+	private static final String APPLICATION_NAME = "Recipe planner";
+	private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+	private static final String TOKENS_DIRECTORY_PATH = "tokens";
+	private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
+	private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
-  private Sheets sheetService;
+	private String spreadsheetId;
+	private String shoppingSheetId;
+	private String templateSheetId;
 
-  private int startRow;
+	private Sheets sheetService;
 
-  public boolean credentialsValid() {
-      boolean valid = true;
-      NetHttpTransport httpTransport;
-      try {
-        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        valid &= validateCredentials(httpTransport);
-        
-      } catch (GeneralSecurityException | IOException e) {
-        log.error("Fout bij het valideren van de credentials voor Google sheets");
-        e.printStackTrace();
-        valid &= false;
-      }
-      return valid;
-  }
-  
-  private boolean validateCredentials(NetHttpTransport httpTransport) throws IOException {
-    InputStream in = GoogleSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-    if (in == null) {
-      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-    }
-    GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+	private int startRow;
 
-    // Build flow and trigger user authorization request.
-    GoogleAuthorizationCodeFlow flow =
-        new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-            .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-            .setAccessType("offline").build();
-    Credential credential = flow.loadCredential("user");
-    return (credential != null
-        && (credential.getRefreshToken() != null
-            || credential.getExpiresInSeconds() == null
-            || credential.getExpiresInSeconds() > 60)); 
-  }
+	public GoogleSheetService(ConfigService configService) {
+	this.configService = configService;
+	this.spreadsheetId = this.configService.getConfigProperty(GOOGLE_SPREADSHEET_ID);
+	this.shoppingSheetId = this.configService.getConfigProperty(SHOPPING_SHEET_ID);
+	this.templateSheetId = this.configService.getConfigProperty(TEMPLATE_SHEET_ID);
+}
 
-  public Sheets createSheetService() {
-    NetHttpTransport HTTP_TRANSPORT;
-    try {
-      HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-      sheetService = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-          .setApplicationName(APPLICATION_NAME).build();
-      return sheetService;
-    } catch (GeneralSecurityException | IOException e) {
-      log.error("Fout tijdens benaderen Google sheets");
-      e.printStackTrace();
-      return null;
-    }
-  }
+	public boolean credentialsValid() {
+		boolean valid = true;
+		NetHttpTransport httpTransport;
+		try {
+			httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+			valid &= validateCredentials(httpTransport);
 
-  private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-    InputStream in = GoogleSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-    if (in == null) {
-      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-    }
-    GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+		} catch (GeneralSecurityException | IOException e) {
+			log.error("Fout bij het valideren van de credentials voor Google sheets");
+			e.printStackTrace();
+			valid &= false;
+		}
+		return valid;
+	}
 
-    GoogleAuthorizationCodeFlow flow =
-        new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-            .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-            .setAccessType("offline").build();
-    LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-    return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-  }
+	private boolean validateCredentials(NetHttpTransport httpTransport) throws IOException {
+		InputStream in = GoogleSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+		if (in == null) {
+			throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+		}
+		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-  // Keep for now to check if it will be needed when credentials are revoked
-  public boolean deleteStoredCredentials() {
-    Path rootPath = Path.of("").toAbsolutePath();
-    Path storedCredentialsPath = Path.of(rootPath.toString(), TOKENS_DIRECTORY_PATH, "StoredCredential");
-    File storedCredentials = storedCredentialsPath.toFile();
-    try {
-      Files.deleteIfExists(storedCredentialsPath);
-    } catch (IOException e) {
-      log.debug("Fout bij het verwijderen van de bewaarde credentials");
-    }
-    return !storedCredentials.exists();
-  }
+		// Build flow and trigger user authorization request.
+		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, JSON_FACTORY,
+				clientSecrets, SCOPES)
+				.setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+				.setAccessType("offline").build();
+		Credential credential = flow.loadCredential("user");
+		return (credential != null && (credential.getRefreshToken() != null || credential.getExpiresInSeconds() == null
+				|| credential.getExpiresInSeconds() > 60));
+	}
 
-  public void setEkoShoppings(List<ShoppingItem> ekoShoppingList) throws IOException {
-    startRow = 0;
+	public Sheets createSheetService() {
+		NetHttpTransport HTTP_TRANSPORT;
+		try {
+			HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+			sheetService = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+					.setApplicationName(APPLICATION_NAME).build();
+			return sheetService;
+		} catch (GeneralSecurityException | IOException e) {
+			log.error("Fout tijdens benaderen Google sheets");
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-    int totalEkoItems = ekoShoppingList.size();
-      int lastRow = prepareSpreadsheet(spreadsheetId, totalEkoItems, startRow, 0);
+	private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+		InputStream in = GoogleSheetService.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+		if (in == null) {
+			throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+		}
+		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-      List<List<Object>> items = new ArrayList<>();
-      for (ShoppingItem shoppingItem : ekoShoppingList) {
-        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
-            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-            shoppingItem.getName()));
-      }
+		GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY,
+				clientSecrets, SCOPES)
+				.setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+				.setAccessType("offline").build();
+		LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+		return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+	}
 
-      ValueRange body = new ValueRange().setValues(items);
-      getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
-          .setValueInputOption("USER_ENTERED").execute();
-      this.startRow = lastRow;
-  }
+	public boolean deleteStoredCredentials() {
+		Path rootPath = Path.of("").toAbsolutePath();
+		Path storedCredentialsPath = Path.of(rootPath.toString(), TOKENS_DIRECTORY_PATH, "StoredCredential");
+		File storedCredentials = storedCredentialsPath.toFile();
+		try {
+			Files.deleteIfExists(storedCredentialsPath);
+		} catch (IOException e) {
+			log.debug("Fout bij het verwijderen van de bewaarde credentials");
+		}
+		return !storedCredentials.exists();
+	}
 
-  public void setDekaShoppings(List<ShoppingItem> dekaShoppingList) throws IOException {
-    int totalDekaItems = dekaShoppingList.size();
-      int lastRow = prepareSpreadsheet(spreadsheetId, totalDekaItems, startRow, 1);
+	public void setEkoShoppings(List<ShoppingItem> ekoShoppingList) throws IOException {
+		startRow = 0;
 
-      List<List<Object>> items = new ArrayList<>();
-      for (ShoppingItem shoppingItem : dekaShoppingList) {
-        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
-            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-            shoppingItem.getName()));
-      }
+		int totalEkoItems = ekoShoppingList.size();
+		int lastRow = prepareSpreadsheet(spreadsheetId, totalEkoItems, startRow, 0);
 
-      ValueRange body = new ValueRange().setValues(items);
-      getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
-          .setValueInputOption("USER_ENTERED").execute();
-      this.startRow = lastRow;
-  }
+		List<List<Object>> items = new ArrayList<>();
+		for (ShoppingItem shoppingItem : ekoShoppingList) {
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+					shoppingItem.getName()));
+		}
 
-  public void setMarktShoppings(List<ShoppingItem> marktShoppingList) throws IOException  {
-    int totalMarktItems = marktShoppingList.size();
-      int lastRow = prepareSpreadsheet(spreadsheetId, totalMarktItems, startRow, 2);
+		ValueRange body = new ValueRange().setValues(items);
+		getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
+				.setValueInputOption("USER_ENTERED").execute();
+		this.startRow = lastRow;
+	}
 
-      List<List<Object>> items = new ArrayList<>();
-      for (ShoppingItem shoppingItem : marktShoppingList) {
-        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
-            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-            shoppingItem.getName()));
-      }
+	public void setDekaShoppings(List<ShoppingItem> dekaShoppingList) throws IOException {
+		int totalDekaItems = dekaShoppingList.size();
+		int lastRow = prepareSpreadsheet(spreadsheetId, totalDekaItems, startRow, 1);
 
-      ValueRange body = new ValueRange().setValues(items);
-      getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
-          .setValueInputOption("USER_ENTERED").execute();
-      this.startRow = lastRow;
-  }
+		List<List<Object>> items = new ArrayList<>();
+		for (ShoppingItem shoppingItem : dekaShoppingList) {
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+					shoppingItem.getName()));
+		}
 
-  public void setOtherShoppings(List<ShoppingItem> otherShoppingList) throws IOException  {
-    int totalOtherItems = otherShoppingList.size();
-      int lastRow = prepareSpreadsheet(spreadsheetId, totalOtherItems, startRow, 3);
+		ValueRange body = new ValueRange().setValues(items);
+		getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
+				.setValueInputOption("USER_ENTERED").execute();
+		this.startRow = lastRow;
+	}
 
-      List<List<Object>> items = new ArrayList<>();
-      for (ShoppingItem shoppingItem : otherShoppingList) {
-        items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
-            shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-            shoppingItem.getName()));
-      }
+	public void setMarktShoppings(List<ShoppingItem> marktShoppingList) throws IOException {
+		int totalMarktItems = marktShoppingList.size();
+		int lastRow = prepareSpreadsheet(spreadsheetId, totalMarktItems, startRow, 2);
 
-      ValueRange body = new ValueRange().setValues(items);
-      getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
-          .setValueInputOption("USER_ENTERED").execute();
-      this.startRow = lastRow;
+		List<List<Object>> items = new ArrayList<>();
+		for (ShoppingItem shoppingItem : marktShoppingList) {
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+					shoppingItem.getName()));
+		}
 
-      // This is the last shoppinglist part, clear possible data below this part
-      clearSheetBelowShoppingList();
-  }
+		ValueRange body = new ValueRange().setValues(items);
+		getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
+				.setValueInputOption("USER_ENTERED").execute();
+		this.startRow = lastRow;
+	}
 
-  private Sheets getSheetService() {
-    return (sheetService == null) ? createSheetService() : sheetService;
-  }
-  
-  private void clearSheetBelowShoppingList() throws IOException {
-    List<Request> requests = new ArrayList<>();
-    for (int i = 0; i < 100; i++) {
-      requests.add(requestEmptyRow(startRow + i));
-    }
+	public void setOtherShoppings(List<ShoppingItem> otherShoppingList) throws IOException {
+		int totalOtherItems = otherShoppingList.size();
+		int lastRow = prepareSpreadsheet(spreadsheetId, totalOtherItems, startRow, 3);
 
-    BatchUpdateSpreadsheetRequest content = new BatchUpdateSpreadsheetRequest();
-    content.setRequests(requests);
-    getSheetService().spreadsheets().batchUpdate(spreadsheetId, content).execute();
-  }
+		List<List<Object>> items = new ArrayList<>();
+		for (ShoppingItem shoppingItem : otherShoppingList) {
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
+					shoppingItem.getName()));
+		}
 
-  private int prepareSpreadsheet(String spreadsheetId, int listSize, int startRow, int headerIndex) throws IOException {
-    List<Request> requests = new ArrayList<>();
+		ValueRange body = new ValueRange().setValues(items);
+		getSheetService().spreadsheets().values().update(spreadsheetId, "A" + (startRow + 2), body)
+				.setValueInputOption("USER_ENTERED").execute();
+		this.startRow = lastRow;
 
-    BatchUpdateSpreadsheetRequest content = new BatchUpdateSpreadsheetRequest();
+		// This is the last shoppinglist part, clear possible data below this part
+		clearSheetBelowShoppingList();
+	}
 
-    int rowIndex = startRow;
-    Request headerCopyPasteRequest = new Request().setCopyPaste(new CopyPasteRequest()
-        .setSource(new GridRange().setSheetId(templateSheetId).setStartRowIndex(headerIndex)
-            .setEndRowIndex(headerIndex + 1).setStartColumnIndex(0).setEndColumnIndex(4))
-        .setDestination(new GridRange().setSheetId(shoppingSheetId).setStartRowIndex(rowIndex)
-            .setEndRowIndex(++rowIndex).setStartColumnIndex(0).setEndColumnIndex(4))
-        .setPasteType("PASTE_NORMAL").setPasteOrientation("NORMAL"));
-    requests.add(headerCopyPasteRequest);
-    for (int i = 0; i < listSize; i++) {
-      requests.add(requestRowWithSelection(rowIndex));
-      rowIndex++;
-    }
+	private Sheets getSheetService() {
+		return (sheetService == null) ? createSheetService() : sheetService;
+	}
 
-    content.setRequests(requests);
-    getSheetService().spreadsheets().batchUpdate(spreadsheetId, content).execute();
-    return rowIndex;
-  }
+	private void clearSheetBelowShoppingList() throws IOException {
+		List<Request> requests = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			requests.add(requestEmptyRow(startRow + i));
+		}
 
-  private Request requestRowWithSelection(int rowIndex) {
-    return new Request().setCopyPaste(new CopyPasteRequest()
-        .setSource(new GridRange().setSheetId(templateSheetId).setStartRowIndex(4).setEndRowIndex(5)
-            .setStartColumnIndex(0).setEndColumnIndex(4))
-        .setDestination(new GridRange().setSheetId(shoppingSheetId).setStartRowIndex(rowIndex)
-            .setEndRowIndex(rowIndex + 1).setStartColumnIndex(0).setEndColumnIndex(4))
-        .setPasteType("PASTE_NORMAL").setPasteOrientation("NORMAL"));
-  }
+		BatchUpdateSpreadsheetRequest content = new BatchUpdateSpreadsheetRequest();
+		content.setRequests(requests);
+		getSheetService().spreadsheets().batchUpdate(spreadsheetId, content).execute();
+	}
 
-  private Request requestEmptyRow(int rowIndex) {
-    return new Request().setCopyPaste(new CopyPasteRequest()
-        .setSource(new GridRange().setSheetId(templateSheetId).setStartRowIndex(5).setEndRowIndex(6)
-            .setStartColumnIndex(0).setEndColumnIndex(4))
-        .setDestination(new GridRange().setSheetId(shoppingSheetId).setStartRowIndex(rowIndex)
-            .setEndRowIndex(rowIndex + 1).setStartColumnIndex(0).setEndColumnIndex(4))
-        .setPasteType("PASTE_NORMAL").setPasteOrientation("NORMAL"));
-  }
+	private int prepareSpreadsheet(String spreadsheetId, int listSize, int startRow, int headerIndex)
+			throws IOException {
+		List<Request> requests = new ArrayList<>();
+
+		BatchUpdateSpreadsheetRequest content = new BatchUpdateSpreadsheetRequest();
+
+		int rowIndex = startRow;
+		Request headerCopyPasteRequest = new Request().setCopyPaste(new CopyPasteRequest()
+				.setSource(new GridRange().setSheetId(Integer.valueOf(templateSheetId)).setStartRowIndex(headerIndex)
+						.setEndRowIndex(headerIndex + 1).setStartColumnIndex(0).setEndColumnIndex(4))
+				.setDestination(new GridRange().setSheetId(Integer.valueOf(shoppingSheetId)).setStartRowIndex(rowIndex)
+						.setEndRowIndex(++rowIndex).setStartColumnIndex(0).setEndColumnIndex(4))
+				.setPasteType("PASTE_NORMAL").setPasteOrientation("NORMAL"));
+		requests.add(headerCopyPasteRequest);
+		for (int i = 0; i < listSize; i++) {
+			requests.add(requestRowWithSelection(rowIndex));
+			rowIndex++;
+		}
+
+		content.setRequests(requests);
+		getSheetService().spreadsheets().batchUpdate(spreadsheetId, content).execute();
+		return rowIndex;
+	}
+
+	private Request requestRowWithSelection(int rowIndex) {
+		return new Request().setCopyPaste(new CopyPasteRequest()
+				.setSource(new GridRange().setSheetId(Integer.valueOf(templateSheetId)).setStartRowIndex(4).setEndRowIndex(5)
+						.setStartColumnIndex(0).setEndColumnIndex(4))
+				.setDestination(new GridRange().setSheetId(Integer.valueOf(shoppingSheetId)).setStartRowIndex(rowIndex)
+						.setEndRowIndex(rowIndex + 1).setStartColumnIndex(0).setEndColumnIndex(4))
+				.setPasteType("PASTE_NORMAL").setPasteOrientation("NORMAL"));
+	}
+
+	private Request requestEmptyRow(int rowIndex) {
+		return new Request().setCopyPaste(new CopyPasteRequest()
+				.setSource(new GridRange().setSheetId(Integer.valueOf(templateSheetId)).setStartRowIndex(5).setEndRowIndex(6)
+						.setStartColumnIndex(0).setEndColumnIndex(4))
+				.setDestination(new GridRange().setSheetId(Integer.valueOf(shoppingSheetId)).setStartRowIndex(rowIndex)
+						.setEndRowIndex(rowIndex + 1).setStartColumnIndex(0).setEndColumnIndex(4))
+				.setPasteType("PASTE_NORMAL").setPasteOrientation("NORMAL"));
+	}
 }

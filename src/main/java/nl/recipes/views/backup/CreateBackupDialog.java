@@ -1,6 +1,6 @@
 package nl.recipes.views.backup;
 
-import static nl.recipes.views.ViewConstants.*;
+import static nl.recipes.views.ViewMessages.*;
 
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,6 @@ import nl.recipes.services.ConfigService;
 public class CreateBackupDialog {
 
   private final BackupService backupService;
-
   private final ConfigService configService;
 
   public CreateBackupDialog(BackupService backupService, ConfigService configService) {
@@ -24,8 +23,8 @@ public class CreateBackupDialog {
   }
 
   public void createBackup() {
-    if (configService.getConfigProperty(CSS_BACKUP_FOLDER) != null) {
-      backupService.backup(configService.getConfigProperty(CSS_BACKUP_FOLDER));
+    if (configService.getConfigProperty(BACKUP_FOLDER) != null) {
+      backupService.backup(configService.getConfigProperty(BACKUP_FOLDER));
     } else {
       showNoBackupLocationError();
     }

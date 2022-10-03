@@ -1,6 +1,6 @@
 package nl.recipes.views.configurations;
 
-import static nl.recipes.views.ViewConstants.*;
+import static nl.recipes.views.ViewMessages.*;
 
 import java.io.File;
 
@@ -32,8 +32,10 @@ public class SettingsDialog {
   private Stage dialog;
 
   private TextField backupFolderTextField = new TextField();
-
   private TextField backupsToKeepTextField = new TextField();
+  private TextField googleSpreadsheetIdField = new TextField();
+  private TextField shoppingSheetIdField = new TextField();
+  private TextField templateSheetIdField = new TextField();
 
   public SettingsDialog(ConfigService configService) {
     this.configService = configService;
@@ -56,7 +58,7 @@ public class SettingsDialog {
     // layout the dialog.
     HBox buttons = new HBox();
     buttons.getChildren().addAll(cancel, ok);
-    buttons.setSpacing(30);
+    buttons.setSpacing(25);
     buttons.setPadding(new Insets(20, 40, 10, 0));
     buttons.setAlignment(Pos.CENTER_RIGHT);
 
@@ -64,7 +66,7 @@ public class SettingsDialog {
     layout.getChildren().addAll(initializeForm(), buttons);
     layout.setPadding(new Insets(5));
 
-    dialog.setScene(new Scene(layout, 900, 200));
+    dialog.setScene(new Scene(layout, 900, 325));
     dialog.centerOnScreen();
     dialog.showAndWait();
   }
@@ -79,10 +81,10 @@ public class SettingsDialog {
     inputForm.setVgap(20);
 
     ColumnConstraints column0 = new ColumnConstraints();
-    column0.setPercentWidth(15);
+    column0.setPercentWidth(25);
     column0.setHalignment(HPos.RIGHT);
     ColumnConstraints column1 = new ColumnConstraints();
-    column1.setPercentWidth(65);
+    column1.setPercentWidth(50);
     ColumnConstraints column2 = new ColumnConstraints();
     column2.setPercentWidth(20);
 
@@ -90,7 +92,7 @@ public class SettingsDialog {
 
     Label backupFolderLabel = new Label("Backup folder:");
     inputForm.add(backupFolderLabel, 0, 0);
-    backupFolderTextField.setText(configService.getConfigProperty(CSS_BACKUP_FOLDER));
+    backupFolderTextField.setText(configService.getConfigProperty(BACKUP_FOLDER));
     inputForm.add(backupFolderTextField, 1, 0);
     inputForm.add(select, 2, 0);
 
@@ -102,9 +104,24 @@ public class SettingsDialog {
       backupsToKeepTextField.setText(newValue.replaceAll("[^\\d]", ""));
     });
     backupsToKeepTextField.setMaxWidth(50);
-    backupsToKeepTextField.setText(configService.getConfigProperty(CSS_BACKUPS_TO_KEEP));
+    backupsToKeepTextField.setText(configService.getConfigProperty(BACKUPS_TO_KEEP));
     inputForm.add(backupsToKeepTextField, 1, 1);
+    
+    Label googleSpreadsheetIdLabel = new Label("Google spreadsheet id:");
+    inputForm.add(googleSpreadsheetIdLabel, 0, 2);
+    googleSpreadsheetIdField.setText(configService.getConfigProperty(GOOGLE_SPREADSHEET_ID));
+    inputForm.add(googleSpreadsheetIdField, 1, 2);
 
+    Label shoppingSheetIdLabel = new Label("Boodschappen sheet id:");
+    inputForm.add(shoppingSheetIdLabel, 0, 3);
+    shoppingSheetIdField.setText(configService.getConfigProperty(SHOPPING_SHEET_ID));
+    inputForm.add(shoppingSheetIdField, 1, 3);
+    
+    Label templateSheetIdLabel = new Label("Template sheet id:");
+    inputForm.add(templateSheetIdLabel, 0, 4);
+    templateSheetIdField.setText(configService.getConfigProperty(TEMPLATE_SHEET_ID));
+    inputForm.add(templateSheetIdField, 1, 4);
+    
     GridPane.setHgrow(backupFolderLabel, Priority.ALWAYS);
     GridPane.setHgrow(backupFolderTextField, Priority.ALWAYS);
 
@@ -113,10 +130,10 @@ public class SettingsDialog {
 
   public void selectBackupFolder(ActionEvent actionEvent) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (configService.getConfigProperty(CSS_BACKUP_FOLDER) != null
-        && !configService.getConfigProperty(CSS_BACKUP_FOLDER).isBlank()) {
+    if (configService.getConfigProperty(BACKUP_FOLDER) != null
+        && !configService.getConfigProperty(BACKUP_FOLDER).isBlank()) {
       directoryChooser
-          .setInitialDirectory(new File(configService.getConfigProperty(CSS_BACKUP_FOLDER)));
+          .setInitialDirectory(new File(configService.getConfigProperty(BACKUP_FOLDER)));
     }
     File directory = directoryChooser.showDialog(dialog);
 
@@ -126,8 +143,11 @@ public class SettingsDialog {
   }
 
   public void save(ActionEvent actionEvent) {
-    configService.setConfigProperty(CSS_BACKUP_FOLDER, backupFolderTextField.getText());
-    configService.setConfigProperty(CSS_BACKUPS_TO_KEEP, backupsToKeepTextField.getText());
+    configService.setConfigProperty(BACKUP_FOLDER, backupFolderTextField.getText());
+    configService.setConfigProperty(BACKUPS_TO_KEEP, backupsToKeepTextField.getText());
+    configService.setConfigProperty(GOOGLE_SPREADSHEET_ID, googleSpreadsheetIdField.getText());
+    configService.setConfigProperty(SHOPPING_SHEET_ID, shoppingSheetIdField.getText());
+    configService.setConfigProperty(TEMPLATE_SHEET_ID, templateSheetIdField.getText());
     dialog.close();
   }
 

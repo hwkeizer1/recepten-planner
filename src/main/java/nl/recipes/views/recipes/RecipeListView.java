@@ -1,14 +1,16 @@
 package nl.recipes.views.recipes;
 
 import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Predicate;
+
 import org.springframework.stereotype.Component;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;

@@ -6,6 +6,11 @@ public final class ViewMessages {
   public static final String TO_SHOPPING_PAGE = "Naar boodschappenlijst";
   public static final String EDIT_STOCK_SHOPPINGS = "Voorraad boodschappen bewerken";
   
+  public static final String BACKUP_FOLDER = "backup-folder";
+  public static final String BACKUPS_TO_KEEP = "backups-to-keep";
+  public static final String GOOGLE_SPREADSHEET_ID = "google-spreadsheet-id";
+  public static final String SHOPPING_SHEET_ID = "shopping-sheet-id";
+  public static final String TEMPLATE_SHEET_ID = "template-sheet-id";
   
   public static final String AMOUNT = "Hoeveelheid";
   public static final String PLURAL_NAME = "Meervoud";
