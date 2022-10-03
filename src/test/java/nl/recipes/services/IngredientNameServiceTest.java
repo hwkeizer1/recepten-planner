@@ -230,6 +230,36 @@ class IngredientNameServiceTest {
     assertEquals(4, ingredientNameService.getList().size());
     assertEquals(expectedIngredientName, ingredientNameService.getList().get(2));
   }
+  
+  @Test
+  void testUpdate_HappyPathOnlyUpdateStock() throws Exception {
+    when(ingredientNameRepository.findByName("ui")).thenReturn(Optional.of(mockIngredientNames.getIngredientNameList().get(1)));
+    when(ingredientNameRepository.findById(2L)).thenReturn(Optional.of(mockIngredientNames.getIngredientNameList().get(1)));
+    
+    IngredientName originalIngredientName = ingredientNameService.findByName("ui").get();
+    IngredientName update = new IngredientName.IngredientNameBuilder()
+        .withName("ui")
+        .withPluralName("uien")
+        .withStock(false)
+        .withShopType(ShopType.EKO)
+        .withIngredientType(IngredientType.GROENTE)
+        .build();
+
+    IngredientName expectedIngredientName = new IngredientName.IngredientNameBuilder()
+        .withName("ui")
+        .withPluralName("uien")
+        .withStock(false)
+        .withShopType(ShopType.EKO)
+        .withIngredientType(IngredientType.GROENTE)
+        .build(2L);
+
+    when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
+
+    assertEquals(expectedIngredientName,
+        ingredientNameService.update(originalIngredientName, update));
+    assertEquals(4, ingredientNameService.getList().size());
+    assertEquals(expectedIngredientName, ingredientNameService.getList().get(2));
+  }
 
   @Test
   void testUpdate_NotFoundException() throws Exception {
