@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -40,13 +41,12 @@ public class ShoppingPage {
   private final GoogleSheetService googleSheetService;
 
   AnchorPane shoppingView;
+  ScrollPane scrollPane;
 
   HBox finalListBox = new HBox();
-
   Button sendShoppingListToGoogle;
 
   ObservableList<Ingredient> ingredientList;
-
   List<ShoppingItem> finalShoppingList;
 
   public ShoppingPage(PlanningService planningService, StandardShoppingItemService standardShoppingItemService,
@@ -57,7 +57,7 @@ public class ShoppingPage {
     this.googleSheetService = googleSheetService;
   }
 
-  public AnchorPane getShoppingPage() {
+  public ScrollPane getShoppingPage() {
     finalListBox.getChildren().clear();
     ingredientList = FXCollections.observableList(planningService.getIngredientList());
     
@@ -65,7 +65,11 @@ public class ShoppingPage {
 
     shoppingView = new AnchorPane();
     shoppingView.getChildren().add(getShoppingPanel());
-    return shoppingView;
+    
+    
+    scrollPane = new ScrollPane();
+    scrollPane.setContent(shoppingView);
+    return scrollPane;
   }
 
   private VBox getShoppingPanel() {
