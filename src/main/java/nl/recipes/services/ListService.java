@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class ListService<T> {
 

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
@@ -19,6 +20,7 @@ import nl.recipes.repositories.IngredientNameRepository;
 import nl.recipes.repositories.ShoppingItemRepository;
 import nl.recipes.util.testdata.MockShoppingItems;
 
+@Slf4j
 class StandardShoppingItemServiceTest {
 
   @Mock
@@ -36,14 +38,14 @@ class StandardShoppingItemServiceTest {
   public void setup() {
     MockitoAnnotations.openMocks(this);
     mockShoppingItems = new MockShoppingItems();
-    standardShoppingItemService.setStandardShoppingItemList(mockShoppingItems.getShoppingItemList());
+    standardShoppingItemService.setObservableList(mockShoppingItems.getShoppingItemList());
   }
   
   @Test
   void testGetReadonlyShoppingItemList() {
     List<ShoppingItem> expectedList = mockShoppingItems.getShoppingItemList();
 
-    assertEquals(expectedList, standardShoppingItemService.getReadonlyShoppingItemList());
+    assertEquals(expectedList, standardShoppingItemService.getList());
   }
 
 
@@ -100,7 +102,7 @@ class StandardShoppingItemServiceTest {
     when(shoppingItemRepository.save(shoppingItem)).thenReturn(savedShoppingItem);
 
     assertEquals(savedShoppingItem, standardShoppingItemService.create(shoppingItem));
-    assertEquals(4, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    assertEquals(4, standardShoppingItemService.getList().size());
     assertEquals(Optional.of(savedShoppingItem),
         standardShoppingItemService.findByName("chips"));
   }
@@ -116,8 +118,8 @@ class StandardShoppingItemServiceTest {
       standardShoppingItemService.create(shoppingItem);
     });
 
-    Assertions.assertEquals("Naam boter bestaat al", exception.getMessage());
-    assertEquals(3, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    Assertions.assertEquals("Boodschap boter bestaat al", exception.getMessage());
+    assertEquals(3, standardShoppingItemService.getList().size());
   }
   
   @Test
@@ -128,8 +130,8 @@ class StandardShoppingItemServiceTest {
       standardShoppingItemService.create(shoppingItem);
     });
 
-    Assertions.assertEquals("Naam mag niet leeg zijn", exception.getMessage());
-    assertEquals(3, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    Assertions.assertEquals("Boodschap naam mag niet leeg zijn", exception.getMessage());
+    assertEquals(3, standardShoppingItemService.getList().size());
   }
   
   @Test
@@ -150,8 +152,8 @@ class StandardShoppingItemServiceTest {
     when(shoppingItemRepository.save(expectedShoppingItem)).thenReturn(expectedShoppingItem);
 
     assertEquals(expectedShoppingItem,
-        standardShoppingItemService.update(originalShoppingItem, update));
-    assertEquals(3, standardShoppingItemService.getReadonlyShoppingItemList().size());
+        standardShoppingItemService.edit(originalShoppingItem, update));
+    assertEquals(3, standardShoppingItemService.getList().size());
     assertEquals(Optional.of(expectedShoppingItem), standardShoppingItemService.findById(3L));
   }
   
@@ -174,11 +176,11 @@ class StandardShoppingItemServiceTest {
         .build(3L);
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
-      standardShoppingItemService.update(originalShoppingItem, update);
+      standardShoppingItemService.edit(originalShoppingItem, update);
     });
 
-    Assertions.assertEquals("Naam druifen niet gevonden", exception.getMessage());
-    assertEquals(3, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    Assertions.assertEquals("Boodschap druifen niet gevonden", exception.getMessage());
+    assertEquals(3, standardShoppingItemService.getList().size());
   }
   
   @Test
@@ -199,20 +201,20 @@ class StandardShoppingItemServiceTest {
         .build();
     
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
-      standardShoppingItemService.update(originalShoppingItem, update);
+      standardShoppingItemService.edit(originalShoppingItem, update);
     });
 
-    Assertions.assertEquals("Naam eieren bestaat al", exception.getMessage());
-    assertEquals(3, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    Assertions.assertEquals("Boodschap eieren bestaat al", exception.getMessage());
+    assertEquals(3, standardShoppingItemService.getList().size());
   }
   
   @Test
   void testRemove_HappyPath() throws Exception {
     ShoppingItem originalShoppingItem = standardShoppingItemService.findById(2L).get();
 
-    assertEquals(3, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    assertEquals(3, standardShoppingItemService.getList().size());
     standardShoppingItemService.remove(originalShoppingItem);
-    assertEquals(2, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    assertEquals(2, standardShoppingItemService.getList().size());
     assertEquals(Optional.empty(),
         standardShoppingItemService.findByName(originalShoppingItem.getName()));
   }
@@ -231,7 +233,7 @@ class StandardShoppingItemServiceTest {
       standardShoppingItemService.remove(originalIngredientName);
     });
 
-    Assertions.assertEquals("Naam druiven niet gevonden", exception.getMessage());
-    assertEquals(3, standardShoppingItemService.getReadonlyShoppingItemList().size());
+    Assertions.assertEquals("Boodschap druiven niet gevonden", exception.getMessage());
+    assertEquals(3, standardShoppingItemService.getList().size());
   }
 }

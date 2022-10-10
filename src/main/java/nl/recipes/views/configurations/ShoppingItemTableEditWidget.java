@@ -119,7 +119,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
   private VBox createTable() {
     shoppingItemTableView = new TableView<>();
     shoppingItemTableView.getStyleClass().add(CSS_BASIC_TABLE);
-    shoppingItemTableView.setItems(shoppingItemService.getReadonlyShoppingItemList());
+    shoppingItemTableView.setItems(shoppingItemService.getList());
     shoppingItemTableView.setMinHeight(200); // prevent table from collapsing
     shoppingItemTableView.getSelectionModel().clearSelection();
 
@@ -339,7 +339,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
         .build();
  
     try {
-      shoppingItemService.update(selectedShoppingItem, update);
+      shoppingItemService.edit(selectedShoppingItem, update);
       shoppingItemTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException | AlreadyExistsException e) {
       nameError.setText(e.getMessage());

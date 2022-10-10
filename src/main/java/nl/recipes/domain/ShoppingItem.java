@@ -195,7 +195,7 @@ public class ShoppingItem {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(id);
   }
 
   @Override
@@ -207,8 +207,7 @@ public class ShoppingItem {
     if (getClass() != obj.getClass())
       return false;
     ShoppingItem other = (ShoppingItem) obj;
-    return Objects.equals(name, other.name);
+    return Objects.equals(id, other.id);
   }
-
 
 }

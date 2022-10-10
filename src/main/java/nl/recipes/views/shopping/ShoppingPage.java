@@ -291,7 +291,7 @@ public class ShoppingPage {
 
   private List<ShoppingItem> createStandardShoppingList() {
     List<ShoppingItem> standardShoppingList = new ArrayList<>();
-    for (ShoppingItem shoppingItem : standardShoppingItemService.getReadonlyShoppingItemList()) {
+    for (ShoppingItem shoppingItem : standardShoppingItemService.getList()) {
       if (standardShoppingList.stream()
           .noneMatch(s -> s.getName().equals(shoppingItem.getName()))) {
         standardShoppingList.add(shoppingItem);

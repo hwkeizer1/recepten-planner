@@ -36,6 +36,11 @@ public final class ViewMessages {
   public static final String INGREDIENT_NAME_ = "Ingrediënt ";
   public static final String INGREDIENT_NAME_NAME_CANNOT_BE_EMPTY = "Ingrediënt naam mag niet leeg zijn";
   
+  public static final String SHOPPING_ITEM_NAME = "Boodschap";
+  public static final String SHOPPING_ITEM_NAME_ = "Boodschap ";
+  public static final String EDIT_SHOPPING_ITEMS = "Boodschappen bewerken";
+  public static final String SHOPPING_ITEM_NAME_CANNOT_BE_EMPTY = "Boodschap naam mag niet leeg zijn";
+  
   public static final String RECIPE = "Recept";
   public static final String RECIPE_ = "Recept ";
 }
