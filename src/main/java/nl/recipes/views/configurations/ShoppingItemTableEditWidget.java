@@ -99,7 +99,6 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
 
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
-    log.debug("{}", c);
     shoppingItemTableView.getSelectionModel().clearSelection();
     updateMeasureUnitComboBox();
   }

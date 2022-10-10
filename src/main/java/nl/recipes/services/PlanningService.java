@@ -148,7 +148,6 @@ public class PlanningService {
 			try {
 				recipeService.update(recipe, recipe);
 			} catch (NotFoundException | AlreadyExistsException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

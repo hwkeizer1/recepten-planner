@@ -120,8 +120,6 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
   public void onChanged(Change<? extends IngredientName> c) {
     while (c.next()) {
       if (c.wasPermutated()) {
-        /* Should not happen */
-        log.debug("IngredientNameList was permutated unexpectedly on element: " + c);
       } else if (c.wasUpdated()) {
         /* Should not happen */
         log.debug("IngredientNameList was updated unexpectedly on element: " + c);
@@ -131,7 +129,6 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
           log.debug("Unexpected mutations on IngredientNameList");
           return;
         }
-        
         // Single replacement
         if (c.getRemoved().get(0).isStock() == c.getAddedSubList().get(0).isStock()) {
           /* No mutation on stock field but some other fields might have changed */
