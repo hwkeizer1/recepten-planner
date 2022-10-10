@@ -17,17 +17,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
-import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
@@ -300,6 +297,7 @@ public class ShoppingPage {
         standardShoppingList.add(shoppingItem);
       }
     }
+    standardShoppingList.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
     finalShoppingList.addAll(standardShoppingList);
     return standardShoppingList;
   }
