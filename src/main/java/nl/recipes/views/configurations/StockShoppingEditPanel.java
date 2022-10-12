@@ -114,7 +114,7 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
     VBox tableBox = new VBox();
     
     shoppingTableView.getStyleClass().add(CSS_BASIC_TABLE);
-    shoppingTableView.setItems(stockShoppingItemService.getReadonlyShoppingItemList());
+    shoppingTableView.setItems(stockShoppingItemService.getList());
     shoppingTableView.setMinHeight(200); // prevent table from collapsing
     shoppingTableView.getSelectionModel().clearSelection();
     
@@ -227,7 +227,7 @@ public class StockShoppingEditPanel implements ListChangeListener<MeasureUnit> {
             : Float.valueOf(amountField.getText()));
     selectedShopping.setMeasureUnit(measureUnitComboBox.getValue());
     try {
-      stockShoppingItemService.update(selectedShopping);
+      stockShoppingItemService.edit(selectedShopping);
       shoppingTableView.getSelectionModel().clearSelection();
     } catch (NotFoundException e) {
       log.error("stockShoppingItem not found");

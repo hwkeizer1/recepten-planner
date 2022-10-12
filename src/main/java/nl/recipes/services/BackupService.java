@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +61,7 @@ public class BackupService {
   private static final String MEASURE_UNITS_PLAN = "measureunits.plan";
 
   private static final String RECIPES_PLAN = "recipes.plan";
-  
+
   private static final String SHOPPINGITEMS_PLAN = "shoppingitems.plan";
 
   private final TagService tagService;
@@ -69,17 +70,16 @@ public class BackupService {
   private final RecipeService recipeService;
   private final StandardShoppingItemService standardShoppingItemService;
   private final StockShoppingItemService stockShoppingItemService;
-  private final ShoppingItemRepository shoppingItemRepository;
   private final ConfigService configService;
 
   private final ObjectMapper objectMapper;
 
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
-      MeasureUnitService measureUnitService, RecipeService recipeService, ConfigService configService,
-      StandardShoppingItemService standardShoppingItemService,
-      ShoppingItemRepository shoppingItemRepository, StockShoppingItemService stockShoppingItemService) {
+      MeasureUnitService measureUnitService, RecipeService recipeService,
+      ConfigService configService, StandardShoppingItemService standardShoppingItemService,
+      StockShoppingItemService stockShoppingItemService
+      ) {
     this.stockShoppingItemService = stockShoppingItemService;
-    this.shoppingItemRepository = shoppingItemRepository;
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
     this.tagService = tagService;
@@ -107,7 +107,7 @@ public class BackupService {
     if (recipes != null) {
       restoreRecipes(recipes);
     }
-    
+
     String shoppingItems = readShoppingItemsFromFile(directoryPath);
     if (shoppingItems != null) {
       restoreShoppingItems(shoppingItems);
@@ -142,7 +142,7 @@ public class BackupService {
     if (recipes != null) {
       writeRecipesToFile(backupDirectory.toString(), recipes);
     }
-    
+
     String shoppingItems = backupShoppingItems();
     if (shoppingItems != null) {
       writeShoppingItemsToFile(backupDirectory.toString(), shoppingItems);
@@ -372,8 +372,8 @@ public class BackupService {
 
     for (Ingredient ingredient : recipe.getIngredients()) {
       if (ingredient.getIngredientName().getMeasureUnit() != null) {
-        Optional<MeasureUnit> optionalMeasureUnit =
-            measureUnitService.findByName(ingredient.getIngredientName().getMeasureUnit().getName());
+        Optional<MeasureUnit> optionalMeasureUnit = measureUnitService
+            .findByName(ingredient.getIngredientName().getMeasureUnit().getName());
         if (optionalMeasureUnit.isPresent()) {
           ingredient.getIngredientName().setMeasureUnit(optionalMeasureUnit.get());
         }
@@ -398,9 +398,11 @@ public class BackupService {
       return null;
     }
   }
-  
+
   private String backupShoppingItems() {
-    List<ShoppingItem> shoppingItemList = shoppingItemRepository.findAll();
+    List<ShoppingItem> shoppingItemList = new ArrayList<>();
+    // standardShoppingItemService.getBackupList will return all shoppingItems including the stockShoppingItems
+    shoppingItemList.addAll(standardShoppingItemService.getBackupList());
     try {
       return objectMapper.writeValueAsString(shoppingItemList);
     } catch (JsonProcessingException e) {
@@ -433,9 +435,9 @@ public class BackupService {
 
   private void restoreShoppingItems(String shoppingItems) {
     try {
-      List<ShoppingItem> shoppingItemList = objectMapper.readValue(shoppingItems, new TypeReference<List<ShoppingItem>>() {});
+      List<ShoppingItem> shoppingItemList =
+          objectMapper.readValue(shoppingItems, new TypeReference<List<ShoppingItem>>() {});
       for (ShoppingItem shoppingItem : shoppingItemList) {
-        shoppingItem.setId(null);
         createShoppingItem(shoppingItem);
       }
     } catch (JsonProcessingException ex) {
@@ -446,12 +448,19 @@ public class BackupService {
   private void createShoppingItem(ShoppingItem shoppingItem) {
     try {
       if (shoppingItem.isStandard()) {
+        shoppingItem.setId(null);
         standardShoppingItemService.create(shoppingItem);
       } else {
-        stockShoppingItemService.create(shoppingItem);
+        stockShoppingItemService.findByName(shoppingItem.getName())
+            .ifPresent(s -> shoppingItem.setId(s.getId()));
+        if (shoppingItem.getId() == null) {
+          standardShoppingItemService.create(shoppingItem);
+        } else {
+          stockShoppingItemService.edit(shoppingItem);
+        }
       }
     } catch (AlreadyExistsException | IllegalValueException ex) {
-      log.error("Tag {} already exists", shoppingItem.getName());
+      log.error("ShoppingItem {} already exists", shoppingItem.getName());
     }
   }
 

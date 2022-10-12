@@ -199,10 +199,18 @@ public class ShoppingPage {
 
   private void updateFinalShoppingList() {
     for (ShoppingItem shoppingItem : oneTimeShoppingList) {
-      if (!finalShoppingList.contains(shoppingItem)) {
+      if (!finalListContainsName(shoppingItem.getName())) {
         finalShoppingList.add(shoppingItem);
       }
     }
+  }
+  
+  private boolean finalListContainsName(String name) {
+    boolean result = false;
+    for (ShoppingItem finalShoppingItem : finalShoppingList) {
+      if (finalShoppingItem.getName().equalsIgnoreCase(name)) result = true;       
+    }
+    return result;
   }
 
   private void sendShoppingListToGoogle(ActionEvent event) {

@@ -84,5 +84,4 @@ public class StandardShoppingItemService extends ListService<ShoppingItem> {
   void setObservableList(ObservableList<ShoppingItem> observableList) {
     this.observableList = observableList;
   }
-
 }

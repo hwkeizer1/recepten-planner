@@ -1,8 +1,13 @@
 package nl.recipes.services;
 
+import static nl.recipes.views.ViewMessages.SHOPPING_ITEM_NAME_;
+import static nl.recipes.views.ViewMessages.SHOPPING_ITEM_NAME_CANNOT_BE_EMPTY;
+import static nl.recipes.views.ViewMessages._ALREADY_EXISTS;
+import static nl.recipes.views.ViewMessages._NOT_FOUND;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -11,36 +16,43 @@ import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientName;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
+import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.ShoppingItemRepository;
 
 @Slf4j
 @Service
-public class StockShoppingItemService implements ListChangeListener<IngredientName> {
+public class StockShoppingItemService extends ListService<ShoppingItem> implements ListChangeListener<IngredientName> {
 
   private final IngredientNameService ingredientNameService;
-  private final ShoppingItemRepository shoppingItemRepository;
-
-  private ObservableList<ShoppingItem> stockShoppingItemList;
 
   public StockShoppingItemService(ShoppingItemRepository shoppingItemRepository,
       IngredientNameService ingredientNameService) {
     this.ingredientNameService = ingredientNameService;
-    this.shoppingItemRepository = shoppingItemRepository;
+    repository = shoppingItemRepository;
     
     this.ingredientNameService.addListener(this);
-    loadShoppingItemList();
-    synchronizeWithIngredientNameStockItems();
+    
+    Sort sort = Sort.by("name").ascending();
+    observableList = FXCollections.observableList(repository.findAll(sort).stream()
+            .filter(s -> !s.isStandard()).collect(Collectors.toList()));
+    comparator = (t1, t2)-> t1.getName().compareTo(t2.getName());
+  }
+  
+  public Optional<ShoppingItem> findByName(String name) {
+    return observableList.stream().filter(shoppingItem -> name.equals(shoppingItem.getName()))
+        .findAny();
   }
 
-  public ObservableList<ShoppingItem> getReadonlyShoppingItemList() {
-    return FXCollections.unmodifiableObservableList(stockShoppingItemList);
+  public Optional<ShoppingItem> findById(Long id) {
+    return observableList.stream().filter(shoppingItem -> id.equals(shoppingItem.getId()))
+        .findAny();
   }
   
   protected ShoppingItem create(IngredientName ingredientName) throws AlreadyExistsException {
     if (findByName(ingredientName.getName()).isPresent()) {
       throw new AlreadyExistsException(
-          "Naam " + ingredientName.getName() + " bestaat al");
+          SHOPPING_ITEM_NAME_ + ingredientName.getName() + _ALREADY_EXISTS);
     }
     ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
         .withName(ingredientName.getName())
@@ -50,67 +62,36 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
         .withIsStandard(false)
         .build();
     
-    ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
-    stockShoppingItemList.add(createdShoppingItem);
-    
-    return createdShoppingItem;
+    return save(shoppingItem);
   }
   
-  protected ShoppingItem create(ShoppingItem shoppingItem) throws AlreadyExistsException {
+  protected ShoppingItem create(ShoppingItem shoppingItem) throws AlreadyExistsException, IllegalValueException {
+    if (shoppingItem == null || shoppingItem.getName() == null) {
+      throw new IllegalValueException(SHOPPING_ITEM_NAME_CANNOT_BE_EMPTY);
+    }
     if (findByName(shoppingItem.getName()).isPresent()) {
       throw new AlreadyExistsException(
-          "Naam " + shoppingItem.getName() + " bestaat al");
+          SHOPPING_ITEM_NAME_+ shoppingItem.getName() + _ALREADY_EXISTS);
     }
     
-    ShoppingItem createdShoppingItem = shoppingItemRepository.save(shoppingItem);
-    stockShoppingItemList.add(createdShoppingItem);
-    
-    return createdShoppingItem;
+    return save(shoppingItem);
   }
   
-  public void update(ShoppingItem shoppingItem) {
-    Optional<ShoppingItem> opt = findById(shoppingItem.getId());
-    if (opt.isPresent()) {
-      ShoppingItem updatedShoppingItem = shoppingItemRepository.save(shoppingItem);
-      stockShoppingItemList.set(stockShoppingItemList.lastIndexOf(shoppingItem),
-          updatedShoppingItem);
-    } else {
-      throw new NotFoundException(
-          "Boodschap artikel met id " + shoppingItem.getId() + " niet gevonden");
+  public ShoppingItem edit(ShoppingItem shoppingItem) {
+    if (!findById(shoppingItem.getId()).isPresent()) {
+      throw new NotFoundException(SHOPPING_ITEM_NAME_ + shoppingItem.getName() + _NOT_FOUND);
     }
+    return update(shoppingItem);
   }
   
   protected void removeByName(String name) throws NotFoundException {
-    if (!findByName(name).isPresent()) {
+    if (findByName(name).isPresent()) {
+      delete(findByName(name).get());
+      
+    } else {
       throw new NotFoundException(
-          "Naam " + name + " niet gevonden");
+          SHOPPING_ITEM_NAME_ + name + _NOT_FOUND);
     }
-    shoppingItemRepository.delete(findByName(name).get());
-    stockShoppingItemList.remove(findByName(name).get());
-  }
-
-  public Optional<ShoppingItem> findByName(String name) {
-    return stockShoppingItemList.stream()
-        .filter(shoppingItem -> name.equals(shoppingItem.getName())).findAny();
-  }
-
-  public Optional<ShoppingItem> findById(Long id) {
-    return stockShoppingItemList.stream()
-        .filter(shoppingItem -> id.equals(shoppingItem.getId())).findAny();
-  }
-
-  public void addListener(ListChangeListener<ShoppingItem> listener) {
-    stockShoppingItemList.addListener(listener);
-  }
-
-  public void removeChangeListener(ListChangeListener<ShoppingItem> listener) {
-    stockShoppingItemList.removeListener(listener);
-  }
-
-  private void loadShoppingItemList() {
-    stockShoppingItemList = FXCollections.observableList(shoppingItemRepository.findByOrderByNameAsc().stream()
-        .filter(s -> !s.isStandard())
-        .collect(Collectors.toList()));
   }
 
   /*
@@ -138,7 +119,7 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
               s.setPluralName(c.getAddedSubList().get(0).getPluralName());
               s.setShopType(c.getAddedSubList().get(0).getShopType());
               s.setIngredientType(c.getAddedSubList().get(0).getIngredientType());
-              update(s);
+              edit(s);
             });
           }
           return;
@@ -167,41 +148,24 @@ public class StockShoppingItemService implements ListChangeListener<IngredientNa
         }
         for (IngredientName added : c.getAddedSubList()) {
           if (added.isStock()) {
-            findByName(added.getName()).ifPresent(s -> {
+            if (findByName(added.getName()).isEmpty())
               try {
                 create(added);
               } catch (AlreadyExistsException e) {
                 log.debug("To be created shoppingitem already exists: ", added);
               }
-            });
           }
         }
       }
     }
   }
   
-  private void synchronizeWithIngredientNameStockItems() {
-    List<IngredientName> ingredientNameStockItems = ingredientNameService.findAllStockItems();
-    if (ingredientNameStockItems.size() != stockShoppingItemList.size()) {
-      log.debug("Het aantal voorraad boodschappen (" + stockShoppingItemList.size()
-          + ") komt niet overeen met het aantal voorraad ingredienten (" + ingredientNameStockItems.size() + ")");
-      for (IngredientName ingredientName : ingredientNameStockItems) {
-        if (findByName(ingredientName.getName()).isEmpty()) {
-          try {
-            create(ingredientName);
-          } catch (AlreadyExistsException e) {
-            log.debug("De te creeeren voorraad boodschap " + ingredientName.getName() + " bestaat al");
-          }
-        }
-      }
-    } else {
-      log.info("Het aantal voorraad boodschappen komt overeen met het aantal voorraad ingredienten");
-    }
+  /**
+   * Setter for JUnit testing only!
+   * 
+   * @param observableList
+   */
+  void setObservableList(ObservableList<ShoppingItem> observableList) {
+    this.observableList = observableList;
   }
-  
-  // Setter for JUnit testing only
-  void setStockShoppingItemList(ObservableList<ShoppingItem> standardShoppingItemList) {
-    this.stockShoppingItemList = standardShoppingItemList;
-  }
-
 }
