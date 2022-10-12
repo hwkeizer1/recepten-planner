@@ -2,7 +2,7 @@ package nl.recipes.views;
 
 public final class ViewMessages {
 
-  public static final String PROGRAM_TITLE = "Recepten-planner versie 1.0.8";
+  public static final String PROGRAM_TITLE = "Recepten-planner versie 1.0.9";
   public static final String TO_SHOPPING_PAGE = "Naar boodschappenlijst";
   public static final String EDIT_STOCK_SHOPPINGS = "Voorraad boodschappen bewerken";
   

@@ -60,6 +60,7 @@ public class StandardShoppingItemService extends ListService<ShoppingItem> {
       throw new AlreadyExistsException(SHOPPING_ITEM_NAME_ + update.getName() + _ALREADY_EXISTS);
     }
 
+    update.setStandard(true);
     update.setId(shoppingItem.getId());
     return update(update);
   }
