@@ -142,7 +142,7 @@ public class GoogleSheetService {
 
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : ekoShoppingList) {
-			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
 					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
 					shoppingItem.getName()));
 		}
@@ -159,7 +159,7 @@ public class GoogleSheetService {
 
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : dekaShoppingList) {
-			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
 					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
 					shoppingItem.getName()));
 		}
@@ -176,7 +176,7 @@ public class GoogleSheetService {
 
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : marktShoppingList) {
-			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
 					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
 					shoppingItem.getName()));
 		}
@@ -193,7 +193,7 @@ public class GoogleSheetService {
 
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : otherShoppingList) {
-			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount().toString(),
+			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
 					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
 					shoppingItem.getName()));
 		}
