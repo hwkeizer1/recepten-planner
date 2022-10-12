@@ -96,44 +96,12 @@ public class ShoppingPage {
     shoppingBox.setPadding(new Insets(15));
     shoppingBox.setSpacing(30);
     shoppingBox.getChildren().clear();
-    shoppingBox.getChildren().addAll(getNoStockList(), getStockPane(),
+    shoppingBox.getChildren().addAll(getNoStockList(), getStockList(),
         createShoppingPanel("Selecteer voorraad boodschappen", createRelevantStockList(), true),
         createShoppingPanel("Selecteer standaard boodschappen", createStandardShoppingList(), true),
         createShoppingPanel("Selecteer eenmalige boodschappen", oneTimeShoppingList, true,
             createNewItemButton()));
     return shoppingBox;
-  }
-
-  private Button createNewItemButton() {
-    Button button = new Button("Voeg eenmalige boodschap toe");
-    button.setOnAction(this::showAddItemDialog);
-    return button;
-  }
-
-  private void showAddItemDialog(ActionEvent event) {
-    AddItemDialog dialog = new AddItemDialog(measureUnitService.getList());
-    Optional<ShoppingItem> shoppingItem = dialog.getDialogResult();
-    shoppingItem.ifPresent(s -> oneTimeShoppingList.add(s));
-    int count = shoppingBox.getChildren().size();
-    shoppingBox.getChildren().remove(count - 1);
-    shoppingBox.getChildren().add(createShoppingPanel("Selecteer eenmalige boodschappen",
-        oneTimeShoppingList, true, createNewItemButton()));
-  }
-
-
-  private HBox getButtonPanel() {
-    Button generateShoppingList = new Button("Genereer boodschappenlijst");
-    generateShoppingList.setOnAction(this::createFinalShoppingPanels);
-
-    sendShoppingListToGoogle = new Button("Stuur boodschappenlijst naar Google sheets");
-    sendShoppingListToGoogle.setOnAction(this::sendShoppingListToGoogle);
-    sendShoppingListToGoogle.setVisible(false);
-
-    HBox buttonPanel = new HBox();
-    buttonPanel.setPadding(new Insets(30));
-    buttonPanel.setSpacing(20);
-    buttonPanel.getChildren().addAll(generateShoppingList, sendShoppingListToGoogle);
-    return buttonPanel;
   }
 
   private GridPane getNoStockList() {
@@ -158,7 +126,7 @@ public class ShoppingPage {
     return createShoppingPanel("Boodschappen voor recepten", noStockList, true);
   }
 
-  private GridPane getStockPane() {
+  private GridPane getStockList() {
     GridPane stockPane = new GridPane();
     stockPane.setHgap(20);
 
@@ -182,6 +150,61 @@ public class ShoppingPage {
       row++;
     }
     return stockPane;
+  }
+  
+  private List<ShoppingItem> createRelevantStockList() {
+    List<ShoppingItem> stockSelectionList = new ArrayList<>();
+    for (Ingredient ingredient : ingredientList.stream()
+        .filter(s -> s.getIngredientName().isStock()).toList()) {
+      stockShoppingItemService.findByName(ingredient.getIngredientName().getName())
+          .ifPresent(stockSelectionList::add);
+    }
+    finalShoppingList.addAll(stockSelectionList);
+    return stockSelectionList;
+  }
+
+  private List<ShoppingItem> createStandardShoppingList() {
+    List<ShoppingItem> standardShoppingList = new ArrayList<>();
+    for (ShoppingItem shoppingItem : standardShoppingItemService.getList()) {
+      if (standardShoppingList.stream()
+          .noneMatch(s -> s.getName().equals(shoppingItem.getName()))) {
+        standardShoppingList.add(shoppingItem);
+      }
+    }
+    standardShoppingList.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
+    finalShoppingList.addAll(standardShoppingList);
+    return standardShoppingList;
+  }
+  
+  private Button createNewItemButton() {
+    Button button = new Button("Voeg eenmalige boodschap toe");
+    button.setOnAction(this::showAddItemDialog);
+    return button;
+  }
+
+  private void showAddItemDialog(ActionEvent event) {
+    AddItemDialog dialog = new AddItemDialog(measureUnitService.getList());
+    Optional<ShoppingItem> shoppingItem = dialog.getDialogResult();
+    shoppingItem.ifPresent(s -> oneTimeShoppingList.add(s));
+    int count = shoppingBox.getChildren().size();
+    shoppingBox.getChildren().remove(count - 1);
+    shoppingBox.getChildren().add(createShoppingPanel("Selecteer eenmalige boodschappen",
+        oneTimeShoppingList, true, createNewItemButton()));
+  }
+  
+  private HBox getButtonPanel() {
+    Button generateShoppingList = new Button("Genereer boodschappenlijst");
+    generateShoppingList.setOnAction(this::createFinalShoppingPanels);
+
+    sendShoppingListToGoogle = new Button("Stuur boodschappenlijst naar Google sheets");
+    sendShoppingListToGoogle.setOnAction(this::sendShoppingListToGoogle);
+    sendShoppingListToGoogle.setVisible(false);
+
+    HBox buttonPanel = new HBox();
+    buttonPanel.setPadding(new Insets(30));
+    buttonPanel.setSpacing(20);
+    buttonPanel.getChildren().addAll(generateShoppingList, sendShoppingListToGoogle);
+    return buttonPanel;
   }
 
   private void createFinalShoppingPanels(ActionEvent event) {
@@ -284,30 +307,6 @@ public class ShoppingPage {
       shoppingPanel.add(button, 1, row, 4, 1);
     }
     return shoppingPanel;
-  }
-
-  private List<ShoppingItem> createRelevantStockList() {
-    List<ShoppingItem> stockSelectionList = new ArrayList<>();
-    for (Ingredient ingredient : ingredientList.stream()
-        .filter(s -> s.getIngredientName().isStock()).toList()) {
-      stockShoppingItemService.findByName(ingredient.getIngredientName().getName())
-          .ifPresent(stockSelectionList::add);
-    }
-    finalShoppingList.addAll(stockSelectionList);
-    return stockSelectionList;
-  }
-
-  private List<ShoppingItem> createStandardShoppingList() {
-    List<ShoppingItem> standardShoppingList = new ArrayList<>();
-    for (ShoppingItem shoppingItem : standardShoppingItemService.getList()) {
-      if (standardShoppingList.stream()
-          .noneMatch(s -> s.getName().equals(shoppingItem.getName()))) {
-        standardShoppingList.add(shoppingItem);
-      }
-    }
-    standardShoppingList.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
-    finalShoppingList.addAll(standardShoppingList);
-    return standardShoppingList;
   }
 
   private List<ShoppingItem> createEkoShoppingList() {

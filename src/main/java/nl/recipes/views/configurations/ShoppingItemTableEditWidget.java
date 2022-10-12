@@ -21,12 +21,14 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
@@ -67,6 +69,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
   ComboBox<IngredientType> ingredientTypeComboBox;
 
   Label nameError = new Label();
+  CheckBox listCheckBox = new CheckBox();
 
   private ShoppingItem selectedShoppingItem;
 
@@ -147,6 +150,10 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     pluralNameColumn.setCellValueFactory(
         c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
     
+    TableColumn<ShoppingItem, Boolean> listColumn = new TableColumn<>("Op lijst");
+    listColumn.setCellValueFactory(c -> new SimpleBooleanProperty(c.getValue().isOnList()));
+    listColumn.setCellFactory(c -> new CheckBoxTableCell<>());
+    
     TableColumn<ShoppingItem, ShopType> shopTypeColumn = new TableColumn<>("Winkel");
     shopTypeColumn
     .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
@@ -156,10 +163,11 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientType()));
     
     
-    amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
-    measureUnitColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.15));
-    nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.25));
-    pluralNameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.25));
+    amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.14));
+    measureUnitColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.14));
+    nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.19));
+    pluralNameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.19));
+    listColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.14));
     shopTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.10));
     ingredientTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.10));
 
@@ -167,6 +175,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     shoppingItemTableView.getColumns().add(measureUnitColumn);
     shoppingItemTableView.getColumns().add(nameColumn);
     shoppingItemTableView.getColumns().add(pluralNameColumn);
+    shoppingItemTableView.getColumns().add(listColumn);
     shoppingItemTableView.getColumns().add(shopTypeColumn);
     shoppingItemTableView.getColumns().add(ingredientTypeColumn);
     
@@ -229,6 +238,11 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     form.add(nameLabel, 0, 2);
     form.add(nameWithValidation, 1, 2);
     
+    Label listLabel = new Label("Op lijst:");
+    form.add(listLabel, 0, 3);
+    form.add(listCheckBox, 1, 3);
+    listCheckBox.setOnAction(e -> modifiedProperty.set(true));
+    
     Label pluralNameLabel = new Label("Meervoud:");
     pluralNameField = new TextField();
     pluralNameField.setOnAction(e -> modifiedProperty.set(true));
@@ -261,6 +275,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
             nameError.setText("");
             pluralNameField.setText(selectedShoppingItem.getPluralName());
             measureUnitComboBox.setValue(selectedShoppingItem.getMeasureUnit());
+            listCheckBox.setSelected(selectedShoppingItem.isOnList());
             shopTypeComboBox.setValue(selectedShoppingItem.getShopType());
             ingredientTypeComboBox.setValue(selectedShoppingItem.getIngredientType());
           } else {
@@ -269,6 +284,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
             nameError.setText("");
             pluralNameField.setText(null);
             measureUnitComboBox.setValue(null);
+            listCheckBox.setSelected(false);
             shopTypeComboBox.setValue(null);
             ingredientTypeComboBox.setValue(null);
           }
@@ -313,6 +329,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
         .withMeasureUnit(measureUnitComboBox.getValue())
         .withName(nameField.getText())
         .withPluralName(pluralNameField.getText())
+        .withOnList(listCheckBox.isSelected())
         .withShopType(shopTypeComboBox.getValue())
         .withIngredientType(ingredientTypeComboBox.getValue())
         .build();
@@ -334,6 +351,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
         .withMeasureUnit(measureUnitComboBox.getValue())
         .withName(nameField.getText())
         .withPluralName(pluralNameField.getText())
+        .withOnList(listCheckBox.isSelected())
         .withShopType(shopTypeComboBox.getValue())
         .withIngredientType(ingredientTypeComboBox.getValue())
         .build();

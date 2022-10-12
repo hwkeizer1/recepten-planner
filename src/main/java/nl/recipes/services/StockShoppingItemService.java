@@ -81,6 +81,7 @@ public class StockShoppingItemService extends ListService<ShoppingItem> implemen
     if (!findById(shoppingItem.getId()).isPresent()) {
       throw new NotFoundException(SHOPPING_ITEM_NAME_ + shoppingItem.getName() + _NOT_FOUND);
     }
+    shoppingItem.setOnList(false);
     return update(shoppingItem);
   }
   
