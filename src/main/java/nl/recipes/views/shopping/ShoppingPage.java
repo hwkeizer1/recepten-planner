@@ -3,6 +3,7 @@ package nl.recipes.views.shopping;
 import static nl.recipes.views.ViewConstants.CSS_PLANNING_DATE;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -171,7 +172,8 @@ public class ShoppingPage {
         standardShoppingList.add(shoppingItem);
       }
     }
-    standardShoppingList.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
+    standardShoppingList.sort(Comparator.comparing(ShoppingItem::isOnList).reversed()
+        .thenComparing(ShoppingItem::getName));
     finalShoppingList.addAll(standardShoppingList);
     return standardShoppingList;
   }
