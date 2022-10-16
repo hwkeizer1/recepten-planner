@@ -1,7 +1,6 @@
 package nl.recipes.services;
 
-import static nl.recipes.views.ViewMessages.*;
-
+import static nl.recipes.views.ViewMessages.BACKUPS_TO_KEEP;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,15 +17,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.IngredientName;
@@ -36,7 +32,6 @@ import nl.recipes.domain.ShoppingItem;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
-import nl.recipes.repositories.ShoppingItemRepository;
 
 @Slf4j
 @Service

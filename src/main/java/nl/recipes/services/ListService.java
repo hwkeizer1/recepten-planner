@@ -3,16 +3,12 @@ package nl.recipes.services;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 public class ListService<T> {
 

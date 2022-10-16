@@ -4,7 +4,6 @@ import static nl.recipes.views.ViewMessages.SHOPPING_ITEM_NAME_;
 import static nl.recipes.views.ViewMessages.SHOPPING_ITEM_NAME_CANNOT_BE_EMPTY;
 import static nl.recipes.views.ViewMessages._ALREADY_EXISTS;
 import static nl.recipes.views.ViewMessages._NOT_FOUND;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Sort;

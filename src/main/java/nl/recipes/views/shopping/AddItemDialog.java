@@ -1,6 +1,5 @@
 package nl.recipes.views.shopping;
 
-import java.util.List;
 import java.util.Optional;
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
@@ -46,6 +45,7 @@ public class AddItemDialog {
                 (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
                     : Float.valueOf(amountTextField.getText()))
             .withMeasureUnit(measureUnitComboBox.getValue()).withName(nameField.getText())
+            .withOnList(true)
             .withShopType(shopTypeComboBox.getValue())
             .withIngredientType(ingredientTypeComboBox.getValue()).build();
       }
