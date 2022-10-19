@@ -152,8 +152,7 @@ public class IngredientName {
     }
     
     public IngredientName build() {
-      IngredientName ingredientName = new IngredientName(this);
-      return ingredientName;
+      return new IngredientName(this);
     }
     
     public IngredientName build(Long id) {

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
@@ -37,7 +36,6 @@ public class ShoppingPage {
   private final StockShoppingItemService stockShoppingItemService;
   private final MeasureUnitService measureUnitService;
   private final GoogleSheetService googleSheetService;
-  private final ShoppingPanelProvider shoppingPanelProvider;
 
   AnchorPane shoppingView;
   ScrollPane scrollPane;
@@ -46,20 +44,19 @@ public class ShoppingPage {
   HBox finalListBox;
   Button sendShoppingListToGoogle;
 
-  ObservableList<Ingredient> ingredientList;
+  List<Ingredient> ingredientList;
   List<ShoppingItem> oneTimeShoppingList;
   List<ShoppingItem> finalShoppingList;
 
   public ShoppingPage(PlanningService planningService,
       StandardShoppingItemService standardShoppingItemService,
       GoogleSheetService googleSheetService, StockShoppingItemService stockShoppingItemService,
-      MeasureUnitService measureUnitService, ShoppingPanelProvider shoppingPanelProvider) {
+      MeasureUnitService measureUnitService) {
     this.planningService = planningService;
     this.standardShoppingItemService = standardShoppingItemService;
     this.stockShoppingItemService = stockShoppingItemService;
     this.measureUnitService = measureUnitService;
     this.googleSheetService = googleSheetService;
-    this.shoppingPanelProvider = shoppingPanelProvider;
 
     oneTimeShoppingList = new ArrayList<>();
     finalListBox = new HBox();
@@ -93,11 +90,11 @@ public class ShoppingPage {
     shoppingBox.setSpacing(30);
     shoppingBox.getChildren().clear();
     shoppingBox.getChildren().addAll(
-        shoppingPanelProvider.createShoppingPanel("Boodschappen voor recepten", getRecipeShoppingsList(), true),
-        shoppingPanelProvider.createShoppingPanel("Benodigd uit voorraad", getStockShoppingList(), false),
-        shoppingPanelProvider.createShoppingPanel("Selecteer voorraad boodschappen", getSelectStockShoppingList(), true),
-        shoppingPanelProvider.createShoppingPanel("Selecteer standaard boodschappen", getSelectStandardShoppingList(), true),
-        shoppingPanelProvider.createShoppingPanel("Selecteer eenmalige boodschappen", oneTimeShoppingList, true,
+        ShoppingPanel.buildWithCheckboxes("Boodschappen voor recepten", getRecipeShoppingsList()),
+        ShoppingPanel.build("Benodigd uit voorraad", getStockShoppingList()),
+        ShoppingPanel.buildWithCheckboxes("Selecteer voorraad boodschappen", getSelectStockShoppingList()),
+        ShoppingPanel.buildWithCheckboxes("Selecteer standaard boodschappen", getSelectStandardShoppingList()),
+        ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer eenmalige boodschappen", oneTimeShoppingList,
             createNewItemButton()));
     return shoppingBox;
   }
@@ -157,18 +154,18 @@ public class ShoppingPage {
 
   private Button createNewItemButton() {
     Button button = new Button("Voeg eenmalige boodschap toe");
-    button.setOnAction(this::showAddItemDialog);
+    button.setOnAction(this::addOneTimeShoppingItem);
     return button;
   }
 
-  private void showAddItemDialog(ActionEvent event) {
+  private void addOneTimeShoppingItem(ActionEvent event) {
     AddItemDialog dialog = new AddItemDialog(measureUnitService.getList());
     Optional<ShoppingItem> shoppingItem = dialog.getDialogResult();
     shoppingItem.ifPresent(s -> oneTimeShoppingList.add(s));
     int count = shoppingBox.getChildren().size();
     shoppingBox.getChildren().remove(count - 1);
-    shoppingBox.getChildren().add(shoppingPanelProvider.createShoppingPanel("Selecteer eenmalige boodschappen",
-        oneTimeShoppingList, true, createNewItemButton()));
+    shoppingBox.getChildren().add(ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer eenmalige boodschappen", oneTimeShoppingList,
+        createNewItemButton()));
   }
 
   private HBox getButtonPanel() {
@@ -192,10 +189,10 @@ public class ShoppingPage {
     finalListBox.setPadding(new Insets(15));
     finalListBox.setSpacing(30);
     finalListBox.getChildren().addAll(
-        shoppingPanelProvider.createShoppingPanel("Eko plaza", createEkoShoppingList(), false),
-        shoppingPanelProvider.createShoppingPanel("DEKA", createDekaShoppingList(), false),
-        shoppingPanelProvider.createShoppingPanel("Markt", createMarktShoppingList(), false),
-        shoppingPanelProvider.createShoppingPanel("Other", createOtherShoppingList(), false));
+        ShoppingPanel.build("Eko plaza", createEkoShoppingList()),
+        ShoppingPanel.build("DEKA", createDekaShoppingList()),
+        ShoppingPanel.build("Markt", createMarktShoppingList()),
+        ShoppingPanel.build("Other", createOtherShoppingList()));
     sendShoppingListToGoogle.setVisible(true);
   }
 
