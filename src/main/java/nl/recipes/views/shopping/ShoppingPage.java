@@ -73,6 +73,7 @@ public class ShoppingPage {
     shoppingView.getChildren().add(getShoppingPanel());
 
     scrollPane = new ScrollPane();
+    scrollPane.setPannable(true);
     scrollPane.setContent(shoppingView);
     return scrollPane;
   }
