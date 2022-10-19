@@ -1,6 +1,5 @@
 package nl.recipes.views.shopping;
 
-import static nl.recipes.views.ViewConstants.CSS_PLANNING_DATE;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,10 +13,8 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -30,7 +27,6 @@ import nl.recipes.services.MeasureUnitService;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.StandardShoppingItemService;
 import nl.recipes.services.StockShoppingItemService;
-import nl.recipes.views.components.utils.Utils;
 
 @Slf4j
 @Component
@@ -46,12 +42,12 @@ public class ShoppingPage {
   AnchorPane shoppingView;
   ScrollPane scrollPane;
 
-  List<ShoppingItem> oneTimeShoppingList;
   HBox shoppingBox;
   HBox finalListBox;
   Button sendShoppingListToGoogle;
 
   ObservableList<Ingredient> ingredientList;
+  List<ShoppingItem> oneTimeShoppingList;
   List<ShoppingItem> finalShoppingList;
 
   public ShoppingPage(PlanningService planningService,
@@ -96,23 +92,18 @@ public class ShoppingPage {
     shoppingBox.setPadding(new Insets(15));
     shoppingBox.setSpacing(30);
     shoppingBox.getChildren().clear();
-    shoppingBox.getChildren().addAll(getNoStockList(), getStockList(),
-        shoppingPanelProvider.createShoppingPanel("Selecteer voorraad boodschappen", createRelevantStockList(), true),
-        shoppingPanelProvider.createShoppingPanel("Selecteer standaard boodschappen", createStandardShoppingList(), true),
+    shoppingBox.getChildren().addAll(
+        shoppingPanelProvider.createShoppingPanel("Boodschappen voor recepten", getRecipeShoppingsList(), true),
+        shoppingPanelProvider.createShoppingPanel("Benodigd uit voorraad", getStockShoppingList(), false),
+        shoppingPanelProvider.createShoppingPanel("Selecteer voorraad boodschappen", getSelectStockShoppingList(), true),
+        shoppingPanelProvider.createShoppingPanel("Selecteer standaard boodschappen", getSelectStandardShoppingList(), true),
         shoppingPanelProvider.createShoppingPanel("Selecteer eenmalige boodschappen", oneTimeShoppingList, true,
             createNewItemButton()));
     return shoppingBox;
   }
 
-  private GridPane getNoStockList() {
-    GridPane noStockPane = new GridPane();
-    noStockPane.setHgap(20);
-
-    Label header = new Label("Boodschappen voor recepten");
-    header.getStyleClass().add(CSS_PLANNING_DATE);
-    noStockPane.add(header, 1, 0, 4, 1);
-
-    List<ShoppingItem> noStockList = ingredientList.stream()
+  private List<ShoppingItem> getRecipeShoppingsList() {
+    List<ShoppingItem> recipeList = ingredientList.stream()
         .filter(i -> !i.getIngredientName().isStock())
         .<ShoppingItem>map(i -> new ShoppingItem.ShoppingItemBuilder().withAmount(i.getAmount())
             .withName(i.getIngredientName().getName())
@@ -121,38 +112,25 @@ public class ShoppingPage {
             .withShopType(i.getIngredientName().getShopType())
             .withIngredientType(i.getIngredientName().getIngredientType()).withOnList(true).build())
         .toList();
-    finalShoppingList.addAll(noStockList);
+    finalShoppingList.addAll(recipeList);
 
-    return shoppingPanelProvider.createShoppingPanel("Boodschappen voor recepten", noStockList, true);
+    return recipeList;
   }
 
-  private GridPane getStockList() {
-    GridPane stockPane = new GridPane();
-    stockPane.setHgap(20);
+  private List<ShoppingItem> getStockShoppingList() {
+    return ingredientList.stream()
+        .filter(i -> i.getIngredientName().isStock())
+        .<ShoppingItem>map(i -> new ShoppingItem.ShoppingItemBuilder().withAmount(i.getAmount())
+            .withName(i.getIngredientName().getName())
+            .withPluralName(i.getIngredientName().getPluralName())
+            .withMeasureUnit(i.getIngredientName().getMeasureUnit())
+            .withShopType(i.getIngredientName().getShopType())
+            .withIngredientType(i.getIngredientName().getIngredientType()).withOnList(false).build())
+        .toList();
 
-    Label header = new Label("Benodigd uit voorraad");
-    header.getStyleClass().add(CSS_PLANNING_DATE);
-    stockPane.add(header, 1, 0, 4, 1);
-
-    int row = 1;
-    for (Ingredient ingredient : ingredientList.stream()
-        .filter(s -> s.getIngredientName().isStock()).toList()) {
-      Label amountLabel =
-          new Label(ingredient.getAmount() == null ? "" : Utils.format(ingredient.getAmount()));
-      Label measureUnitLabel =
-          new Label(ingredient.getIngredientName().getMeasureUnit() == null ? ""
-              : getIngredientMeasureUnitLabel(ingredient));
-      Label ingredientName = new Label(getIngredientIngredientNameLabel(ingredient));
-
-      stockPane.add(amountLabel, 1, row);
-      stockPane.add(measureUnitLabel, 2, row);
-      stockPane.add(ingredientName, 3, row);
-      row++;
-    }
-    return stockPane;
   }
 
-  private List<ShoppingItem> createRelevantStockList() {
+  private List<ShoppingItem> getSelectStockShoppingList() {
     List<ShoppingItem> stockSelectionList = new ArrayList<>();
     for (Ingredient ingredient : ingredientList.stream()
         .filter(s -> s.getIngredientName().isStock()).toList()) {
@@ -163,7 +141,7 @@ public class ShoppingPage {
     return stockSelectionList;
   }
 
-  private List<ShoppingItem> createStandardShoppingList() {
+  private List<ShoppingItem> getSelectStandardShoppingList() {
     List<ShoppingItem> standardShoppingList = new ArrayList<>();
     for (ShoppingItem shoppingItem : standardShoppingItemService.getList()) {
       if (standardShoppingList.stream()
@@ -266,8 +244,6 @@ public class ShoppingPage {
     a.showAndWait();
   }
 
- 
-
   private List<ShoppingItem> createEkoShoppingList() {
     return finalShoppingList.stream().filter(ShoppingItem::isOnList)
         .filter(s -> s.getShopType().equals(ShopType.EKO)).toList();
@@ -286,17 +262,5 @@ public class ShoppingPage {
   private List<ShoppingItem> createOtherShoppingList() {
     return finalShoppingList.stream().filter(ShoppingItem::isOnList)
         .filter(s -> s.getShopType().equals(ShopType.OVERIG)).toList();
-  }
-
-  private String getIngredientMeasureUnitLabel(Ingredient ingredient) {
-    return (ingredient.getAmount() == null || ingredient.getAmount() <= 1)
-        ? ingredient.getIngredientName().getMeasureUnit().getName()
-        : ingredient.getIngredientName().getMeasureUnit().getPluralName();
-  }
-
-  private String getIngredientIngredientNameLabel(Ingredient ingredient) {
-    return (ingredient.getAmount() == null || ingredient.getAmount() <= 1)
-        ? ingredient.getIngredientName().getName()
-        : ingredient.getIngredientName().getPluralName();
   }
 }
