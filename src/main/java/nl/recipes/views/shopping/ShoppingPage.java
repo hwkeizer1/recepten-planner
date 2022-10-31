@@ -1,5 +1,6 @@
 package nl.recipes.views.shopping;
 
+import static nl.recipes.views.ViewConstants.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -94,9 +95,10 @@ public class ShoppingPage {
         ShoppingPanel.buildWithCheckboxes("Boodschappen voor recepten", getRecipeShoppingsList()),
         ShoppingPanel.build("Benodigd uit voorraad", getStockShoppingList()),
         ShoppingPanel.buildWithCheckboxes("Selecteer voorraad boodschappen", getSelectStockShoppingList()),
-        ShoppingPanel.buildWithCheckboxes("Selecteer standaard boodschappen", getSelectStandardShoppingList()),
+        ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer standaard boodschappen", getSelectStandardShoppingList(),
+            createStandardToolBarButtonList()),
         ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer eenmalige boodschappen", oneTimeShoppingList,
-            createNewItemButton()));
+            createOneTimeToolBarButtonList()));
     return shoppingBox;
   }
 
@@ -152,21 +154,82 @@ public class ShoppingPage {
     finalShoppingList.addAll(standardShoppingList);
     return standardShoppingList;
   }
+  
+  private List<Button> createStandardToolBarButtonList() {
+    List<Button> buttons = new ArrayList<>();
+    Button button = ShoppingPanel.createToolBarButton("/icons/select_all.svg", "Selecteer alle standaard boodschappen");
+    button.setOnAction(this::selectAllStandardItems);
+    buttons.add(button);
+    
+    button = ShoppingPanel.createToolBarButton("/icons/select_none.svg", "Deselecteer alle standaard boodschappen");
+    button.setOnAction(this::selectNoneStandardItems);
+    buttons.add(button);
+    return buttons;
+  }
+  
+  private void selectAllStandardItems(ActionEvent event) {
+    for (ShoppingItem shoppingItem : standardShoppingItemService.getList()) {
+      shoppingItem.setOnList(true);
+    }
+  }
+  
+  private void selectNoneStandardItems(ActionEvent event) {
+    for (ShoppingItem shoppingItem : standardShoppingItemService.getList()) {
+      shoppingItem.setOnList(false);
+    }
+  }
 
-  private Button createNewItemButton() {
-    Button button = new Button("Voeg eenmalige boodschap toe");
+  private List<Button> createOneTimeToolBarButtonList() {
+    List<Button> buttons = new ArrayList<>();
+    Button button = ShoppingPanel.createToolBarButton("/icons/add.svg", "Voeg nieuwe eenmalige boodschap toe");
     button.setOnAction(this::addOneTimeShoppingItem);
-    return button;
+    buttons.add(button);
+    
+    button = ShoppingPanel.createToolBarButton("/icons/remove.svg", "Verwijder alle huidige eenmalige boodschappen");
+    button.setOnAction(this::deleteAllOneTimeItems);
+    buttons.add(button);
+    
+    button = ShoppingPanel.createToolBarButton("/icons/select_all.svg", "Selecteer alle eenmalige boodschappen");
+    button.setOnAction(this::selectAllOneTimeItems);
+    buttons.add(button);
+    
+    button = ShoppingPanel.createToolBarButton("/icons/select_none.svg", "Deselecteer alle eenmalige boodschappen");
+    button.setOnAction(this::selectNoneOneTimeItems);
+    buttons.add(button);
+    return buttons;
   }
 
   private void addOneTimeShoppingItem(ActionEvent event) {
     AddItemDialog dialog = new AddItemDialog(measureUnitService.getList());
     Optional<ShoppingItem> shoppingItem = dialog.getDialogResult();
     shoppingItem.ifPresent(s -> oneTimeShoppingList.add(s));
+    updateOneTimeShoppingList();
+  }
+
+  private void updateOneTimeShoppingList() {
     int count = shoppingBox.getChildren().size();
     shoppingBox.getChildren().remove(count - 1);
     shoppingBox.getChildren().add(ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer eenmalige boodschappen", oneTimeShoppingList,
-        createNewItemButton()));
+        createOneTimeToolBarButtonList()));
+  }
+  
+  private void deleteAllOneTimeItems(ActionEvent event) {
+    oneTimeShoppingList.clear();
+    updateOneTimeShoppingList();
+  }
+  
+  private void selectAllOneTimeItems(ActionEvent event) {
+    for (ShoppingItem shoppingItem : oneTimeShoppingList) {
+      shoppingItem.setOnList(true);
+    }
+    updateOneTimeShoppingList();
+  }
+  
+  private void selectNoneOneTimeItems(ActionEvent event) {
+    for (ShoppingItem shoppingItem : oneTimeShoppingList) {
+      shoppingItem.setOnList(false);
+    }
+    updateOneTimeShoppingList();
   }
 
   private HBox getButtonPanel() {

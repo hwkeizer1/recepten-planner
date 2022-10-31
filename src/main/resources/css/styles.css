@@ -80,3 +80,7 @@
 	-fx-alignment: center;
 	-fx-padding: 0px 10px 10px 10px;
 }
+
+.tool-bar {
+    -fx-spacing: 8px;
+}

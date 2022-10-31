@@ -1,36 +1,59 @@
 package nl.recipes.views.shopping;
 
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
 import static nl.recipes.views.ViewConstants.CSS_PLANNING_DATE;
+import java.net.URL;
 import java.util.List;
+import org.girod.javafx.svgimage.SVGImage;
+import org.girod.javafx.svgimage.SVGLoader;
 import org.springframework.stereotype.Component;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.views.components.utils.Utils;
 
 @Component
 public class ShoppingPanel {
-  
+
   private ShoppingPanel() {}
-  
+
   public static GridPane build(String header, List<ShoppingItem> shoppingItems) {
     return createShoppingPanel(header, shoppingItems, false, null);
   }
-  
+
   public static GridPane buildWithCheckboxes(String header, List<ShoppingItem> shoppingItems) {
     return createShoppingPanel(header, shoppingItems, true, null);
   }
-  
-  public static GridPane buildWithCheckboxesAndGeneralButtons(String header, List<ShoppingItem> shoppingItems, Button button) {
-    return createShoppingPanel(header, shoppingItems, true, button);
+
+  public static GridPane buildWithCheckboxesAndGeneralButtons(String header,
+      List<ShoppingItem> shoppingItems, List<Button> buttons) {
+    return createShoppingPanel(header, shoppingItems, true, buttons);
   }
   
-  public static GridPane createShoppingPanel(String header, List<ShoppingItem> shoppingItems,
-      boolean showCheckBox, Button button) {
+  public static Button createToolBarButton(String iconPath, String toolTipText) {
+    URL url = ShoppingPanel.class.getResource(iconPath);
+    SVGImage image = SVGLoader.load(url).scale(0.4d);
+    Button button = new Button();
+    button.setGraphic(image);
+    button.setMinSize(20, 20);
+    button.setPrefSize(20, 20);
+    button.setMaxSize(20, 20);
+    Tooltip toolTip = new Tooltip(toolTipText);
+    toolTip.setShowDelay(new Duration(500));
+    button.setTooltip(toolTip);
+    return button;
+  }
+
+  private static GridPane createShoppingPanel(String header, List<ShoppingItem> shoppingItems,
+      boolean showCheckBox, List<Button> buttons) {
     GridPane shoppingPanel = new GridPane();
     shoppingPanel.setHgap(20);
 
@@ -39,6 +62,13 @@ public class ShoppingPanel {
     shoppingPanel.add(headerLabel, 1, 0, 4, 1);
 
     int row = 1;
+
+    shoppingPanel.add(createToolBar(buttons), 1, row++, 4, 1);
+
+    final Pane space = new Pane();
+    space.minHeightProperty().bind(headerLabel.heightProperty().multiply(0.2));
+    shoppingPanel.add(space, 1, row++);
+
     for (ShoppingItem shoppingItem : shoppingItems) {
       Label amountLabel =
           new Label(shoppingItem.getAmount() == null ? "" : Utils.format(shoppingItem.getAmount()));
@@ -59,14 +89,20 @@ public class ShoppingPanel {
       }
       row++;
     }
-
-    if (button != null) {
-      final Pane space = new Pane();
-      space.minHeightProperty().bind(headerLabel.heightProperty());
-      shoppingPanel.add(space, 1, row++);
-      shoppingPanel.add(button, 1, row, 4, 1);
-    }
     return shoppingPanel;
+  }
+
+  private static ToolBar createToolBar(List<Button> buttons) {
+    ToolBar toolBar = new ToolBar();
+    toolBar.setMinHeight(24);
+    toolBar.setPrefHeight(24);
+    toolBar.setMaxHeight(24);
+    toolBar.setPadding(new Insets(2,5,2,5));
+    toolBar.getStyleClass().add(CSS_DROP_SHADOW);
+    if (buttons != null) {
+      toolBar.getItems().addAll(buttons);
+    }
+    return toolBar;
   }
 
   private static String getMeasureUnitLabel(ShoppingItem shoppingItem) {
