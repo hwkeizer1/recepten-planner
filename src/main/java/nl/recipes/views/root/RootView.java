@@ -158,7 +158,7 @@ public class RootView {
   }
 
   public void showShoppingPage(ActionEvent actionEvent) {
-    rootWindow.setCenter(shoppingPage.getShoppingPage());
+    rootWindow.setCenter(shoppingPage.view());
   }
 
 }

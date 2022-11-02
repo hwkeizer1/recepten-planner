@@ -4,12 +4,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-@Component
 public class ListService<T> {
 
   protected JpaRepository<T, Long> repository;
