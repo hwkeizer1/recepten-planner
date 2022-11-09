@@ -26,14 +26,9 @@ public class OneTimeShoppingPanel extends ShoppingList {
   }
 
   @Override
-  protected void initializeList() {
-    observableList = FXCollections.observableList(new ArrayList<ShoppingItem>()) ;
-  }
-
-  @Override
   protected Node view() {
     if (observableList == null) {
-      initializeList();
+      observableList = FXCollections.observableList(new ArrayList<ShoppingItem>()) ;
     }
     if (panel == null) {
     panel = ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer eenmalige boodschappen", observableList,

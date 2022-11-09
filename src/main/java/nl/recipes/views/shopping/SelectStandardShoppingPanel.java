@@ -24,7 +24,18 @@ public class SelectStandardShoppingPanel extends ShoppingList {
   }
 
   @Override
-  protected void initializeList() {
+  protected Node view() {
+    if (observableList == null) {
+      initializeList();
+    }
+    if (panel == null) {
+    panel = ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer standaard boodschappen", observableList,
+        createToolBarButtonList());
+    }
+    return panel;
+  }
+  
+  private void initializeList() {
     List<ShoppingItem> standardShoppingList = new ArrayList<>();
     for (ShoppingItem shoppingItem : standardShoppingItemService.getList()) {
       if (standardShoppingList.stream()
@@ -35,18 +46,6 @@ public class SelectStandardShoppingPanel extends ShoppingList {
     standardShoppingList.sort(Comparator.comparing(ShoppingItem::isOnList).reversed()
         .thenComparing(ShoppingItem::getName));
     observableList = FXCollections.observableList(standardShoppingList);
-  }
-
-  @Override
-  protected Node view() {
-    if (observableList == null) {
-      initializeList();
-    }
-    if (panel == null) {
-    panel = ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer standaard boodschappen", observableList,
-        createToolBarButtonList());
-    }
-    return panel;
   }
   
   private List<Button> createToolBarButtonList() {

@@ -1,7 +1,9 @@
 package nl.recipes.views.shopping;
 
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.PlanningService;
@@ -15,10 +17,18 @@ public class RecipeShoppingPanel extends ShoppingList {
     this.planningService = planningService;
   }
 
-  //TODO: make ingredientList observable and listen for changes here
   @Override
-  protected void initializeList() {
-    observableList = FXCollections.observableList(planningService.getIngredientList().stream()
+  protected Node view() {
+    if (observableList == null) {
+      observableList = createShoppingList();
+    } else {
+      updateShoppingList();
+    }
+    return ShoppingPanel.buildWithCheckboxes("Boodschappen voor recepten", observableList);
+  }
+  
+  private ObservableList<ShoppingItem> createShoppingList() {
+    return FXCollections.observableList(planningService.getIngredientList().stream()
         .filter(i -> !i.getIngredientName().isStock())
         .<ShoppingItem>map(i -> new ShoppingItem.ShoppingItemBuilder().withAmount(i.getAmount())
             .withName(i.getIngredientName().getName())
@@ -28,12 +38,24 @@ public class RecipeShoppingPanel extends ShoppingList {
             .withIngredientType(i.getIngredientName().getIngredientType()).withOnList(true).build())
         .toList());
   }
-
-  @Override
-  protected Node view() {
-    if (observableList == null) {
-      initializeList();
+  
+  private boolean nameAndMeasureUnitAreEqual(ShoppingItem a, ShoppingItem b) {
+    if (a.getMeasureUnit() == null) {
+      return (a.getName().equals(b.getName()) && b.getMeasureUnit() == null);
     }
-    return ShoppingPanel.buildWithCheckboxes("Boodschappen voor recepten", observableList);
+    if (b.getMeasureUnit() == null)
+      return false;
+    return (a.getName().equals(b.getName())
+        && a.getMeasureUnit().getName().equals(b.getMeasureUnit().getName()));
+  }
+
+  private void updateShoppingList() {
+    ObservableList<ShoppingItem> newList = createShoppingList();
+    for (ShoppingItem shoppingItem : newList) {
+      Optional<ShoppingItem> optionalShoppingItem = observableList.stream()
+          .filter(s -> nameAndMeasureUnitAreEqual(s, shoppingItem)).findFirst();
+      optionalShoppingItem.ifPresent(s -> shoppingItem.setOnList(s.isOnList()));
+    }
+    observableList = newList;
   }
 }

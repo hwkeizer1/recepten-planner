@@ -11,8 +11,6 @@ public abstract class ShoppingList {
 
   protected ObservableList<ShoppingItem> observableList;
   protected Comparator<ShoppingItem> comparator;
-
-  protected abstract void initializeList();
   
   protected abstract Node view();
   
