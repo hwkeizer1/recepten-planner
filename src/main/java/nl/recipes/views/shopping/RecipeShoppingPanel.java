@@ -80,6 +80,7 @@ public class RecipeShoppingPanel extends ShoppingList {
       optionalShoppingItem.ifPresent(s -> shoppingItem.setOnList(s.isOnList()));
     }
     observableList = newList;
+    ShoppingPanel.updateShoppingItems(panel, observableList, true);
   }
   
   private void selectAllRecipeItems(ActionEvent event) {
