@@ -33,5 +33,4 @@ public class StockShoppingPanel extends ShoppingList {
             .withIngredientType(i.getIngredientName().getIngredientType()).withOnList(true).build())
         .toList());
   }
-
 }

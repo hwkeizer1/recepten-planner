@@ -90,7 +90,9 @@ public class ShoppingPanel {
     Label headerLabel = new Label(header);
     headerLabel.getStyleClass().add(CSS_PLANNING_DATE);
     shoppingPanel.add(headerLabel, 1, 0, 4, 1);
-    shoppingPanel.add(createToolBar(buttons), 1, 1, 4, 1);
+    ToolBar toolBar = createToolBar(buttons);
+    if (buttons == null) toolBar.setVisible(false);
+    shoppingPanel.add(toolBar, 1, 1, 4, 1);
 
     final Pane space = new Pane();
     space.minHeightProperty().bind(headerLabel.heightProperty().multiply(0.2));
