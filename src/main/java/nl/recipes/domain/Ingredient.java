@@ -120,8 +120,8 @@ public class Ingredient {
 
   @Override
   public String toString() {
-    return "Ingredient [id=" + id + ", amount=" + amount
-        + ", ingredientName=" + ingredientName + ", onList=" + onList + "]";
+    return "[" + id + ", " + amount + ", " + ingredientName.getMeasureUnit()
+        + ", " + ingredientName.getName() + "]";
   }
 
   @Override

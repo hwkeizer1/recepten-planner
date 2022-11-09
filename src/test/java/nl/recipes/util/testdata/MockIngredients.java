@@ -123,7 +123,7 @@ public class MockIngredients {
             .withIngredientType(IngredientType.OVERIG)
             .build(2L))
         .withRecipe(new Recipe.RecipeBuilder().withName("Recipe 1").build(1L))
-        .build(5L));
+        .build());
     ingredientList.add(new Ingredient.IngredientBuilder()
             .withAmount(1F)
             .withIngredientName(new IngredientName.IngredientNameBuilder()
@@ -138,7 +138,7 @@ public class MockIngredients {
                 .withIngredientType(IngredientType.OVERIG)
                 .build(2L))
             .withRecipe(new Recipe.RecipeBuilder().withName("Recipe 2").build(2L))
-            .build(6L));
+            .build());
     ingredientList.add(new Ingredient.IngredientBuilder()
             .withAmount(2F)
             .withIngredientName(new IngredientName.IngredientNameBuilder()
@@ -150,7 +150,7 @@ public class MockIngredients {
                 .withIngredientType(IngredientType.GROENTE)
                 .build(3L))
             .withRecipe(new Recipe.RecipeBuilder().withName("Recipe 1").build(1L))
-            .build(4L));
+            .build());
     ingredientList.add(new Ingredient.IngredientBuilder()
         .withAmount(4.3F)
         .withIngredientName(new IngredientName.IngredientNameBuilder()
@@ -165,7 +165,7 @@ public class MockIngredients {
             .withIngredientType(IngredientType.GROENTE)
             .build(1L))
         .withRecipe(new Recipe.RecipeBuilder().withName("Recipe 1").build(1L))
-        .build(3L));
+        .build());
     return ingredientList;
   }
 }

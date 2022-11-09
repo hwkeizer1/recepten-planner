@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
@@ -16,6 +17,7 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.PlanningRepository;
 
+@Slf4j
 @Service
 public class PlanningService {
 
@@ -84,6 +86,7 @@ public class PlanningService {
 	List<Ingredient> consolidateIngredients(List<Ingredient> ingredients) {
 		List<Ingredient> ingredientList = new ArrayList<>();
 		for (Ingredient ingredient : ingredients) {
+		  
 			boolean exists = false;
 			for (Ingredient resultIngredient : ingredientList) {
 				if (canMerge(ingredient, resultIngredient)) {
@@ -94,7 +97,13 @@ public class PlanningService {
 				}
 			}
 			if (!exists) {
-				ingredientList.add(ingredient);
+			  Ingredient clonedIngredient = new Ingredient.IngredientBuilder()
+			      .withAmount(ingredient.getAmount())
+			      .withIngredientName(ingredient.getIngredientName())
+			      .withOnList(ingredient.isOnList())
+			      .withRecipe(ingredient.getRecipe())
+			      .build();
+				ingredientList.add(clonedIngredient);
 			}
 		}
 		return ingredientList;
@@ -111,8 +120,10 @@ public class PlanningService {
 	}
 
 	private List<Ingredient> getIngredientsFromPlanning() {
-		return observablePlanningList.stream().filter(Planning::isOnShoppingList).map(Planning::getRecipes)
+	  
+	  List<Ingredient> ingredients = observablePlanningList.stream().filter(Planning::isOnShoppingList).map(Planning::getRecipes)
 				.flatMap(List::stream).map(Recipe::getIngredients).flatMap(Set::stream).collect(Collectors.toList());
+	  return ingredients;
 	}
 
 	private void preparePlanningList() {

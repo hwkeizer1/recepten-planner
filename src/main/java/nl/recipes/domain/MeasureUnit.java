@@ -80,7 +80,7 @@ public class MeasureUnit {
 
   @Override
   public String toString() {
-    return "MeasureUnit [id=" + id + ", name=" + name + ", pluralName=" + pluralName + "]";
+    return "[" + id + ", " + name + "]";
   }
 
   @Override
