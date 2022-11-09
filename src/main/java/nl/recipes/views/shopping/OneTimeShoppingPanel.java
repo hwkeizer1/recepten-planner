@@ -9,11 +9,9 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.MeasureUnitService;
 
-@Slf4j
 @Component
 public class OneTimeShoppingPanel extends ShoppingList {
 
