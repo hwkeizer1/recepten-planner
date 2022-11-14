@@ -1,37 +1,26 @@
 package nl.recipes.views.shopping;
 
 import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
-import static nl.recipes.views.ViewConstants.CSS_INGREDIENT_TABLE;
 import static nl.recipes.views.ViewConstants.CSS_PLANNING_DATE;
 import java.net.URL;
 import java.util.List;
 import org.girod.javafx.svgimage.SVGImage;
 import org.girod.javafx.svgimage.SVGLoader;
 import org.springframework.stereotype.Component;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
-import lombok.extern.slf4j.Slf4j;
-import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.views.components.utils.Utils;
 
-@Slf4j
 @Component
 public class ShoppingPanel {
 
@@ -90,6 +79,7 @@ public class ShoppingPanel {
     Label headerLabel = new Label(header);
     headerLabel.getStyleClass().add(CSS_PLANNING_DATE);
     shoppingPanel.add(headerLabel, 1, 0, 4, 1);
+    
     ToolBar toolBar = createToolBar(buttons);
     if (buttons == null) toolBar.setVisible(false);
     shoppingPanel.add(toolBar, 1, 1, 4, 1);
