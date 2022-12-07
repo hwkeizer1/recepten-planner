@@ -1,5 +1,6 @@
 package nl.recipes.views.shopping;
 
+import static nl.recipes.views.ViewMessages.*;
 import org.springframework.stereotype.Component;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,7 +20,12 @@ public class StockShoppingPanel extends ShoppingList {
   @Override
   protected Node view() {
     observableList = initializeList();
-    return ShoppingPanel.build("Benodigd uit voorraad", observableList);
+    ImprovedShoppingPanel panel = new ImprovedShoppingPanel.ShoppingPanelBuilder()
+        .withHeader(STOCK_SHOPPINGS)
+        .withObservableList(observableList)
+        .withToolBar()
+        .build();
+    return panel.view();
   }
   
   private ObservableList<ShoppingItem> initializeList() {

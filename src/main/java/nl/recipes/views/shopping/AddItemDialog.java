@@ -42,7 +42,7 @@ public class AddItemDialog {
       if (dialogButton == ButtonType.OK) {
         return new ShoppingItem.ShoppingItemBuilder()
             .withAmount(
-                (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+                (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? 0.0f
                     : Float.valueOf(amountTextField.getText()))
             .withMeasureUnit(measureUnitComboBox.getValue()).withName(nameField.getText())
             .withOnList(true)

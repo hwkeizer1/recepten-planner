@@ -231,7 +231,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
   private void createIngredient(ActionEvent actionEvent) {
     Ingredient ingredient = new Ingredient.IngredientBuilder()
         .withAmount(
-            (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+            (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? 0.0f
                 : Float.valueOf(amountTextField.getText()))
         .withIngredientName(ingredientNameComboBox.getValue()).build();
 
@@ -244,7 +244,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
   private void updateIngredient(ActionEvent actionEvent) {
     int index = ingredientList.indexOf(selectedIngredient);
     selectedIngredient
-        .setAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+        .setAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? 0.0f
             : Float.valueOf(amountTextField.getText()));
     selectedIngredient.setIngredientName(ingredientNameComboBox.getValue());
     ingredientList.set(index, selectedIngredient);

@@ -76,6 +76,10 @@ public class RecipeService extends ListService<Recipe> {
       throw new AlreadyExistsException(RECIPE_ + update.getName() + _ALREADY_EXISTS);
     }
     
+    // Always update the none-editable fields
+    update.setTimesServed(recipe.getTimesServed());
+    update.setLastServed(recipe.getLastServed());
+    
     update.setId(recipe.getId());
     return update(update);
   }
@@ -101,3 +105,4 @@ public class RecipeService extends ListService<Recipe> {
 	  this.observableList = observableList;
   }
 }
+;

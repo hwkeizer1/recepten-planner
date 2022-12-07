@@ -5,17 +5,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShoppingItem;
 
+@Slf4j
 public abstract class ShoppingList {
 
   protected ObservableList<ShoppingItem> observableList;
   protected Comparator<ShoppingItem> comparator;
-  
+
   protected abstract Node view();
   
   public ObservableList<ShoppingItem> getList() {
     return observableList;
+  }
+  
+  public Comparator<ShoppingItem> getComparator() {
+    return comparator;
+  }
+
+  public void setComparator(Comparator<ShoppingItem> comparator) {
+    this.comparator = comparator;
   }
   
   public void addListener(ListChangeListener<ShoppingItem> listener) {
@@ -28,13 +38,17 @@ public abstract class ShoppingList {
   
   ShoppingItem save(ShoppingItem item) {
     observableList.add(item);
-    FXCollections.sort(observableList, comparator);
+    if (comparator != null) {
+      FXCollections.sort(observableList, comparator);
+    }
     return item;
   }
   
   ShoppingItem update(ShoppingItem oldItem, ShoppingItem newItem) {
     observableList.set(observableList.lastIndexOf(oldItem), newItem);
-    FXCollections.sort(observableList, comparator);
+    if (comparator != null) {
+      FXCollections.sort(observableList, comparator);
+    }
     return newItem;
   }
   

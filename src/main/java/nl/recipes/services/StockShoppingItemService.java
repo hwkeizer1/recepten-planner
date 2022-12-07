@@ -73,6 +73,7 @@ public class StockShoppingItemService extends ListService<ShoppingItem> implemen
           SHOPPING_ITEM_NAME_+ shoppingItem.getName() + _ALREADY_EXISTS);
     }
     
+    if (shoppingItem.getAmount() == null) shoppingItem.setAmount(0.0f);
     return save(shoppingItem);
   }
   
@@ -81,6 +82,7 @@ public class StockShoppingItemService extends ListService<ShoppingItem> implemen
       throw new NotFoundException(SHOPPING_ITEM_NAME_ + shoppingItem.getName() + _NOT_FOUND);
     }
     shoppingItem.setOnList(false);
+    if (shoppingItem.getAmount() == null) shoppingItem.setAmount(0.0f);
     return update(shoppingItem);
   }
   

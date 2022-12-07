@@ -1,0 +1,80 @@
+/*
+ * Shopping panel styling
+ */
+.shopping-panel {
+	-fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-background-radius: 5px;
+	-fx-padding: 5px 15px 15px 15px;
+}
+
+/*
+ * Title styling
+ */
+.shopping-panel-title {
+	-fx-font-size: 0.9em;
+	-fx-font-weight: bold;
+	-fx-text-fill: rp-header-text;
+}
+
+.shopping-panel-border {
+	-fx-border-color: rp-bg-color;
+	-fx-border-width: 1px;
+}
+
+/* Table styling*/
+
+.shopping-panel-table *.scroll-bar:horizontal *.increment-button,
+.shopping-panel-table *.scroll-bar:horizontal *.decrement-button {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.shopping-panel-table *.scroll-bar:horizontal *.increment-arrow, 
+.shopping-panel-table *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+
+.shopping-panel-table .table-row-cell: odd{
+    -fx-background-color: rp-bg-thin-color;
+    -fx-border-color: rp-bg-thin-color;
+}
+
+.shopping-panel-table .table-row-cell: even{
+    -fx-background-color: rp-bg-contra-color;
+    -fx-border-color: rp-bg-contra-color;
+}
+
+.shopping-panel-table .table-row-cell: hover odd{
+    -fx-background-color: rp-bg-color;
+    -fx-border-color: rp-bg-color;
+}
+
+.shopping-panel-table .table-row-cell: hover even{
+    -fx-background-color: rp-bg-contra-color;
+    -fx-border-color: rp-bg-contra-color;
+}
+
+.shopping-panel-table .table-row-cell:focused {
+	-fx-background-color: rp-header-text;
+}
+
+.shopping-panel-table .column-header-background{
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+.shopping-panel-table {
+	-fx-font-size: 0.8em;
+	-fx-accent: transparent ;
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-background-color: transparent;
+}
+

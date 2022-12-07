@@ -19,10 +19,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
 
+@Slf4j
 @Component
 public class ShoppingPage {
 
@@ -86,9 +88,12 @@ public class ShoppingPage {
     HBox shoppingPanels = new HBox();
     shoppingPanels.setPadding(new Insets(10));
     shoppingPanels.setSpacing(10);
-    shoppingPanels.getChildren().addAll(recipeShoppingPanel.view(), stockShoppingPanel.view(),
-        selectStockShoppingPanel.view(), selectStandardShoppingPanel.view(),
-        oneTimeShoppingPanel.view());
+    shoppingPanels.getChildren().addAll(
+    		recipeShoppingPanel.view(), 
+    		stockShoppingPanel.view(),
+    		selectStockShoppingPanel.view(), 
+    		selectStandardShoppingPanel.view(),
+    		oneTimeShoppingPanel.view());
     return shoppingPanels;
   }
 

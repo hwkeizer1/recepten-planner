@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -24,6 +25,7 @@ public class Ingredient {
   @JsonIgnore
   private Recipe recipe;
 
+  @NotNull
   private Float amount;
 
   @OneToOne(fetch = FetchType.EAGER)

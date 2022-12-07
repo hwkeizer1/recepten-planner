@@ -1,5 +1,7 @@
 package nl.recipes.domain;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +12,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Entity
 public class ShoppingItem {
 
@@ -19,18 +25,19 @@ public class ShoppingItem {
   private Long id;
 
   private String name;
-  
+
   private String pluralName;
 
+  @NotNull
   private Float amount;
-  
+
   @OneToOne(fetch = FetchType.EAGER)
   private MeasureUnit measureUnit;
 
   private boolean isStandard;
 
-  private boolean onList;
-  
+  private Boolean onList;
+
   @Enumerated(EnumType.STRING)
   @Column(length = 20)
   private ShopType shopType;
@@ -39,9 +46,19 @@ public class ShoppingItem {
   @Column(length = 20)
   private IngredientType ingredientType;
 
-  protected ShoppingItem() {}
+  @Transient
+  private PropertyChangeSupport support;
+
+  protected ShoppingItem() {
+    if (support == null) {
+      support = new PropertyChangeSupport(this);
+    }
+  }
 
   private ShoppingItem(ShoppingItemBuilder builder) {
+    if (support == null) {
+      support = new PropertyChangeSupport(this);
+    }
     this.amount = builder.amount;
     this.name = builder.name;
     this.pluralName = builder.pluralName;
@@ -65,7 +82,12 @@ public class ShoppingItem {
   }
 
   public void setAmount(Float amount) {
+    Float previous = this.amount;
     this.amount = amount;
+    if (support == null) {
+      support = new PropertyChangeSupport(this);
+    }
+    support.firePropertyChange("amount", previous, amount);
   }
 
   public String getName() {
@@ -75,7 +97,7 @@ public class ShoppingItem {
   public void setName(String name) {
     this.name = name;
   }
-  
+
   public String getPluralName() {
     return pluralName;
   }
@@ -100,14 +122,19 @@ public class ShoppingItem {
     this.isStandard = isStandard;
   }
 
-  public boolean isOnList() {
+  public Boolean isOnList() {
     return onList;
   }
 
-  public void setOnList(boolean onList) {
+  public void setOnList(Boolean onList) {
+    Boolean previous = this.onList;
     this.onList = onList;
+    if (support == null) {
+      support = new PropertyChangeSupport(this);
+    }
+    support.firePropertyChange("onList", previous, onList);
   }
-  
+
   public ShopType getShopType() {
     return shopType;
   }
@@ -123,7 +150,22 @@ public class ShoppingItem {
   public void setIngredientType(IngredientType ingredientType) {
     this.ingredientType = ingredientType;
   }
-  
+
+  public String getLabel() {
+    if (amount == null)
+      return getName();
+    if (amount > 1.0)
+      return getPluralName();
+    return getName();
+  }
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    support.addPropertyChangeListener(listener);
+  }
+
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    support.removePropertyChangeListener(listener);
+  }
 
   public static class ShoppingItemBuilder {
     private Float amount;
@@ -131,7 +173,7 @@ public class ShoppingItem {
     private String pluralName;
     private MeasureUnit measureUnit;
     private boolean isStandard;
-    private boolean onList;
+    private Boolean onList;
     private ShopType shopType;
     private IngredientType ingredientType;
 
@@ -144,12 +186,12 @@ public class ShoppingItem {
       this.name = name;
       return this;
     }
-    
+
     public ShoppingItemBuilder withPluralName(String pluralName) {
       this.pluralName = pluralName;
       return this;
     }
-    
+
     public ShoppingItemBuilder withMeasureUnit(MeasureUnit measureUnit) {
       this.measureUnit = measureUnit;
       return this;
@@ -160,16 +202,16 @@ public class ShoppingItem {
       return this;
     }
 
-    public ShoppingItemBuilder withOnList(boolean onList) {
+    public ShoppingItemBuilder withOnList(Boolean onList) {
       this.onList = onList;
       return this;
     }
-    
+
     public ShoppingItemBuilder withShopType(ShopType shopType) {
       this.shopType = shopType;
       return this;
     }
-    
+
     public ShoppingItemBuilder withIngredientType(IngredientType ingredientType) {
       this.ingredientType = ingredientType;
       return this;
@@ -188,9 +230,9 @@ public class ShoppingItem {
 
   @Override
   public String toString() {
-    return "ShoppingItem [id=" + id + ", name=" + name + ", amount=" + amount + ", measureUnit=" + measureUnit
-        + ", isStandard=" + isStandard + ", onList=" + onList + ", shopType=" + shopType + ", ingredientType="
-        + ingredientType + "]";
+    return "ShoppingItem [id=" + id + ", name=" + name + ", amount=" + amount + ", measureUnit="
+        + measureUnit + ", isStandard=" + isStandard + ", onList=" + onList + ", shopType="
+        + shopType + ", ingredientType=" + ingredientType + "]";
   }
 
   @Override

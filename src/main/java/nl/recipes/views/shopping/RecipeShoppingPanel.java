@@ -1,5 +1,6 @@
 package nl.recipes.views.shopping;
 
+import static nl.recipes.views.ViewMessages.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +10,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.PlanningService;
 
@@ -18,7 +18,7 @@ public class RecipeShoppingPanel extends ShoppingList {
 
   private final PlanningService planningService;
 
-  private GridPane panel;
+  private ImprovedShoppingPanel panel;
   
   public RecipeShoppingPanel(PlanningService planningService) {
     this.planningService = planningService;
@@ -32,10 +32,15 @@ public class RecipeShoppingPanel extends ShoppingList {
       updateShoppingList();
     }
     if (panel == null) {
-    panel = ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Boodschappen voor recepten", observableList,
-        createToolBarButtonList());
+    panel = new ImprovedShoppingPanel.ShoppingPanelBuilder()
+        .withHeader(SELECT_RECIPE_SHOPPINGS)
+        .withObservableList(observableList)
+        .withCheckBoxes(true)
+        .withToolBar()
+        .withButtons(createToolBarButtonList())
+        .build();
     }
-    return panel;
+    return panel.view();
   }
   
   private ObservableList<ShoppingItem> createShoppingList() {
@@ -80,20 +85,20 @@ public class RecipeShoppingPanel extends ShoppingList {
       optionalShoppingItem.ifPresent(s -> shoppingItem.setOnList(s.isOnList()));
     }
     observableList = newList;
-    ShoppingPanel.updateShoppingItems(panel, observableList, true);
+    panel.refresh(observableList);
   }
   
   private void selectAllRecipeItems(ActionEvent event) {
     for (ShoppingItem shoppingItem : observableList) {
       shoppingItem.setOnList(true);
     }
-    ShoppingPanel.updateShoppingItems(panel, observableList, true);
+    panel.refresh();
   }
   
   private void selectNoneRecipeItems(ActionEvent event) {
     for (ShoppingItem shoppingItem : observableList) {
       shoppingItem.setOnList(false);
     }
-    ShoppingPanel.updateShoppingItems(panel, observableList, true);
+    panel.refresh();
   }
 }

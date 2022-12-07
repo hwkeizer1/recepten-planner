@@ -1,5 +1,6 @@
 package nl.recipes.views.shopping;
 
+import static nl.recipes.views.ViewMessages.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,7 +9,6 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.MeasureUnitService;
 
@@ -17,7 +17,7 @@ public class OneTimeShoppingPanel extends ShoppingList {
 
   private final MeasureUnitService measureUnitService;
   
-  private GridPane panel;
+  private ImprovedShoppingPanel panel;
   
   public OneTimeShoppingPanel(MeasureUnitService measureUnitService) {
     this.measureUnitService = measureUnitService;
@@ -28,11 +28,14 @@ public class OneTimeShoppingPanel extends ShoppingList {
     if (observableList == null) {
       observableList = FXCollections.observableList(new ArrayList<ShoppingItem>()) ;
     }
-    if (panel == null) {
-    panel = ShoppingPanel.buildWithCheckboxesAndGeneralButtons("Selecteer eenmalige boodschappen", observableList,
-        createToolBarButtonList());
-    }
-    return panel;
+    panel = new ImprovedShoppingPanel.ShoppingPanelBuilder()
+        .withHeader(SELECT_ONETIME_SHOPPINGS)
+        .withObservableList(observableList)
+        .withCheckBoxes(true)
+        .withToolBar()
+        .withButtons(createToolBarButtonList())
+        .build();
+    return panel.view();
   }
 
   private List<Button> createToolBarButtonList() {
@@ -59,25 +62,25 @@ public class OneTimeShoppingPanel extends ShoppingList {
     AddItemDialog dialog = new AddItemDialog(measureUnitService.getList());
     Optional<ShoppingItem> shoppingItem = dialog.getDialogResult();
     shoppingItem.ifPresent(s -> observableList.add(s));
-    ShoppingPanel.updateShoppingItems(panel, observableList, true);
+    panel.refresh();
   }
   
   private void deleteAllOneTimeItems(ActionEvent event) {
     observableList.clear();
-    ShoppingPanel.updateShoppingItems(panel, observableList, true);
+    panel.refresh();
   }
   
   private void selectAllOneTimeItems(ActionEvent event) {
     for (ShoppingItem shoppingItem : observableList) {
       shoppingItem.setOnList(true);
     }
-    ShoppingPanel.updateShoppingItems(panel, observableList, true);
+    panel.refresh();
   }
   
   private void selectNoneOneTimeItems(ActionEvent event) {
     for (ShoppingItem shoppingItem : observableList) {
       shoppingItem.setOnList(false);
     }
-    ShoppingPanel.updateShoppingItems(panel, observableList, true);
+    panel.refresh();
   }
 }
