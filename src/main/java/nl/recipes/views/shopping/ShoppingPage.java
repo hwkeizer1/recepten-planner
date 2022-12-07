@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
+import nl.recipes.views.components.utils.ButtonFactory;
 
 @Slf4j
 @Component
@@ -72,11 +73,11 @@ public class ShoppingPage {
   private ToolBar getToolBar() {
     ToolBar toolBar = new ToolBar();
     Button listButton =
-        ShoppingPanel.createLargeToolBarButton("/icons/list.svg", "Genereer boodschappenlijst");
+        ButtonFactory.createLargeToolBarButton("/icons/list.svg", "Genereer boodschappenlijst");
     listButton.setOnAction(this::createFinalShoppingPanels);
     toolBar.getItems().add(listButton);
 
-    cloudButton = ShoppingPanel.createLargeToolBarButton("/icons/cloud.svg",
+    cloudButton = ButtonFactory.createLargeToolBarButton("/icons/cloud.svg",
         "Upload boodschappenlijst naar Google sheets");
     cloudButton.setOnAction(this::sendShoppingListToGoogle);
     cloudButton.setVisible(false);
@@ -108,11 +109,18 @@ public class ShoppingPage {
     finalShoppingPanels.setPadding(new Insets(15));
     finalShoppingPanels.setSpacing(30);
     finalShoppingPanels.getChildren().addAll(
-        ShoppingPanel.buildWithoutToolBar("Eko plaza", createEkoShoppingList()),
-        ShoppingPanel.buildWithoutToolBar("DEKA", createDekaShoppingList()),
-        ShoppingPanel.buildWithoutToolBar("Markt", createMarktShoppingList()),
-        ShoppingPanel.buildWithoutToolBar("Other", createOtherShoppingList()));
+        createFinalShoppingPanel("Eko plaza", createEkoShoppingList()).view(),
+        createFinalShoppingPanel("DEKA", createDekaShoppingList()).view(),
+        createFinalShoppingPanel("Markt", createMarktShoppingList()).view(),
+        createFinalShoppingPanel("Other", createOtherShoppingList()).view());
     cloudButton.setVisible(true);
+  }
+  
+  private ShoppingPanel createFinalShoppingPanel(String header, ObservableList<ShoppingItem> shoppingList) {
+    return new ShoppingPanel.ShoppingPanelBuilder()
+    .withHeader(header)
+    .withObservableList(shoppingList)
+    .build();
   }
 
   private void createFinalShoppingList() {

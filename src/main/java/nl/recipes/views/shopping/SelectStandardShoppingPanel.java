@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.StandardShoppingItemService;
+import nl.recipes.views.components.utils.ButtonFactory;
 
 @Slf4j
 @Component
@@ -21,7 +22,7 @@ public class SelectStandardShoppingPanel extends ShoppingList
 
   private final StandardShoppingItemService standardShoppingItemService;
 
-  private ImprovedShoppingPanel panel;
+  private ShoppingPanel panel;
 
   public SelectStandardShoppingPanel(StandardShoppingItemService standardShoppingItemService) {
     this.standardShoppingItemService = standardShoppingItemService;
@@ -42,7 +43,7 @@ public class SelectStandardShoppingPanel extends ShoppingList
       initializeList();
     }
     if (panel == null) {
-      panel = new ImprovedShoppingPanel.ShoppingPanelBuilder().withHeader(SELECT_STANDARD_SHOPPINGS)
+      panel = new ShoppingPanel.ShoppingPanelBuilder().withHeader(SELECT_STANDARD_SHOPPINGS)
           .withObservableList(observableList).withCheckBoxes(true).withToolBar()
           .withButtons(createToolBarButtonList()).build();
     }
@@ -63,12 +64,12 @@ public class SelectStandardShoppingPanel extends ShoppingList
 
   private List<Button> createToolBarButtonList() {
     List<Button> buttons = new ArrayList<>();
-    Button button = ShoppingPanel.createToolBarButton("/icons/select_all.svg",
+    Button button = ButtonFactory.createToolBarButton("/icons/select_all.svg",
         "Selecteer alle standaard boodschappen");
     button.setOnAction(this::selectAllStandardItems);
     buttons.add(button);
 
-    button = ShoppingPanel.createToolBarButton("/icons/select_none.svg",
+    button = ButtonFactory.createToolBarButton("/icons/select_none.svg",
         "Deselecteer alle standaard boodschappen");
     button.setOnAction(this::selectNoneStandardItems);
     buttons.add(button);

@@ -14,6 +14,7 @@ import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.StockShoppingItemService;
+import nl.recipes.views.components.utils.ButtonFactory;
 
 @Component
 public class SelectStockShoppingPanel extends ShoppingList {
@@ -21,7 +22,7 @@ public class SelectStockShoppingPanel extends ShoppingList {
   private final StockShoppingItemService stockShoppingItemService;
   private final PlanningService planningService;
 
-  private ImprovedShoppingPanel panel;
+  private ShoppingPanel panel;
   
   public SelectStockShoppingPanel(StockShoppingItemService stockShoppingItemService,
       PlanningService planningService) {
@@ -37,7 +38,7 @@ public class SelectStockShoppingPanel extends ShoppingList {
       updateShoppingList();
     }
     if (panel == null) {
-      panel = new ImprovedShoppingPanel.ShoppingPanelBuilder()
+      panel = new ShoppingPanel.ShoppingPanelBuilder()
             .withHeader(SELECT_STOCK_SHOPPINGS)
             .withObservableList(observableList)
             .withCheckBoxes(true)
@@ -60,11 +61,11 @@ public class SelectStockShoppingPanel extends ShoppingList {
   
   private List<Button> createToolBarButtonList() {
     List<Button> buttons = new ArrayList<>();
-    Button button = ShoppingPanel.createToolBarButton("/icons/select_all.svg", "Selecteer alle voorraad boodschappen");
+    Button button = ButtonFactory.createToolBarButton("/icons/select_all.svg", "Selecteer alle voorraad boodschappen");
     button.setOnAction(this::selectAllStockingItems);
     buttons.add(button);
     
-    button = ShoppingPanel.createToolBarButton("/icons/select_none.svg", "Deselecteer alle voorraad boodschappen");
+    button = ButtonFactory.createToolBarButton("/icons/select_none.svg", "Deselecteer alle voorraad boodschappen");
     button.setOnAction(this::selectNoneStockingItems);
     buttons.add(button);
     return buttons;

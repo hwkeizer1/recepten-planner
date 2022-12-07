@@ -20,7 +20,7 @@ public class StockShoppingPanel extends ShoppingList {
   @Override
   protected Node view() {
     observableList = initializeList();
-    ImprovedShoppingPanel panel = new ImprovedShoppingPanel.ShoppingPanelBuilder()
+    ShoppingPanel panel = new ShoppingPanel.ShoppingPanelBuilder()
         .withHeader(STOCK_SHOPPINGS)
         .withObservableList(observableList)
         .withToolBar()

@@ -12,13 +12,14 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.PlanningService;
+import nl.recipes.views.components.utils.ButtonFactory;
 
 @Component
 public class RecipeShoppingPanel extends ShoppingList {
 
   private final PlanningService planningService;
 
-  private ImprovedShoppingPanel panel;
+  private ShoppingPanel panel;
   
   public RecipeShoppingPanel(PlanningService planningService) {
     this.planningService = planningService;
@@ -32,7 +33,7 @@ public class RecipeShoppingPanel extends ShoppingList {
       updateShoppingList();
     }
     if (panel == null) {
-    panel = new ImprovedShoppingPanel.ShoppingPanelBuilder()
+    panel = new ShoppingPanel.ShoppingPanelBuilder()
         .withHeader(SELECT_RECIPE_SHOPPINGS)
         .withObservableList(observableList)
         .withCheckBoxes(true)
@@ -57,11 +58,11 @@ public class RecipeShoppingPanel extends ShoppingList {
   
   private List<Button> createToolBarButtonList() {
     List<Button> buttons = new ArrayList<>();
-    Button button = ShoppingPanel.createToolBarButton("/icons/select_all.svg", "Selecteer alle boodschappen voor recepten");
+    Button button = ButtonFactory.createToolBarButton("/icons/select_all.svg", "Selecteer alle boodschappen voor recepten");
     button.setOnAction(this::selectAllRecipeItems);
     buttons.add(button);
     
-    button = ShoppingPanel.createToolBarButton("/icons/select_none.svg", "Deselecteer alle boodschappen voor recepten");
+    button = ButtonFactory.createToolBarButton("/icons/select_none.svg", "Deselecteer alle boodschappen voor recepten");
     button.setOnAction(this::selectNoneRecipeItems);
     buttons.add(button);
     return buttons;
