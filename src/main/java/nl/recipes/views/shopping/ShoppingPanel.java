@@ -5,8 +5,6 @@ import java.util.List;
 import static nl.recipes.views.ViewConstants.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.adapter.JavaBeanBooleanProperty;
 import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanFloatProperty;
 import javafx.beans.property.adapter.JavaBeanFloatPropertyBuilder;
@@ -15,15 +13,12 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.util.converter.FloatStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShoppingItem;
@@ -212,13 +207,13 @@ public class ShoppingPanel {
     return hbox;
   }
   
-  private static String getMeasureUnitLabel(ShoppingItem shoppingItem) {
+  private String getMeasureUnitLabel(ShoppingItem shoppingItem) {
     return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
         ? shoppingItem.getMeasureUnit().getName()
         : shoppingItem.getMeasureUnit().getPluralName();
   }
 
-  private static String getShoppingItemNameLabel(ShoppingItem shoppingItem) {
+  private String getShoppingItemNameLabel(ShoppingItem shoppingItem) {
     if (shoppingItem.getPluralName() == null)
       return shoppingItem.getName();
     return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)

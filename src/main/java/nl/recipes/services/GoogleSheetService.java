@@ -143,8 +143,8 @@ public class GoogleSheetService {
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : ekoShoppingList) {
 			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
-					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-					shoppingItem.getName()));
+					shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem),
+					getShoppingItemNameLabel(shoppingItem)));
 		}
 
 		ValueRange body = new ValueRange().setValues(items);
@@ -160,8 +160,8 @@ public class GoogleSheetService {
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : dekaShoppingList) {
 			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
-					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-					shoppingItem.getName()));
+					shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem),
+					getShoppingItemNameLabel(shoppingItem)));
 		}
 
 		ValueRange body = new ValueRange().setValues(items);
@@ -177,8 +177,8 @@ public class GoogleSheetService {
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : marktShoppingList) {
 			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
-					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-					shoppingItem.getName()));
+					shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem),
+					getShoppingItemNameLabel(shoppingItem)));
 		}
 
 		ValueRange body = new ValueRange().setValues(items);
@@ -194,8 +194,8 @@ public class GoogleSheetService {
 		List<List<Object>> items = new ArrayList<>();
 		for (ShoppingItem shoppingItem : otherShoppingList) {
 			items.add(Arrays.asList(shoppingItem.getAmount() == null ? "" : shoppingItem.getAmount(),
-					shoppingItem.getMeasureUnit() == null ? "" : shoppingItem.getMeasureUnit().getName(),
-					shoppingItem.getName()));
+					shoppingItem.getMeasureUnit() == null ? "" : getMeasureUnitLabel(shoppingItem),
+					getShoppingItemNameLabel(shoppingItem)));
 		}
 
 		ValueRange body = new ValueRange().setValues(items);
@@ -263,4 +263,18 @@ public class GoogleSheetService {
 						.setEndRowIndex(rowIndex + 1).setStartColumnIndex(0).setEndColumnIndex(4))
 				.setPasteType("PASTE_NORMAL").setPasteOrientation("NORMAL"));
 	}
+	
+	  private String getMeasureUnitLabel(ShoppingItem shoppingItem) {
+	    return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
+	        ? shoppingItem.getMeasureUnit().getName()
+	        : shoppingItem.getMeasureUnit().getPluralName();
+	  }
+
+	  private String getShoppingItemNameLabel(ShoppingItem shoppingItem) {
+	    if (shoppingItem.getPluralName() == null)
+	      return shoppingItem.getName();
+	    return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
+	        ? shoppingItem.getName()
+	        : shoppingItem.getPluralName();
+	  }
 }
