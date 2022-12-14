@@ -16,7 +16,6 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.TagRepository;
-import nl.recipes.services.TagService;
 import nl.recipes.util.testdata.MockTags;
 
 class TagServiceTest {

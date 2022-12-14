@@ -15,7 +15,6 @@ import nl.recipes.domain.ShoppingItem;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.IllegalValueException;
 import nl.recipes.exceptions.NotFoundException;
-import nl.recipes.repositories.IngredientNameRepository;
 import nl.recipes.repositories.ShoppingItemRepository;
 import nl.recipes.util.testdata.MockShoppingItems;
 

@@ -3,6 +3,7 @@ package nl.recipes.domain;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,9 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Entity
 public class ShoppingItem {
 

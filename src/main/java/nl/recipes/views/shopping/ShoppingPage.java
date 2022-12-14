@@ -5,27 +5,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import org.springframework.stereotype.Component;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
 import nl.recipes.views.components.utils.ButtonFactory;
 
-@Slf4j
 @Component
 public class ShoppingPage {
 

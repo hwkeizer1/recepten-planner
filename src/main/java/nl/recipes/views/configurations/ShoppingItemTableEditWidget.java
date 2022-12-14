@@ -5,9 +5,11 @@ import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
 import static nl.recipes.views.ViewConstants.CSS_TITLE;
 import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
 import static nl.recipes.views.ViewConstants.CSS_WIDGET;
+
 import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.stereotype.Component;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -34,8 +36,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.IngredientType;
 import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.ShopType;
@@ -48,7 +48,6 @@ import nl.recipes.services.StandardShoppingItemService;
 import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.converters.MeasureUnitStringConverter;
 
-@Slf4j
 @Component
 public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUnit> {
 

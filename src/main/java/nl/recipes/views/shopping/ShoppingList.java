@@ -1,14 +1,13 @@
 package nl.recipes.views.shopping;
 
 import java.util.Comparator;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShoppingItem;
 
-@Slf4j
 public abstract class ShoppingList {
 
   protected ObservableList<ShoppingItem> observableList;
