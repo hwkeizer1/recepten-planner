@@ -34,7 +34,7 @@ public class ShoppingPanel {
   private TableView<ShoppingItem> tableView;
 
   private ShoppingPanel() {}
-  
+
   private ShoppingPanel(ShoppingPanelBuilder builder) {
     this.header = builder.header;
     this.withToolBar = builder.withToolBar;
@@ -42,7 +42,7 @@ public class ShoppingPanel {
     this.shoppingItems = builder.shoppingItems;
     this.showCheckBoxes = builder.showCheckBoxes;
   }
-  
+
   /*
    * Builder convenience class
    */
@@ -52,32 +52,32 @@ public class ShoppingPanel {
     private List<Button> buttons;
     private ObservableList<ShoppingItem> shoppingItems;
     private boolean showCheckBoxes;
-    
+
     public ShoppingPanelBuilder withHeader(String header) {
       this.header = header;
       return this;
     }
-    
+
     public ShoppingPanelBuilder withToolBar() {
       this.withToolBar = true;
       return this;
     }
-    
+
     public ShoppingPanelBuilder withButtons(List<Button> buttons) {
       this.buttons = buttons;
       return this;
     }
-    
+
     public ShoppingPanelBuilder withObservableList(ObservableList<ShoppingItem> shoppingItems) {
       this.shoppingItems = shoppingItems;
       return this;
     }
-    
+
     public ShoppingPanelBuilder withCheckBoxes(boolean showCheckBoxes) {
       this.showCheckBoxes = showCheckBoxes;
       return this;
     }
-    
+
     public ShoppingPanel build() {
       return new ShoppingPanel(this);
     }
@@ -93,12 +93,12 @@ public class ShoppingPanel {
     vbox.getChildren().add(createTableView());
     return vbox;
   }
-  
+
   public void refresh() {
     tableView.getSelectionModel().clearSelection();
     tableView.refresh();
   }
-  
+
   public void refresh(ObservableList<ShoppingItem> shoppingItems) {
     this.shoppingItems = shoppingItems;
     tableView.getSelectionModel().clearSelection();
@@ -107,19 +107,19 @@ public class ShoppingPanel {
 
   private HBox createHeader() {
     HBox hbox = new HBox();
-    hbox.setPadding(new Insets(0,0,5,0));
+    hbox.setPadding(new Insets(0, 0, 5, 0));
     Label label = new Label(header);
     label.getStyleClass().add(CSS_SHOPPING_PANEL_TITLE);
     hbox.getChildren().add(label);
     return hbox;
   }
-  
+
   private ToolBar createToolBar() {
     ToolBar toolBar = new ToolBar();
     toolBar.setMinHeight(24);
     toolBar.setPrefHeight(24);
     toolBar.setMaxHeight(24);
-    toolBar.setPadding(new Insets(2,5,2,5));
+    toolBar.setPadding(new Insets(2, 5, 2, 5));
     if (buttons != null && !buttons.isEmpty()) {
       toolBar.getItems().addAll(buttons);
     }
@@ -142,14 +142,14 @@ public class ShoppingPanel {
     tableView.getStyleClass().addAll(CSS_SHOPPING_PANEL_TABLE);
     tableView.setItems(shoppingItems);
     tableView.getSelectionModel().clearSelection();
-    
+
     tableView.setFixedCellSize(19);
     if (tableView.getItems().size() > 20) {
       tableView.setMaxHeight(380);
     }
-    tableView.prefHeightProperty().bind(tableView.fixedCellSizeProperty()
-        .multiply(Bindings.size(tableView.getItems())).add(2));
-    
+    tableView.prefHeightProperty().bind(
+        tableView.fixedCellSizeProperty().multiply(Bindings.size(tableView.getItems())).add(2));
+
     TableColumn<ShoppingItem, Number> amountColumn = new TableColumn<>();
     amountColumn.setCellFactory(TextFieldTableCell.forTableColumn(new NumberStringConverter()));
     amountColumn.setCellValueFactory(cellData -> {
@@ -174,7 +174,8 @@ public class ShoppingPanel {
     });
 
     TableColumn<ShoppingItem, String> nameColumn = new TableColumn<>();
-    nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(getShoppingItemNameLabel(c.getValue())));
+    nameColumn.setCellValueFactory(
+        c -> new ReadOnlyObjectWrapper<>(getShoppingItemNameLabel(c.getValue())));
 
 
     TableColumn<ShoppingItem, Boolean> listColumn = new TableColumn<>();
@@ -206,7 +207,7 @@ public class ShoppingPanel {
     hbox.getChildren().add(tableView);
     return hbox;
   }
-  
+
   private String getMeasureUnitLabel(ShoppingItem shoppingItem) {
     return (shoppingItem.getAmount() == null || shoppingItem.getAmount() <= 1)
         ? shoppingItem.getMeasureUnit().getName()

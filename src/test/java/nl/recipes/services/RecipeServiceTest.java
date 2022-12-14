@@ -24,16 +24,16 @@ import nl.recipes.util.testdata.MockRecipes;
 
 class RecipeServiceTest {
 
-  @Mock 
+  @Mock
   RecipeRepository recipeRepository;
-  
+
   @InjectMocks
   RecipeService recipeService;
-  
+
   MockRecipes mockRecipes;
   MockIngredients mockIngredients;
-  
-  
+
+
   @BeforeEach
   public void setup() {
     MockitoAnnotations.openMocks(this);
@@ -41,37 +41,31 @@ class RecipeServiceTest {
     mockIngredients = new MockIngredients();
     recipeService.setObservableRecipeList(mockRecipes.getRecipeListBasic());
   }
-  
-  @Test 
+
+  @Test
   void testGetReadonlyRecipeList() {
     assertEquals(recipeService.getList(), mockRecipes.getRecipeListBasic());
   }
-  
+
   @Test
-  void testCreateRecipe_HappyPath() throws Exception{
-    Recipe recipe = new Recipe.RecipeBuilder()
-        .withName("Last recipe")
-        .withRecipeType(RecipeType.BIJGERECHT)
-        .build();
-    
-    Recipe savedRecipe = new Recipe.RecipeBuilder()
-        .withName("Last recipe")
-        .withRecipeType(RecipeType.BIJGERECHT)
-        .build(5L);
-    
+  void testCreateRecipe_HappyPath() throws Exception {
+    Recipe recipe = new Recipe.RecipeBuilder().withName("Last recipe")
+        .withRecipeType(RecipeType.BIJGERECHT).build();
+
+    Recipe savedRecipe = new Recipe.RecipeBuilder().withName("Last recipe")
+        .withRecipeType(RecipeType.BIJGERECHT).build(5L);
+
     when(recipeRepository.save(recipe)).thenReturn(savedRecipe);
-    
+
     assertEquals(savedRecipe, recipeService.create(recipe));
     assertEquals(5, recipeService.getList().size());
     assertEquals(Optional.of(savedRecipe), recipeService.findByName("Last recipe"));
   }
-  
+
   @Test
   void testCreate_AlreadyExistsException() throws Exception {
-    Recipe recipe = new Recipe.RecipeBuilder()
-        .withName("First recipe")
-        .withRecipeType(RecipeType.HOOFDGERECHT)
-        .build();
+    Recipe recipe = new Recipe.RecipeBuilder().withName("First recipe")
+        .withRecipeType(RecipeType.HOOFDGERECHT).build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       recipeService.create(recipe);
@@ -80,7 +74,7 @@ class RecipeServiceTest {
     Assertions.assertEquals("Recept First recipe bestaat al", exception.getMessage());
     assertEquals(4, recipeService.getList().size());
   }
-  
+
   @Test
   void testUpdate_HappyPath() throws Exception {
     Recipe originalRecipe = recipeService.findByName("Second recipe").get();
@@ -94,16 +88,12 @@ class RecipeServiceTest {
     assertEquals(4, recipeService.getList().size());
     assertEquals(Optional.of(expectedRecipe), recipeService.findById(2L));
   }
-  
+
   @Test
   void testUpdate_NotFoundException() throws Exception {
-    Recipe originalRecipe = new Recipe.RecipeBuilder()
-        .withName("onbekend recept")
-        .build(3000L);
+    Recipe originalRecipe = new Recipe.RecipeBuilder().withName("onbekend recept").build(3000L);
 
-    Recipe update = new Recipe.RecipeBuilder()
-        .withName("updated onbekend recept")
-        .build();
+    Recipe update = new Recipe.RecipeBuilder().withName("updated onbekend recept").build();
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       recipeService.update(originalRecipe, update);
@@ -112,16 +102,12 @@ class RecipeServiceTest {
     Assertions.assertEquals("Recept onbekend recept niet gevonden", exception.getMessage());
     assertEquals(4, recipeService.getList().size());
   }
-  
+
   @Test
   void testUpdate_AlreadyExistsException() throws Exception {
-    Recipe originalIngredientName = new Recipe.RecipeBuilder()
-        .withName("First recipe")
-        .build(1L);
+    Recipe originalIngredientName = new Recipe.RecipeBuilder().withName("First recipe").build(1L);
 
-    Recipe update = new Recipe.RecipeBuilder()
-        .withName("Fourth recipe")
-        .build();
+    Recipe update = new Recipe.RecipeBuilder().withName("Fourth recipe").build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       recipeService.update(originalIngredientName, update);
@@ -130,7 +116,7 @@ class RecipeServiceTest {
     Assertions.assertEquals("Recept Fourth recipe bestaat al", exception.getMessage());
     assertEquals(4, recipeService.getList().size());
   }
-  
+
   @Test
   void testRemove_HappyPath() throws Exception {
     Recipe originalRecipe = recipeService.findByName("Third recipe").get();
@@ -138,15 +124,12 @@ class RecipeServiceTest {
     assertEquals(4, recipeService.getList().size());
     recipeService.remove(originalRecipe);
     assertEquals(3, recipeService.getList().size());
-    assertEquals(Optional.empty(),
-        recipeService.findByName(originalRecipe.getName()));
+    assertEquals(Optional.empty(), recipeService.findByName(originalRecipe.getName()));
   }
 
   @Test
   void testRemove_NotFound() throws Exception {
-    Recipe originalRecipe = new Recipe.RecipeBuilder()
-        .withName("onbekend recept")
-        .build(3000L);
+    Recipe originalRecipe = new Recipe.RecipeBuilder().withName("onbekend recept").build(3000L);
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       recipeService.remove(originalRecipe);
@@ -155,23 +138,21 @@ class RecipeServiceTest {
     Assertions.assertEquals("Recept onbekend recept niet gevonden", exception.getMessage());
     assertEquals(4, recipeService.getList().size());
   }
-  
+
   @Test
   void testFindByName() {
-    Recipe recipe = new Recipe.RecipeBuilder()
-        .withName("Third recipe")
+    Recipe recipe = new Recipe.RecipeBuilder().withName("Third recipe")
         .withRecipeType(RecipeType.NAGERECHT).build(3L);
     assertEquals(recipeService.findByName("Third recipe"), Optional.of(recipe));
   }
-  
+
   @Test
   void testFindById() {
-    Recipe recipe = new Recipe.RecipeBuilder()
-        .withName("Fourth recipe")
+    Recipe recipe = new Recipe.RecipeBuilder().withName("Fourth recipe")
         .withRecipeType(RecipeType.HOOFDGERECHT).build(4L);
     assertEquals(recipeService.findById(4L), Optional.of(recipe));
   }
-  
+
   @Test
   void testGetEditableIngredientList() {
     
@@ -181,7 +162,7 @@ class RecipeServiceTest {
     ingredientList.sort(Comparator.comparing(Ingredient::getId));
     assertEquals(mockIngredients.getIngredientList(), ingredientList);
   }
-  
+
   @Test
   void testGetEditableIngredientList_RecipeIdIsNull() {
     
@@ -191,7 +172,7 @@ class RecipeServiceTest {
     ingredientList.sort(Comparator.comparing(Ingredient::getId));
     assertEquals(Collections.EMPTY_LIST, ingredientList);
   }
-  
+
   @Test
   void testGetEditableIngredientList_RecipeIdDoesNotExist() {
     
@@ -201,7 +182,7 @@ class RecipeServiceTest {
     ingredientList.sort(Comparator.comparing(Ingredient::getId));
     assertEquals(Collections.EMPTY_LIST, ingredientList);
   }
-  
+
   @Test
   void testGetReadOnlyIngredientList() {
     

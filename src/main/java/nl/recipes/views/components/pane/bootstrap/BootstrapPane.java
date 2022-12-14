@@ -22,20 +22,20 @@ public class BootstrapPane extends GridPane {
   }
 
   public void notifyWidthChange(Number newValue) {
-      Breakpoint newBreakpoint = Breakpoint.XSMALL;
-      if (newValue.doubleValue() > 600)
-        newBreakpoint = Breakpoint.SMALL;
-      if (newValue.doubleValue() > 900)
-        newBreakpoint = Breakpoint.MEDIUM;
-      if (newValue.doubleValue() > 1200)
-        newBreakpoint = Breakpoint.LARGE;
-      if (newValue.doubleValue() > 1580)
-        newBreakpoint = Breakpoint.XLARGE;
+    Breakpoint newBreakpoint = Breakpoint.XSMALL;
+    if (newValue.doubleValue() > 600)
+      newBreakpoint = Breakpoint.SMALL;
+    if (newValue.doubleValue() > 900)
+      newBreakpoint = Breakpoint.MEDIUM;
+    if (newValue.doubleValue() > 1200)
+      newBreakpoint = Breakpoint.LARGE;
+    if (newValue.doubleValue() > 1580)
+      newBreakpoint = Breakpoint.XLARGE;
 
-      if (newBreakpoint != currentWindowSize) {
-        currentWindowSize = newBreakpoint;
-        calculateNodePositions();
-      }
+    if (newBreakpoint != currentWindowSize) {
+      currentWindowSize = newBreakpoint;
+      calculateNodePositions();
+    }
   }
 
   private void setColumnConstraints() {

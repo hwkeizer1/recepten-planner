@@ -304,7 +304,7 @@ public class RecipeEditView {
     Recipe update = formFieldsToRecipe();
     try {
       Recipe updatedRecipe = recipeService.update(selectedRecipe, update);
-        rootView.showRecipeSingleViewPanel(updatedRecipe);
+      rootView.showRecipeSingleViewPanel(updatedRecipe);
     } catch (NotFoundException | AlreadyExistsException e) {
       // Fix this error message
       e.printStackTrace();
@@ -316,21 +316,18 @@ public class RecipeEditView {
   }
 
   private Recipe formFieldsToRecipe() {
-    return new Recipe.RecipeBuilder()
-        .withName(recipeName.getText())
-        .withPreparationTime((preparationTime.getText().isEmpty()) ? null : Integer.valueOf(preparationTime.getText()))
+    return new Recipe.RecipeBuilder().withName(recipeName.getText())
+        .withPreparationTime((preparationTime.getText().isEmpty()) ? null
+            : Integer.valueOf(preparationTime.getText()))
         .withCookTime((cookTime.getText().isEmpty()) ? null : Integer.valueOf(cookTime.getText()))
         .withServings((servings.getText().isEmpty()) ? null : Integer.valueOf(servings.getText()))
-        .withPreparations(preparations.getText())
-        .withDirections(directions.getText())
+        .withPreparations(preparations.getText()).withDirections(directions.getText())
         .withIngredients(new HashSet<>(ingredientEditView.getIngredientList()))
-        .withTags(getSelectedTags())
-        .withRecipeType(recipeTypeComboBox.getValue())
+        .withTags(getSelectedTags()).withRecipeType(recipeTypeComboBox.getValue())
         .withRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText()))
-        .withNotes(notes.getText())
-        .build();
+        .withNotes(notes.getText()).build();
   }
-  
+
   private Set<Tag> getSelectedTags() {
     Set<Tag> tags = new HashSet<>();
     for (CheckBox checkBox : tagCheckBoxes) {

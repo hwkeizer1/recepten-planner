@@ -55,14 +55,14 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
   private final MeasureUnitService measureUnitService;
 
   TableView<ShoppingItem> shoppingItemTableView;
-  
+
   TextField amountTextField;
 
   TextField nameField;
   TextField pluralNameField;
-  
+
   SearchableComboBox<MeasureUnit> measureUnitComboBox;
-  
+
   ComboBox<ShopType> shopTypeComboBox;
 
   ComboBox<IngredientType> ingredientTypeComboBox;
@@ -80,11 +80,12 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     this.measureUnitService = measureUnitService;
 
     this.measureUnitService.addListener(this);
-    
+
     measureUnitComboBox = new SearchableComboBox<>();
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
-    TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
-    
+    TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(),
+        measureUnitComboBox.getConverter());
+
     updateMeasureUnitComboBox();
   }
 
@@ -104,14 +105,14 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     shoppingItemTableView.getSelectionModel().clearSelection();
     updateMeasureUnitComboBox();
   }
-  
+
   private void updateMeasureUnitComboBox() {
     ObservableList<MeasureUnit> measureUnitsWithNull = FXCollections.observableArrayList();
     measureUnitsWithNull.add(null);
     measureUnitsWithNull.addAll(measureUnitService.getList());
     measureUnitComboBox.setItems(measureUnitsWithNull);
   }
-  
+
   private Label createHeader() {
     Label title = new Label("Standaard boodschappen bewerken");
     title.getStyleClass().add(CSS_TITLE);
@@ -128,47 +129,47 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     TableColumn<ShoppingItem, Number> amountColumn = new TableColumn<>("Hoeveelheid");
     amountColumn.setCellValueFactory(
         c -> (c.getValue().getAmount() != null && (10 * c.getValue().getAmount() % 10) == 0)
-        ? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
-        : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
- 
+            ? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
+            : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
+
     TableColumn<ShoppingItem, String> measureUnitColumn = new TableColumn<>("Maateenheid");
     measureUnitColumn.setCellValueFactory(c -> {
       if (c.getValue().getMeasureUnit() == null) {
         return new ReadOnlyObjectWrapper<>();
       } else {
-        return new ReadOnlyObjectWrapper<>(
-            c.getValue().getMeasureUnit().getName());
+        return new ReadOnlyObjectWrapper<>(c.getValue().getMeasureUnit().getName());
       }
     });
 
     TableColumn<ShoppingItem, String> nameColumn = new TableColumn<>("Naam");
-    nameColumn.setCellValueFactory(
-        c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
-    
+    nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
+
     TableColumn<ShoppingItem, String> pluralNameColumn = new TableColumn<>("Meervoud");
-    pluralNameColumn.setCellValueFactory(
-        c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
-    
+    pluralNameColumn
+        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
+
     TableColumn<ShoppingItem, Boolean> listColumn = new TableColumn<>("Op lijst");
     listColumn.setCellValueFactory(c -> new SimpleBooleanProperty(c.getValue().isOnList()));
     listColumn.setCellFactory(c -> new CheckBoxTableCell<>());
-    
+
     TableColumn<ShoppingItem, ShopType> shopTypeColumn = new TableColumn<>("Winkel");
     shopTypeColumn
-    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
+        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getShopType()));
 
     TableColumn<ShoppingItem, IngredientType> ingredientTypeColumn = new TableColumn<>("Type");
     ingredientTypeColumn
-    .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientType()));
-    
-    
+        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getIngredientType()));
+
+
     amountColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.14));
-    measureUnitColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.14));
+    measureUnitColumn.prefWidthProperty()
+        .bind(shoppingItemTableView.widthProperty().multiply(0.14));
     nameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.19));
     pluralNameColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.19));
     listColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.14));
     shopTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.10));
-    ingredientTypeColumn.prefWidthProperty().bind(shoppingItemTableView.widthProperty().multiply(0.10));
+    ingredientTypeColumn.prefWidthProperty()
+        .bind(shoppingItemTableView.widthProperty().multiply(0.10));
 
     shoppingItemTableView.getColumns().add(amountColumn);
     shoppingItemTableView.getColumns().add(measureUnitColumn);
@@ -177,7 +178,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     shoppingItemTableView.getColumns().add(listColumn);
     shoppingItemTableView.getColumns().add(shopTypeColumn);
     shoppingItemTableView.getColumns().add(ingredientTypeColumn);
-    
+
     shoppingItemTableView.setRowFactory(callback -> {
       final TableRow<ShoppingItem> row = new TableRow<>();
       row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
@@ -212,7 +213,7 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     column2.setHalignment(HPos.RIGHT);
     ColumnConstraints column3 = new ColumnConstraints();
     column3.setPercentWidth(30);
-    
+
     form.getColumnConstraints().addAll(column0, column1, column2, column3);
 
     Label amountLabel = new Label("Hoeveelheid:");
@@ -220,12 +221,12 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     form.add(amountLabel, 0, 0);
     form.add(amountTextField, 1, 0);
     amountTextField.setOnKeyReleased(this::handleKeyReleasedAction);
-    
+
     Label measureUnitLabel = new Label("Maateenheid:");
     form.add(measureUnitLabel, 0, 1);
     measureUnitComboBox.setOnAction(e -> modifiedProperty.set(true));
     form.add(measureUnitComboBox, 1, 1);
-    
+
     Label nameLabel = new Label("Naam:");
     nameField = new TextField();
     nameField.setOnAction(e -> modifiedProperty.set(true));
@@ -236,19 +237,19 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
     nameWithValidation.getChildren().addAll(nameField, nameError);
     form.add(nameLabel, 0, 2);
     form.add(nameWithValidation, 1, 2);
-    
+
     Label listLabel = new Label("Op lijst:");
     form.add(listLabel, 0, 3);
     form.add(listCheckBox, 1, 3);
     listCheckBox.setOnAction(e -> modifiedProperty.set(true));
-    
+
     Label pluralNameLabel = new Label("Meervoud:");
     pluralNameField = new TextField();
     pluralNameField.setOnAction(e -> modifiedProperty.set(true));
     pluralNameField.setOnKeyReleased(this::handleKeyReleasedAction);
     form.add(pluralNameLabel, 2, 0);
     form.add(pluralNameField, 3, 0);
-    
+
     Label shopTypeLabel = new Label("Winkel:");
     form.add(shopTypeLabel, 2, 1);
     shopTypeComboBox = new ComboBox<>();
@@ -316,23 +317,21 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
 
     return buttonBar;
   }
-  
+
   private void handleKeyReleasedAction(KeyEvent keyEvent) {
     modifiedProperty.set(true);
   }
 
   private void createShoppingItem(ActionEvent actionEvent) {
     ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
-        .withAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+        .withAmount(
+            (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
                 : Float.valueOf(amountTextField.getText()))
-        .withMeasureUnit(measureUnitComboBox.getValue())
-        .withName(nameField.getText())
-        .withPluralName(pluralNameField.getText())
-        .withOnList(listCheckBox.isSelected())
+        .withMeasureUnit(measureUnitComboBox.getValue()).withName(nameField.getText())
+        .withPluralName(pluralNameField.getText()).withOnList(listCheckBox.isSelected())
         .withShopType(shopTypeComboBox.getValue())
-        .withIngredientType(ingredientTypeComboBox.getValue())
-        .build();
-    
+        .withIngredientType(ingredientTypeComboBox.getValue()).build();
+
     try {
       shoppingItemService.create(shoppingItem);
       shoppingItemTableView.scrollTo(shoppingItem);
@@ -345,16 +344,14 @@ public class ShoppingItemTableEditWidget implements ListChangeListener<MeasureUn
 
   private void updateShoppingItem(ActionEvent actionEvent) {
     ShoppingItem update = new ShoppingItem.ShoppingItemBuilder()
-        .withAmount((amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
-            : Float.valueOf(amountTextField.getText()))
-        .withMeasureUnit(measureUnitComboBox.getValue())
-        .withName(nameField.getText())
-        .withPluralName(pluralNameField.getText())
-        .withOnList(listCheckBox.isSelected())
+        .withAmount(
+            (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? null
+                : Float.valueOf(amountTextField.getText()))
+        .withMeasureUnit(measureUnitComboBox.getValue()).withName(nameField.getText())
+        .withPluralName(pluralNameField.getText()).withOnList(listCheckBox.isSelected())
         .withShopType(shopTypeComboBox.getValue())
-        .withIngredientType(ingredientTypeComboBox.getValue())
-        .build();
- 
+        .withIngredientType(ingredientTypeComboBox.getValue()).build();
+
     try {
       shoppingItemService.edit(selectedShoppingItem, update);
       shoppingItemTableView.getSelectionModel().clearSelection();

@@ -43,9 +43,11 @@ public class StandardShoppingItemService extends ListService<ShoppingItem> {
       throw new IllegalValueException(SHOPPING_ITEM_NAME_CANNOT_BE_EMPTY);
     }
     if (findByName(shoppingItem.getName()).isPresent()) {
-      throw new AlreadyExistsException(SHOPPING_ITEM_NAME_ + shoppingItem.getName() + _ALREADY_EXISTS);
+      throw new AlreadyExistsException(
+          SHOPPING_ITEM_NAME_ + shoppingItem.getName() + _ALREADY_EXISTS);
     }
-    if (shoppingItem.getAmount() == null) shoppingItem.setAmount(0.0f);
+    if (shoppingItem.getAmount() == null)
+      shoppingItem.setAmount(0.0f);
     shoppingItem.setStandard(true);
     return save(shoppingItem);
   }
@@ -60,7 +62,8 @@ public class StandardShoppingItemService extends ListService<ShoppingItem> {
       throw new AlreadyExistsException(SHOPPING_ITEM_NAME_ + update.getName() + _ALREADY_EXISTS);
     }
 
-    if (update.getAmount() == null) update.setAmount(0.0f);
+    if (update.getAmount() == null)
+      update.setAmount(0.0f);
     update.setStandard(true);
     update.setId(shoppingItem.getId());
     return update(update);

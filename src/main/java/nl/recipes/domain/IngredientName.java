@@ -22,7 +22,7 @@ public class IngredientName {
 
   @OneToOne(fetch = FetchType.EAGER)
   private MeasureUnit measureUnit;
-  
+
   @Column(length = 50)
   private String name;
 
@@ -38,9 +38,9 @@ public class IngredientName {
   @Enumerated(EnumType.STRING)
   @Column(length = 20)
   private IngredientType ingredientType;
-  
+
   protected IngredientName() {}
-  
+
   private IngredientName(IngredientNameBuilder builder) {
     this.measureUnit = builder.measureUnit;
     this.name = builder.name;
@@ -111,8 +111,8 @@ public class IngredientName {
   public String getListLabel() {
     return name + (measureUnit == null ? "" : " (" + measureUnit.getName() + ")");
   }
-  
-  
+
+
   public static class IngredientNameBuilder {
     private MeasureUnit measureUnit;
     private String name;
@@ -120,41 +120,41 @@ public class IngredientName {
     private boolean stock;
     private ShopType shopType;
     private IngredientType ingredientType;
-    
+
     public IngredientNameBuilder withMeasureUnit(MeasureUnit measureUnit) {
       this.measureUnit = measureUnit;
       return this;
     }
-    
+
     public IngredientNameBuilder withName(String name) {
       this.name = name;
       return this;
     }
-    
+
     public IngredientNameBuilder withPluralName(String pluralName) {
       this.pluralName = pluralName;
       return this;
     }
-    
+
     public IngredientNameBuilder withStock(boolean stock) {
       this.stock = stock;
       return this;
     }
-    
+
     public IngredientNameBuilder withShopType(ShopType shopType) {
       this.shopType = shopType;
       return this;
     }
-    
+
     public IngredientNameBuilder withIngredientType(IngredientType ingredientType) {
       this.ingredientType = ingredientType;
       return this;
     }
-    
+
     public IngredientName build() {
       return new IngredientName(this);
     }
-    
+
     public IngredientName build(Long id) {
       IngredientName ingredientName = new IngredientName(this);
       ingredientName.setId(id);

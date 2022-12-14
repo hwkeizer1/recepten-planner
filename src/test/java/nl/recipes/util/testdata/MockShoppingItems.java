@@ -11,27 +11,15 @@ public class MockShoppingItems {
 
   public ObservableList<ShoppingItem> getShoppingItemList() {
     List<ShoppingItem> shoppingItemList = new ArrayList<>();
-    shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder()
-        .withAmount(750F)
-        .withName("kaas")
+    shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder().withAmount(750F).withName("kaas")
         .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
-        .withIsStandard(true)
-        .withOnList(false)
-        .build(1L));
-    shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder()
-        .withAmount(250F)
-        .withName("boter")
+        .withIsStandard(true).withOnList(false).build(1L));
+    shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder().withAmount(250F).withName("boter")
         .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("gram").build(1L))
-        .withIsStandard(false)
-        .withOnList(true)
-        .build(2L));
-    shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder()
-        .withAmount(6F)
-        .withName("eieren")
-        .withIsStandard(true)
-        .withOnList(true)
-        .build(3L));
-    
+        .withIsStandard(false).withOnList(true).build(2L));
+    shoppingItemList.add(new ShoppingItem.ShoppingItemBuilder().withAmount(6F).withName("eieren")
+        .withIsStandard(true).withOnList(true).build(3L));
+
     return FXCollections.observableList(shoppingItemList);
   }
 }

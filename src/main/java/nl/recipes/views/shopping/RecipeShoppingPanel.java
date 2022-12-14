@@ -20,7 +20,7 @@ public class RecipeShoppingPanel extends ShoppingList {
   private final PlanningService planningService;
 
   private ShoppingPanel panel;
-  
+
   public RecipeShoppingPanel(PlanningService planningService) {
     this.planningService = planningService;
   }
@@ -33,17 +33,13 @@ public class RecipeShoppingPanel extends ShoppingList {
       updateShoppingList();
     }
     if (panel == null) {
-    panel = new ShoppingPanel.ShoppingPanelBuilder()
-        .withHeader(SELECT_RECIPE_SHOPPINGS)
-        .withObservableList(observableList)
-        .withCheckBoxes(true)
-        .withToolBar()
-        .withButtons(createToolBarButtonList())
-        .build();
+      panel = new ShoppingPanel.ShoppingPanelBuilder().withHeader(SELECT_RECIPE_SHOPPINGS)
+          .withObservableList(observableList).withCheckBoxes(true).withToolBar()
+          .withButtons(createToolBarButtonList()).build();
     }
     return panel.view();
   }
-  
+
   private ObservableList<ShoppingItem> createShoppingList() {
     return FXCollections.observableList(planningService.getIngredientList().stream()
         .filter(i -> !i.getIngredientName().isStock())
@@ -55,19 +51,21 @@ public class RecipeShoppingPanel extends ShoppingList {
             .withIngredientType(i.getIngredientName().getIngredientType()).withOnList(true).build())
         .toList());
   }
-  
+
   private List<Button> createToolBarButtonList() {
     List<Button> buttons = new ArrayList<>();
-    Button button = ButtonFactory.createToolBarButton("/icons/select_all.svg", "Selecteer alle boodschappen voor recepten");
+    Button button = ButtonFactory.createToolBarButton("/icons/select_all.svg",
+        "Selecteer alle boodschappen voor recepten");
     button.setOnAction(this::selectAllRecipeItems);
     buttons.add(button);
-    
-    button = ButtonFactory.createToolBarButton("/icons/select_none.svg", "Deselecteer alle boodschappen voor recepten");
+
+    button = ButtonFactory.createToolBarButton("/icons/select_none.svg",
+        "Deselecteer alle boodschappen voor recepten");
     button.setOnAction(this::selectNoneRecipeItems);
     buttons.add(button);
     return buttons;
   }
-  
+
   private boolean nameAndMeasureUnitAreEqual(ShoppingItem a, ShoppingItem b) {
     if (a.getMeasureUnit() == null) {
       return (a.getName().equals(b.getName()) && b.getMeasureUnit() == null);
@@ -88,14 +86,14 @@ public class RecipeShoppingPanel extends ShoppingList {
     observableList = newList;
     panel.refresh(observableList);
   }
-  
+
   private void selectAllRecipeItems(ActionEvent event) {
     for (ShoppingItem shoppingItem : observableList) {
       shoppingItem.setOnList(true);
     }
     panel.refresh();
   }
-  
+
   private void selectNoneRecipeItems(ActionEvent event) {
     for (ShoppingItem shoppingItem : observableList) {
       shoppingItem.setOnList(false);

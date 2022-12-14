@@ -15,7 +15,7 @@ public class MockPlannings {
     }
     return planningList;
   }
-  
+
   public List<Planning> getPlanningListFrom2DaysAgo() {
     List<Planning> planningList = new ArrayList<>();
     for (int i = -2; i < 8; i++) {

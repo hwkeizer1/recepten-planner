@@ -14,11 +14,11 @@ public abstract class ShoppingList {
   protected Comparator<ShoppingItem> comparator;
 
   protected abstract Node view();
-  
+
   public ObservableList<ShoppingItem> getList() {
     return observableList;
   }
-  
+
   public Comparator<ShoppingItem> getComparator() {
     return comparator;
   }
@@ -26,7 +26,7 @@ public abstract class ShoppingList {
   public void setComparator(Comparator<ShoppingItem> comparator) {
     this.comparator = comparator;
   }
-  
+
   public void addListener(ListChangeListener<ShoppingItem> listener) {
     observableList.addListener(listener);
   }
@@ -34,7 +34,7 @@ public abstract class ShoppingList {
   public void removeChangeListener(ListChangeListener<ShoppingItem> listener) {
     observableList.removeListener(listener);
   }
-  
+
   ShoppingItem save(ShoppingItem item) {
     observableList.add(item);
     if (comparator != null) {
@@ -42,7 +42,7 @@ public abstract class ShoppingList {
     }
     return item;
   }
-  
+
   ShoppingItem update(ShoppingItem oldItem, ShoppingItem newItem) {
     observableList.set(observableList.lastIndexOf(oldItem), newItem);
     if (comparator != null) {
@@ -50,7 +50,7 @@ public abstract class ShoppingList {
     }
     return newItem;
   }
-  
+
   void delete(ShoppingItem item) {
     observableList.remove(item);
   }

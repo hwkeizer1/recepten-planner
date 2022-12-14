@@ -13,15 +13,15 @@ public class ListService<T> {
   protected JpaRepository<T, Long> repository;
   protected ObservableList<T> observableList;
   protected Comparator<T> comparator;
-  
+
   public ObservableList<T> getList() {
     return FXCollections.unmodifiableObservableList(observableList);
   }
-  
+
   public List<T> getBackupList() {
     return Collections.unmodifiableList(repository.findAll());
   }
-  
+
   public void addListener(ListChangeListener<T> listener) {
     observableList.addListener(listener);
   }
@@ -29,21 +29,21 @@ public class ListService<T> {
   public void removeChangeListener(ListChangeListener<T> listener) {
     observableList.removeListener(listener);
   }
-  
+
   T save(T o) {
     T createdObject = repository.save(o);
     observableList.add(createdObject);
     FXCollections.sort(observableList, comparator);
     return createdObject;
   }
-  
+
   T update(T o) {
     T update = repository.save(o);
     observableList.set(observableList.lastIndexOf(o), update);
     FXCollections.sort(observableList, comparator);
     return update;
   }
-  
+
   void delete(T o) {
     repository.delete(o);
     observableList.remove(o);

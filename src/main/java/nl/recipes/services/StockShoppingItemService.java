@@ -21,7 +21,8 @@ import nl.recipes.repositories.ShoppingItemRepository;
 
 @Slf4j
 @Service
-public class StockShoppingItemService extends ListService<ShoppingItem> implements ListChangeListener<IngredientName> {
+public class StockShoppingItemService extends ListService<ShoppingItem>
+    implements ListChangeListener<IngredientName> {
 
   private final IngredientNameService ingredientNameService;
 
@@ -29,15 +30,15 @@ public class StockShoppingItemService extends ListService<ShoppingItem> implemen
       IngredientNameService ingredientNameService) {
     this.ingredientNameService = ingredientNameService;
     repository = shoppingItemRepository;
-    
+
     this.ingredientNameService.addListener(this);
-    
+
     Sort sort = Sort.by("name").ascending();
     observableList = FXCollections.observableList(repository.findAll(sort).stream()
-            .filter(s -> !s.isStandard()).collect(Collectors.toList()));
-    comparator = (t1, t2)-> t1.getName().compareTo(t2.getName());
+        .filter(s -> !s.isStandard()).collect(Collectors.toList()));
+    comparator = (t1, t2) -> t1.getName().compareTo(t2.getName());
   }
-  
+
   public Optional<ShoppingItem> findByName(String name) {
     return observableList.stream().filter(shoppingItem -> name.equals(shoppingItem.getName()))
         .findAny();
@@ -47,52 +48,51 @@ public class StockShoppingItemService extends ListService<ShoppingItem> implemen
     return observableList.stream().filter(shoppingItem -> id.equals(shoppingItem.getId()))
         .findAny();
   }
-  
+
   protected ShoppingItem create(IngredientName ingredientName) throws AlreadyExistsException {
     if (findByName(ingredientName.getName()).isPresent()) {
       throw new AlreadyExistsException(
           SHOPPING_ITEM_NAME_ + ingredientName.getName() + _ALREADY_EXISTS);
     }
     ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
-        .withName(ingredientName.getName())
-        .withPluralName(ingredientName.getPluralName())
+        .withName(ingredientName.getName()).withPluralName(ingredientName.getPluralName())
         .withIngredientType(ingredientName.getIngredientType())
-        .withShopType(ingredientName.getShopType())
-        .withIsStandard(false)
-        .build();
-    
+        .withShopType(ingredientName.getShopType()).withIsStandard(false).build();
+
     return save(shoppingItem);
   }
-  
-  protected ShoppingItem create(ShoppingItem shoppingItem) throws AlreadyExistsException, IllegalValueException {
+
+  protected ShoppingItem create(ShoppingItem shoppingItem)
+      throws AlreadyExistsException, IllegalValueException {
     if (shoppingItem == null || shoppingItem.getName() == null) {
       throw new IllegalValueException(SHOPPING_ITEM_NAME_CANNOT_BE_EMPTY);
     }
     if (findByName(shoppingItem.getName()).isPresent()) {
       throw new AlreadyExistsException(
-          SHOPPING_ITEM_NAME_+ shoppingItem.getName() + _ALREADY_EXISTS);
+          SHOPPING_ITEM_NAME_ + shoppingItem.getName() + _ALREADY_EXISTS);
     }
-    
-    if (shoppingItem.getAmount() == null) shoppingItem.setAmount(0.0f);
+
+    if (shoppingItem.getAmount() == null)
+      shoppingItem.setAmount(0.0f);
     return save(shoppingItem);
   }
-  
+
   public ShoppingItem edit(ShoppingItem shoppingItem) {
     if (!findById(shoppingItem.getId()).isPresent()) {
       throw new NotFoundException(SHOPPING_ITEM_NAME_ + shoppingItem.getName() + _NOT_FOUND);
     }
     shoppingItem.setOnList(false);
-    if (shoppingItem.getAmount() == null) shoppingItem.setAmount(0.0f);
+    if (shoppingItem.getAmount() == null)
+      shoppingItem.setAmount(0.0f);
     return update(shoppingItem);
   }
-  
+
   protected void removeByName(String name) throws NotFoundException {
     if (findByName(name).isPresent()) {
       delete(findByName(name).get());
-      
+
     } else {
-      throw new NotFoundException(
-          SHOPPING_ITEM_NAME_ + name + _NOT_FOUND);
+      throw new NotFoundException(SHOPPING_ITEM_NAME_ + name + _NOT_FOUND);
     }
   }
 
@@ -126,7 +126,7 @@ public class StockShoppingItemService extends ListService<ShoppingItem> implemen
           }
           return;
         }
-        
+
         for (IngredientName added : c.getAddedSubList()) {
           if (added.isStock()) {
             try {
@@ -161,7 +161,7 @@ public class StockShoppingItemService extends ListService<ShoppingItem> implemen
       }
     }
   }
-  
+
   /**
    * Setter for JUnit testing only!
    * 

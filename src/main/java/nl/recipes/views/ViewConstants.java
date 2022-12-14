@@ -1,7 +1,7 @@
 package nl.recipes.views;
 
 public final class ViewConstants {
-  
+
   // Styling constants
   public static final String CSS_BACKGROUND = "background";
   public static final String CSS_BASIC_TABLE = "rp-table";

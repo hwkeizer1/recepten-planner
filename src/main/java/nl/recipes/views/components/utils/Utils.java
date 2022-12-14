@@ -26,13 +26,12 @@ public class Utils {
       return value;
     }
   }
-  
-  public static String format(float d)
-  {
-      if(d == (long) d)
-          return String.format("%d",(long)d);
-      else
-          return String.format("%s",d);
+
+  public static String format(float d) {
+    if (d == (long) d)
+      return String.format("%d", (long) d);
+    else
+      return String.format("%s", d);
   }
 
 }

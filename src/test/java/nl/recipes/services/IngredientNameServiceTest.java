@@ -50,17 +50,13 @@ class IngredientNameServiceTest {
 
   @Test
   void testFindByName_HappyPath() {
-    Optional<IngredientName> expectedIngredientName = Optional.of(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("prei")
-        .withPluralName("preien")
-        .withStock(false)
-        .withShopType(ShopType.DEKA)
-        .withIngredientType(IngredientType.GROENTE)
-        .build(3L));
+    Optional<IngredientName> expectedIngredientName =
+        Optional.of(new IngredientName.IngredientNameBuilder().withMeasureUnit(null)
+            .withName("prei").withPluralName("preien").withStock(false).withShopType(ShopType.DEKA)
+            .withIngredientType(IngredientType.GROENTE).build(3L));
 
     when(ingredientNameRepository.findByName("prei")).thenReturn(expectedIngredientName);
-    
+
     assertEquals(expectedIngredientName, ingredientNameService.findByName("prei"));
   }
 
@@ -73,17 +69,13 @@ class IngredientNameServiceTest {
 
   @Test
   void testFindById_HappyPath() {
-    Optional<IngredientName> expectedIngredientName = Optional.of(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("prei")
-        .withPluralName("preien")
-        .withStock(false)
-        .withShopType(ShopType.DEKA)
-        .withIngredientType(IngredientType.GROENTE)
-        .build(3L));
+    Optional<IngredientName> expectedIngredientName =
+        Optional.of(new IngredientName.IngredientNameBuilder().withMeasureUnit(null)
+            .withName("prei").withPluralName("preien").withStock(false).withShopType(ShopType.DEKA)
+            .withIngredientType(IngredientType.GROENTE).build(3L));
 
     when(ingredientNameRepository.findById(3L)).thenReturn(expectedIngredientName);
-    
+
     assertEquals(expectedIngredientName, ingredientNameService.findById(3L));
   }
 
@@ -97,60 +89,42 @@ class IngredientNameServiceTest {
   @Test
   void testCreate_HappyPath() throws Exception {
     IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
-        .withName(NEW_INGREDIENTNAME)
-        .withPluralName(NEW_INGREDIENTNAMES)
-        .withStock(true)
-        .withShopType(ShopType.MARKT)
-        .withIngredientType(IngredientType.OVERIG)
-        .build();
+        .withName(NEW_INGREDIENTNAME).withPluralName(NEW_INGREDIENTNAMES).withStock(true)
+        .withShopType(ShopType.MARKT).withIngredientType(IngredientType.OVERIG).build();
 
-    IngredientName savedIngredientName = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName(NEW_INGREDIENTNAME)
-        .withPluralName(NEW_INGREDIENTNAMES)
-        .withStock(true)
-        .withShopType(ShopType.MARKT)
-        .withIngredientType(IngredientType.OVERIG)
-        .build(5L);
-        
+    IngredientName savedIngredientName =
+        new IngredientName.IngredientNameBuilder().withMeasureUnit(null)
+            .withName(NEW_INGREDIENTNAME).withPluralName(NEW_INGREDIENTNAMES).withStock(true)
+            .withShopType(ShopType.MARKT).withIngredientType(IngredientType.OVERIG).build(5L);
+
     when(ingredientNameRepository.save(ingredientName)).thenReturn(savedIngredientName);
 
     assertEquals(savedIngredientName, ingredientNameService.create(ingredientName));
     assertEquals(5, ingredientNameService.getList().size());
-    assertEquals(savedIngredientName,
-        ingredientNameService.getList().get(1));
+    assertEquals(savedIngredientName, ingredientNameService.getList().get(1));
   }
-  
+
   @Test
   void testCreate_HappyPath_SameNameDifferentMeasureUnit() throws Exception {
     IngredientName ingredientName = new IngredientName.IngredientNameBuilder()
-        .withName("mozzarella")
-        .withPluralName("mozzarella")
-        .withStock(true)
-        .withShopType(ShopType.DEKA)
-        .withIngredientType(IngredientType.ZUIVEL)
-        .build();
+        .withName("mozzarella").withPluralName("mozzarella").withStock(true)
+        .withShopType(ShopType.DEKA).withIngredientType(IngredientType.ZUIVEL).build();
 
     IngredientName savedIngredientName = new IngredientName.IngredientNameBuilder()
-        .withName("mozzarella")
-        .withPluralName("mozzarella")
-        .withMeasureUnit(null)
-        .withStock(true)
-        .withShopType(ShopType.DEKA)
-        .withIngredientType(IngredientType.ZUIVEL)
-        .build(5L);
-        
+        .withName("mozzarella").withPluralName("mozzarella").withMeasureUnit(null).withStock(true)
+        .withShopType(ShopType.DEKA).withIngredientType(IngredientType.ZUIVEL).build(5L);
+
     when(ingredientNameRepository.save(ingredientName)).thenReturn(savedIngredientName);
 
     assertEquals(savedIngredientName, ingredientNameService.create(ingredientName));
     assertEquals(5, ingredientNameService.getList().size());
-    assertEquals(savedIngredientName,
-        ingredientNameService.getList().get(1));
+    assertEquals(savedIngredientName, ingredientNameService.getList().get(1));
   }
 
   @Test
   void testCreate_AlreadyExistsException() throws Exception {
-    IngredientName ingredientName = new IngredientName.IngredientNameBuilder().withName("water").build();
+    IngredientName ingredientName =
+        new IngredientName.IngredientNameBuilder().withName("water").build();
 
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       ingredientNameService.create(ingredientName);
@@ -175,30 +149,20 @@ class IngredientNameServiceTest {
   @Test
   void testUpdate_HappyPath() throws Exception {
     IngredientName originalIngredientName = mockIngredientNames.getIngredientNameList().get(1);
-    IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("wortel")
-        .withPluralName("wortels")
-        .withStock(false)
-        .withShopType(ShopType.EKO)
-        .withIngredientType(IngredientType.GROENTE)
-        .build();
+    IngredientName update = new IngredientName.IngredientNameBuilder().withMeasureUnit(null)
+        .withName("wortel").withPluralName("wortels").withStock(false).withShopType(ShopType.EKO)
+        .withIngredientType(IngredientType.GROENTE).build();
 
     IngredientName expectedIngredientName = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("wortel")
-        .withPluralName("wortels")
-        .withStock(false)
-        .withShopType(ShopType.EKO)
-        .withIngredientType(IngredientType.GROENTE)
-        .build(2L);
+        .withMeasureUnit(null).withName("wortel").withPluralName("wortels").withStock(false)
+        .withShopType(ShopType.EKO).withIngredientType(IngredientType.GROENTE).build(2L);
 
     when(ingredientNameRepository.save(expectedIngredientName)).thenReturn(expectedIngredientName);
 
     assertEquals(expectedIngredientName,
         ingredientNameService.update(originalIngredientName, update));
   }
-  
+
   @Test
   void testUpdate_HappyPathOnlyUpdateMeasureUnit() throws Exception {
     when(ingredientNameRepository.findByName("ui")).thenReturn(Optional.of(mockIngredientNames.getIngredientNameList().get(1)));
@@ -230,7 +194,7 @@ class IngredientNameServiceTest {
     assertEquals(4, ingredientNameService.getList().size());
     assertEquals(expectedIngredientName, ingredientNameService.getList().get(2));
   }
-  
+
   @Test
   void testUpdate_HappyPathOnlyUpdateStock() throws Exception {
     when(ingredientNameRepository.findByName("ui")).thenReturn(Optional.of(mockIngredientNames.getIngredientNameList().get(1)));
@@ -264,18 +228,11 @@ class IngredientNameServiceTest {
   @Test
   void testUpdate_NotFoundException() throws Exception {
     IngredientName originalIngredientName = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("onbekend")
-        .withPluralName("onbekenden")
-        .withStock(true)
-        .withShopType(ShopType.DEKA)
-        .withIngredientType(IngredientType.GROENTE)
-        .build(3000L);
+        .withMeasureUnit(null).withName("onbekend").withPluralName("onbekenden").withStock(true)
+        .withShopType(ShopType.DEKA).withIngredientType(IngredientType.GROENTE).build(3000L);
 
-    IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withName("bekend")
-        .withPluralName("bekenden")
-        .build();
+    IngredientName update = new IngredientName.IngredientNameBuilder().withName("bekend")
+        .withPluralName("bekenden").build();
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       ingredientNameService.update(originalIngredientName, update);
@@ -288,21 +245,15 @@ class IngredientNameServiceTest {
   @Test
   void testUpdate_AlreadyExistsException() throws Exception {
     IngredientName originalIngredientName = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("water")
-        .withPluralName("water")
-        .withStock(true)
-        .withShopType(null)
-        .withIngredientType(IngredientType.OVERIG)
-        .build(1L);
+        .withMeasureUnit(null).withName("water").withPluralName("water").withStock(true)
+        .withShopType(null).withIngredientType(IngredientType.OVERIG).build(1L);
 
-    IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withName("prei")
-        .withPluralName("preien")
-        .build();
+    IngredientName update = new IngredientName.IngredientNameBuilder().withName("prei")
+        .withPluralName("preien").build();
 
-    when (ingredientNameRepository.findById(1L)).thenReturn(Optional.of(ingredientNameService.getList().get(0)));
-    
+    when(ingredientNameRepository.findById(1L))
+        .thenReturn(Optional.of(ingredientNameService.getList().get(0)));
+
     AlreadyExistsException exception = Assertions.assertThrows(AlreadyExistsException.class, () -> {
       ingredientNameService.update(originalIngredientName, update);
     });
@@ -329,13 +280,8 @@ class IngredientNameServiceTest {
   @Test
   void testRemove_NotFound() throws Exception {
     IngredientName originalIngredientName = new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("onbekend")
-        .withPluralName("onbekenden")
-        .withStock(true)
-        .withShopType(null)
-        .withIngredientType(IngredientType.OVERIG)
-        .build(3000L);
+        .withMeasureUnit(null).withName("onbekend").withPluralName("onbekenden").withStock(true)
+        .withShopType(null).withIngredientType(IngredientType.OVERIG).build(3000L);
 
     NotFoundException exception = Assertions.assertThrows(NotFoundException.class, () -> {
       ingredientNameService.remove(originalIngredientName);
@@ -347,53 +293,35 @@ class IngredientNameServiceTest {
 
   @Test
   void testIngredientNameExists() {
-    
-    assertEquals(true, ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("water")
-        .withPluralName("water")
-        .withStock(true)
-        .withShopType(null)
-        .withIngredientType(IngredientType.OVERIG)
-        .build(1L)));
-    
-    assertEquals(true, ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("water")
-        .withPluralName("wateren")
-        .withStock(false)
-        .withShopType(ShopType.EKO)
-        .withIngredientType(IngredientType.ZUIVEL)
-        .build(1000L)));
-    
-    assertEquals(false, ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("liter").build(1L))
-        .withName("water")
-        .withPluralName("water")
-        .withStock(true)
-        .withShopType(null)
-        .withIngredientType(IngredientType.OVERIG)
-        .build(1L)));
-    
-    assertEquals(false, ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("wwater")
-        .withPluralName("water")
-        .withStock(true)
-        .withShopType(null)
-        .withIngredientType(IngredientType.OVERIG)
-        .build(1L)));
-    
-    assertEquals(false, ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
-        .withMeasureUnit(null)
-        .withName("mozzarella")
-        .withPluralName("mozzarella")
-        .withStock(true)
-        .withShopType(null)
-        .withIngredientType(IngredientType.OVERIG)
-        .build(1L)));
+
+    assertEquals(true,
+        ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
+            .withMeasureUnit(null).withName("water").withPluralName("water").withStock(true)
+            .withShopType(null).withIngredientType(IngredientType.OVERIG).build(1L)));
+
+    assertEquals(true,
+        ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
+            .withMeasureUnit(null).withName("water").withPluralName("wateren").withStock(false)
+            .withShopType(ShopType.EKO).withIngredientType(IngredientType.ZUIVEL).build(1000L)));
+
+    assertEquals(false,
+        ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
+            .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("liter").build(1L))
+            .withName("water").withPluralName("water").withStock(true).withShopType(null)
+            .withIngredientType(IngredientType.OVERIG).build(1L)));
+
+    assertEquals(false,
+        ingredientNameService.ingredientNameExists(new IngredientName.IngredientNameBuilder()
+            .withMeasureUnit(null).withName("wwater").withPluralName("water").withStock(true)
+            .withShopType(null).withIngredientType(IngredientType.OVERIG).build(1L)));
+
+    assertEquals(false,
+        ingredientNameService
+            .ingredientNameExists(new IngredientName.IngredientNameBuilder().withMeasureUnit(null)
+                .withName("mozzarella").withPluralName("mozzarella").withStock(true)
+                .withShopType(null).withIngredientType(IngredientType.OVERIG).build(1L)));
   }
-  
+
   @Test
   void testFindAllStockItems() {
     List<IngredientName> list = ingredientNameService.findAllStockItems();

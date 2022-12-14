@@ -22,9 +22,9 @@ public class TagService extends ListService<Tag> {
     repository = tagRepository;
     Sort sort = Sort.by("name").ascending();
     observableList = FXCollections.observableList(repository.findAll(sort));
-    comparator = (t1, t2)-> t1.getName().compareTo(t2.getName());
+    comparator = (t1, t2) -> t1.getName().compareTo(t2.getName());
   }
-  
+
   public Optional<Tag> findByName(String name) {
     return observableList.stream().filter(tag -> name.equals(tag.getName())).findAny();
   }
@@ -32,7 +32,7 @@ public class TagService extends ListService<Tag> {
   public Optional<Tag> findById(Long id) {
     return observableList.stream().filter(tag -> id.equals(tag.getId())).findAny();
   }
-  
+
   public Tag create(Tag tag) throws AlreadyExistsException, IllegalValueException {
     if (tag == null || tag.getName().isEmpty()) {
       throw new IllegalValueException(TAG_NAME_CANNOT_BE_EMPTY);
@@ -50,7 +50,7 @@ public class TagService extends ListService<Tag> {
     if (findByName(name).isPresent()) {
       throw new AlreadyExistsException(TAG_ + name + _ALREADY_EXISTS);
     }
-    
+
     tag.setName(name);
     return update(tag);
   }
@@ -61,9 +61,10 @@ public class TagService extends ListService<Tag> {
     }
     delete(tag);
   }
-  
+
   /**
    * Setter for JUnit testing only!
+   * 
    * @param observableList
    */
   void setObservableList(ObservableList<Tag> observableList) {

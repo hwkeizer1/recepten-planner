@@ -51,7 +51,8 @@ public class TagEditPanel {
     VBox tagEditPanel = new VBox();
     tagEditPanel.setPadding(new Insets(20));
     tagEditPanel.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
-    tagEditPanel.getChildren().addAll(createHeader(), createTableBox(), createForm(), createButtonBar());
+    tagEditPanel.getChildren().addAll(createHeader(), createTableBox(), createForm(),
+        createButtonBar());
     return tagEditPanel;
   }
 
@@ -59,7 +60,7 @@ public class TagEditPanel {
     tagTableView = new TableView<>();
     nameTextField = new TextField();
     nameError = new Label();
-    
+
     modifiedProperty = new SimpleBooleanProperty(false);
   }
 
@@ -76,24 +77,25 @@ public class TagEditPanel {
     tagTableView.setItems(tagService.getList());
     tagTableView.setMinHeight(200); // prevent table from collapsing
     tagTableView.getSelectionModel().clearSelection();
-    
-    tagTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      selectedTag = newValue;
-      modifiedProperty.set(false);
-      if (newValue != null) {
-        nameTextField.setText(selectedTag.getName());
-        nameError.setText("");
-      } else {
-        nameTextField.setText("");
-      }
-    });
-    
+
+    tagTableView.getSelectionModel().selectedItemProperty()
+        .addListener((observable, oldValue, newValue) -> {
+          selectedTag = newValue;
+          modifiedProperty.set(false);
+          if (newValue != null) {
+            nameTextField.setText(selectedTag.getName());
+            nameError.setText("");
+          } else {
+            nameTextField.setText("");
+          }
+        });
+
     TableColumn<Tag, String> nameColumn = new TableColumn<>(TAG);
     nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
     nameColumn.prefWidthProperty().bind(tagTableView.widthProperty());
 
     tagTableView.getColumns().add(nameColumn);
-    
+
     tagTableView.setRowFactory(callback -> {
       final TableRow<Tag> row = new TableRow<>();
       row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
@@ -106,7 +108,7 @@ public class TagEditPanel {
       });
       return row;
     });
-    
+
     tableBox.getChildren().add(tagTableView);
     return tableBox;
   }
@@ -115,7 +117,7 @@ public class TagEditPanel {
     GridPane form = new GridPane();
     form.setPadding(new Insets(20, 0, 0, 0));
     form.setHgap(20);
-//    form.setVgap(15); // No validation fields
+    // form.setVgap(15); // No validation fields
 
     ColumnConstraints column1 = new ColumnConstraints();
     column1.setPercentWidth(35);
@@ -125,7 +127,7 @@ public class TagEditPanel {
 
     form.getColumnConstraints().addAll(column1, column2);
 
-    form.add(new Label(TAG+COLON), 0, 0);
+    form.add(new Label(TAG + COLON), 0, 0);
     form.add(nameTextField, 1, 0);
     form.add(nameError, 1, 1);
 
@@ -134,20 +136,22 @@ public class TagEditPanel {
 
     return form;
   }
-  
+
   private ButtonBar createButtonBar() {
     Button removeButton = new Button(REMOVE);
     Button updateButton = new Button(UPDATE);
     Button createButton = new Button(CREATE);
 
-    removeButton.disableProperty().bind(tagTableView.getSelectionModel().selectedItemProperty().isNull());
+    removeButton.disableProperty()
+        .bind(tagTableView.getSelectionModel().selectedItemProperty().isNull());
     removeButton.setOnAction(this::removeTag);
 
-    updateButton.disableProperty().bind(tagTableView.getSelectionModel().selectedItemProperty().isNull()
-        .or(modifiedProperty.not()).or(nameTextField.textProperty().isEmpty()));
+    updateButton.disableProperty().bind(tagTableView.getSelectionModel().selectedItemProperty()
+        .isNull().or(modifiedProperty.not()).or(nameTextField.textProperty().isEmpty()));
     updateButton.setOnAction(this::updateTag);
 
-    createButton.disableProperty().bind(tagTableView.getSelectionModel().selectedItemProperty().isNotNull());
+    createButton.disableProperty()
+        .bind(tagTableView.getSelectionModel().selectedItemProperty().isNotNull());
     createButton.setOnAction(this::createTag);
 
     ButtonBar buttonBar = new ButtonBar();

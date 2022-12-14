@@ -106,7 +106,7 @@ public class SettingsDialog {
     backupsToKeepTextField.setMaxWidth(50);
     backupsToKeepTextField.setText(configService.getConfigProperty(BACKUPS_TO_KEEP));
     inputForm.add(backupsToKeepTextField, 1, 1);
-    
+
     Label googleSpreadsheetIdLabel = new Label("Google spreadsheet id:");
     inputForm.add(googleSpreadsheetIdLabel, 0, 2);
     googleSpreadsheetIdField.setText(configService.getConfigProperty(GOOGLE_SPREADSHEET_ID));
@@ -116,12 +116,12 @@ public class SettingsDialog {
     inputForm.add(shoppingSheetIdLabel, 0, 3);
     shoppingSheetIdField.setText(configService.getConfigProperty(SHOPPING_SHEET_ID));
     inputForm.add(shoppingSheetIdField, 1, 3);
-    
+
     Label templateSheetIdLabel = new Label("Template sheet id:");
     inputForm.add(templateSheetIdLabel, 0, 4);
     templateSheetIdField.setText(configService.getConfigProperty(TEMPLATE_SHEET_ID));
     inputForm.add(templateSheetIdField, 1, 4);
-    
+
     GridPane.setHgrow(backupFolderLabel, Priority.ALWAYS);
     GridPane.setHgrow(backupFolderTextField, Priority.ALWAYS);
 

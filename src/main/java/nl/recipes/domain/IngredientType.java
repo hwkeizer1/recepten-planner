@@ -6,7 +6,7 @@ package nl.recipes.domain;
  */
 public enum IngredientType {
 
-  GROENTE("Groente"), ZUIVEL("Zuivel en vlees"), OVERIG("Overig") ;
+  GROENTE("Groente"), ZUIVEL("Zuivel en vlees"), OVERIG("Overig");
 
   private String displayName;
 

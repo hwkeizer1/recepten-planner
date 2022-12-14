@@ -45,8 +45,7 @@ public class AddItemDialog {
                 (amountTextField.getText() == null || amountTextField.getText().isEmpty()) ? 0.0f
                     : Float.valueOf(amountTextField.getText()))
             .withMeasureUnit(measureUnitComboBox.getValue()).withName(nameField.getText())
-            .withOnList(true)
-            .withShopType(shopTypeComboBox.getValue())
+            .withOnList(true).withShopType(shopTypeComboBox.getValue())
             .withIngredientType(ingredientTypeComboBox.getValue()).build();
       }
       return null;

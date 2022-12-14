@@ -25,17 +25,17 @@ public class RecipeService extends ListService<Recipe> {
     repository = recipeRepository;
     Sort sort = Sort.by("name").ascending();
     observableList = FXCollections.observableList(repository.findAll(sort));
-    comparator = (t1, t2)-> t1.getName().compareTo(t2.getName());
+    comparator = (t1, t2) -> t1.getName().compareTo(t2.getName());
   }
 
-	public Optional<Recipe> findByName(String name) {
-		return observableList.stream().filter(tag -> name.equals(tag.getName())).findAny();
-	}
+  public Optional<Recipe> findByName(String name) {
+    return observableList.stream().filter(tag -> name.equals(tag.getName())).findAny();
+  }
 
-	public Optional<Recipe> findById(Long id) {
-		return observableList.stream().filter(tag -> id.equals(tag.getId())).findAny();
-	}
-	  
+  public Optional<Recipe> findById(Long id) {
+    return observableList.stream().filter(tag -> id.equals(tag.getId())).findAny();
+  }
+
   public ObservableList<Ingredient> getReadonlyIngredientList(Long recipeId) {
     return getAllIngredients(recipeId, true);
   }
@@ -75,11 +75,11 @@ public class RecipeService extends ListService<Recipe> {
     if (!recipe.getName().equals(update.getName()) && findByName(update.getName()).isPresent()) {
       throw new AlreadyExistsException(RECIPE_ + update.getName() + _ALREADY_EXISTS);
     }
-    
+
     // Always update the none-editable fields
     update.setTimesServed(recipe.getTimesServed());
     update.setLastServed(recipe.getLastServed());
-    
+
     update.setId(recipe.getId());
     return update(update);
   }
@@ -88,7 +88,7 @@ public class RecipeService extends ListService<Recipe> {
     if (!findById(recipe.getId()).isPresent()) {
       throw new NotFoundException(RECIPE_ + recipe.getName() + _NOT_FOUND);
     }
-    
+
     delete(recipe);
   }
 
@@ -102,7 +102,6 @@ public class RecipeService extends ListService<Recipe> {
 
   // Setter for JUnit testing only
   void setObservableRecipeList(ObservableList<Recipe> observableList) {
-	  this.observableList = observableList;
+    this.observableList = observableList;
   }
-}
-;
+};

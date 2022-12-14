@@ -52,26 +52,27 @@ public class MeasureUnitEditPanel {
     VBox measureUnitEditPanel = new VBox();
     measureUnitEditPanel.setPadding(new Insets(20));
     measureUnitEditPanel.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
-    measureUnitEditPanel.getChildren().addAll(createHeader(), createTableBox(), createForm(), createButtonBar());
+    measureUnitEditPanel.getChildren().addAll(createHeader(), createTableBox(), createForm(),
+        createButtonBar());
     return measureUnitEditPanel;
   }
-  
+
   private void initComponents() {
     measureUnitTableView = new TableView<>();
-    
+
     nameTextField = new TextField();
     nameError = new Label();
     pluralNameTextField = new TextField();
-    
+
     modifiedProperty = new SimpleBooleanProperty(false);
   }
-  
+
   private Label createHeader() {
     Label title = new Label(EDIT_MEASURE_UNITS);
     title.getStyleClass().add(CSS_TITLE);
     return title;
   }
-  
+
   private VBox createTableBox() {
     VBox tableBox = new VBox();
 
@@ -79,25 +80,27 @@ public class MeasureUnitEditPanel {
     measureUnitTableView.setItems(measureUnitService.getList());
     measureUnitTableView.setMinHeight(200); // prevent table from collapsing
     measureUnitTableView.getSelectionModel().clearSelection();
-    
-    measureUnitTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      selectedMeasureUnit = newValue;
-      modifiedProperty.set(false);
-      if (newValue != null) {
-        nameTextField.setText(selectedMeasureUnit.getName());
-        nameError.setText("");
-        pluralNameTextField.setText(selectedMeasureUnit.getPluralName());
-      } else {
-        nameTextField.setText(null);
-        pluralNameTextField.setText(null);
-      }
-    });
+
+    measureUnitTableView.getSelectionModel().selectedItemProperty()
+        .addListener((observable, oldValue, newValue) -> {
+          selectedMeasureUnit = newValue;
+          modifiedProperty.set(false);
+          if (newValue != null) {
+            nameTextField.setText(selectedMeasureUnit.getName());
+            nameError.setText("");
+            pluralNameTextField.setText(selectedMeasureUnit.getPluralName());
+          } else {
+            nameTextField.setText(null);
+            pluralNameTextField.setText(null);
+          }
+        });
 
     TableColumn<MeasureUnit, String> nameColumn = new TableColumn<>(MEASURE_UNIT);
     nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
 
     TableColumn<MeasureUnit, String> pluralNameColumn = new TableColumn<>(PLURAL_NAME);
-    pluralNameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
+    pluralNameColumn
+        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getPluralName()));
 
 
     nameColumn.prefWidthProperty().bind(measureUnitTableView.widthProperty().multiply(0.5));
@@ -105,7 +108,7 @@ public class MeasureUnitEditPanel {
 
     measureUnitTableView.getColumns().add(nameColumn);
     measureUnitTableView.getColumns().add(pluralNameColumn);
-    
+
     measureUnitTableView.setRowFactory(callback -> {
       final TableRow<MeasureUnit> row = new TableRow<>();
       row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
@@ -136,38 +139,41 @@ public class MeasureUnitEditPanel {
 
     form.getColumnConstraints().addAll(column0, column1);
 
-    form.add(new Label(MEASURE_UNIT+COLON), 0, 0);
+    form.add(new Label(MEASURE_UNIT + COLON), 0, 0);
     form.add(nameTextField, 1, 0);
     form.add(nameError, 1, 1);
     nameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
     nameError.getStyleClass().add(CSS_VALIDATION);
 
-    form.add(new Label(PLURAL_NAME+COLON), 0, 2);
+    form.add(new Label(PLURAL_NAME + COLON), 0, 2);
     form.add(pluralNameTextField, 1, 2);
     pluralNameTextField.setOnKeyReleased(this::handleKeyReleasedAction);
 
     return form;
   }
-  
+
   private ButtonBar createButtonBar() {
     Button removeButton = new Button(REMOVE);
     Button updateButton = new Button(UPDATE);
     Button createButton = new Button(CREATE);
-    
-    removeButton.disableProperty().bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNull());
+
+    removeButton.disableProperty()
+        .bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNull());
     removeButton.setOnAction(this::removeMeasureUnit);
 
-    updateButton.disableProperty().bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNull()
-        .or(modifiedProperty.not()).or(nameTextField.textProperty().isEmpty()));
+    updateButton.disableProperty()
+        .bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNull()
+            .or(modifiedProperty.not()).or(nameTextField.textProperty().isEmpty()));
     updateButton.setOnAction(this::updateMeasureUnit);
 
-    createButton.disableProperty().bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNotNull());
+    createButton.disableProperty()
+        .bind(measureUnitTableView.getSelectionModel().selectedItemProperty().isNotNull());
     createButton.setOnAction(this::createMeasureUnit);
 
 
     ButtonBar buttonBar = new ButtonBar();
     buttonBar.setPadding(new Insets(15, 0, 0, 0));
-    buttonBar.getButtons().addAll(removeButton,updateButton, createButton);
+    buttonBar.getButtons().addAll(removeButton, updateButton, createButton);
 
     return buttonBar;
   }
@@ -178,11 +184,8 @@ public class MeasureUnitEditPanel {
   }
 
   private void createMeasureUnit(ActionEvent actionEvent) {
-    MeasureUnit measureUnit =
-        new MeasureUnit.MeasureUnitBuilder()
-        .withName(nameTextField.getText())
-        .withPluralName(pluralNameTextField.getText())
-        .build();
+    MeasureUnit measureUnit = new MeasureUnit.MeasureUnitBuilder().withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText()).build();
     try {
       measureUnitService.create(measureUnit);
       measureUnitTableView.scrollTo(measureUnit);
@@ -194,10 +197,8 @@ public class MeasureUnitEditPanel {
   }
 
   private void updateMeasureUnit(ActionEvent actionEvent) {
-    MeasureUnit update = new MeasureUnit.MeasureUnitBuilder()
-        .withName(nameTextField.getText())
-        .withPluralName(pluralNameTextField.getText())
-        .build();
+    MeasureUnit update = new MeasureUnit.MeasureUnitBuilder().withName(nameTextField.getText())
+        .withPluralName(pluralNameTextField.getText()).build();
     try {
       measureUnitService.update(selectedMeasureUnit, update);
       measureUnitTableView.getSelectionModel().clearSelection();

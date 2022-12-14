@@ -69,8 +69,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
     ingredientNameComboBox.setConverter(new IngredientNameStringConverter());
     TextFields.bindAutoCompletion(ingredientNameComboBox.getEditor(),
         ingredientNameComboBox.getItems(), ingredientNameComboBox.getConverter());
-    ingredientNameComboBox.getItems()
-        .setAll(this.ingredientNameService.getList());
+    ingredientNameComboBox.getItems().setAll(this.ingredientNameService.getList());
 
     ingredientPanel.getChildren().addAll(getIngredientTableViewPanel(), getIngredientEditPanel());
   }
@@ -212,7 +211,7 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
     inputForm.add(amountLabel, 0, 0);
     amountTextField.setMaxWidth(80);
     inputForm.add(amountTextField, 1, 0);
-    
+
     Label ingredientNameLabel = new Label("Ingrediënt:");
     inputForm.add(ingredientNameLabel, 0, 1);
     ingredientNameComboBox.setMinWidth(250);
@@ -257,7 +256,6 @@ public class IngredientEditView implements ListChangeListener<IngredientName> {
 
   @Override
   public void onChanged(Change<? extends IngredientName> c) {
-    ingredientNameComboBox.getItems()
-        .setAll(this.ingredientNameService.getList());
+    ingredientNameComboBox.getItems().setAll(this.ingredientNameService.getList());
   }
 }

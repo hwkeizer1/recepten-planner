@@ -36,9 +36,9 @@ public class Planning implements Comparable<Planning> {
   private Integer servings;
 
   private boolean onShoppingList = true;
-  
+
   protected Planning() {}
-  
+
   private Planning(PlanningBuilder builder) {
     this.date = builder.date;
     this.recipes = builder.recipes;
@@ -104,40 +104,40 @@ public class Planning implements Comparable<Planning> {
   public int compareTo(Planning other) {
     return this.getDate().compareTo(other.getDate());
   }
-  
+
   public static class PlanningBuilder {
     private LocalDate date;
     private List<Recipe> recipes = new ArrayList<>();
     private Integer servings;
     private boolean onShoppingList = true;
-    
+
     public PlanningBuilder withDate(LocalDate date) {
       this.date = date;
       return this;
     }
-    
+
     public PlanningBuilder withRecipe(Recipe recipe) {
       if (recipe != null) {
         this.recipes.add(recipe);
       }
       return this;
     }
-    
+
     public PlanningBuilder withServings(Integer servings) {
       this.servings = servings;
       return this;
     }
-    
+
     public PlanningBuilder withOnShoppingList(boolean onShoppingList) {
       this.onShoppingList = onShoppingList;
       return this;
     }
-    
+
     public Planning build() {
       Planning planning = new Planning(this);
       return planning;
     }
-    
+
     public Planning build(Long id) {
       Planning planning = new Planning(this);
       planning.setId(id);

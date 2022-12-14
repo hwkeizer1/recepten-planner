@@ -89,12 +89,9 @@ public class ShoppingPage {
     HBox shoppingPanels = new HBox();
     shoppingPanels.setPadding(new Insets(10));
     shoppingPanels.setSpacing(10);
-    shoppingPanels.getChildren().addAll(
-    		recipeShoppingPanel.view(), 
-    		stockShoppingPanel.view(),
-    		selectStockShoppingPanel.view(), 
-    		selectStandardShoppingPanel.view(),
-    		oneTimeShoppingPanel.view());
+    shoppingPanels.getChildren().addAll(recipeShoppingPanel.view(), stockShoppingPanel.view(),
+        selectStockShoppingPanel.view(), selectStandardShoppingPanel.view(),
+        oneTimeShoppingPanel.view());
     return shoppingPanels;
   }
 
@@ -115,12 +112,11 @@ public class ShoppingPage {
         createFinalShoppingPanel("Other", createOtherShoppingList()).view());
     cloudButton.setVisible(true);
   }
-  
-  private ShoppingPanel createFinalShoppingPanel(String header, ObservableList<ShoppingItem> shoppingList) {
-    return new ShoppingPanel.ShoppingPanelBuilder()
-    .withHeader(header)
-    .withObservableList(shoppingList)
-    .build();
+
+  private ShoppingPanel createFinalShoppingPanel(String header,
+      ObservableList<ShoppingItem> shoppingList) {
+    return new ShoppingPanel.ShoppingPanelBuilder().withHeader(header)
+        .withObservableList(shoppingList).build();
   }
 
   private void createFinalShoppingList() {
@@ -166,22 +162,25 @@ public class ShoppingPage {
   }
 
   private ObservableList<ShoppingItem> createDekaShoppingList() {
-    ObservableList<ShoppingItem> list = FXCollections.observableArrayList(finalShoppingList.stream()
-        .filter(ShoppingItem::isOnList).filter(s -> s.getShopType().equals(ShopType.DEKA)).toList());
+    ObservableList<ShoppingItem> list =
+        FXCollections.observableArrayList(finalShoppingList.stream().filter(ShoppingItem::isOnList)
+            .filter(s -> s.getShopType().equals(ShopType.DEKA)).toList());
     Collections.sort(list, comparator);
     return list;
   }
 
   private ObservableList<ShoppingItem> createMarktShoppingList() {
-    ObservableList<ShoppingItem> list = FXCollections.observableArrayList(finalShoppingList.stream()
-        .filter(ShoppingItem::isOnList).filter(s -> s.getShopType().equals(ShopType.MARKT)).toList());
+    ObservableList<ShoppingItem> list =
+        FXCollections.observableArrayList(finalShoppingList.stream().filter(ShoppingItem::isOnList)
+            .filter(s -> s.getShopType().equals(ShopType.MARKT)).toList());
     Collections.sort(list, comparator);
     return list;
   }
 
   private ObservableList<ShoppingItem> createOtherShoppingList() {
-    ObservableList<ShoppingItem> list = FXCollections.observableArrayList(finalShoppingList.stream()
-        .filter(ShoppingItem::isOnList).filter(s -> s.getShopType().equals(ShopType.OVERIG)).toList());
+    ObservableList<ShoppingItem> list =
+        FXCollections.observableArrayList(finalShoppingList.stream().filter(ShoppingItem::isOnList)
+            .filter(s -> s.getShopType().equals(ShopType.OVERIG)).toList());
     Collections.sort(list, comparator);
     return list;
   }

@@ -20,9 +20,9 @@ public class MeasureUnit {
   private String name;
 
   private String pluralName;
-  
+
   protected MeasureUnit() {}
-  
+
   private MeasureUnit(MeasureUnitBuilder builder) {
     this.name = builder.name;
     this.pluralName = builder.pluralName;
@@ -51,26 +51,26 @@ public class MeasureUnit {
   public void setPluralName(String pluralName) {
     this.pluralName = pluralName;
   }
-  
-  public static class MeasureUnitBuilder { 
+
+  public static class MeasureUnitBuilder {
     private String name;
     private String pluralName;
-    
+
     public MeasureUnitBuilder withName(String name) {
       this.name = name;
       return this;
     }
-    
+
     public MeasureUnitBuilder withPluralName(String pluralName) {
       this.pluralName = pluralName;
       return this;
     }
-    
+
     public MeasureUnit build() {
       MeasureUnit measureUnit = new MeasureUnit(this);
       return measureUnit;
     }
-    
+
     public MeasureUnit build(Long id) {
       MeasureUnit measureUnit = new MeasureUnit(this);
       measureUnit.setId(id);

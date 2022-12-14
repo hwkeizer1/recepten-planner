@@ -48,7 +48,7 @@ import nl.recipes.views.converters.MeasureUnitStringConverter;
 
 
 @Component
-public class IngredientNameTableEditWidget implements  ListChangeListener<MeasureUnit>{
+public class IngredientNameTableEditWidget implements ListChangeListener<MeasureUnit> {
 
   private IngredientNameService ingredientNameService;
 
@@ -106,13 +106,14 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
       MeasureUnitService measureUnitService) {
     this.ingredientNameService = ingredientNameService;
     this.measureUnitService = measureUnitService;
-    
+
     this.measureUnitService.addListener(this);
-    
+
     measureUnitComboBox = new SearchableComboBox<>();
     measureUnitComboBox.setConverter(new MeasureUnitStringConverter());
-    TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(), measureUnitComboBox.getConverter());
-    
+    TextFields.bindAutoCompletion(measureUnitComboBox.getEditor(), measureUnitComboBox.getItems(),
+        measureUnitComboBox.getConverter());
+
     updateMeasureUnitComboBox();
 
     ingredientNameChangeListener = (observable, oldValue, newValue) -> {
@@ -151,7 +152,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
   public Node getIngredientNameTableEditWidget() {
     return rpWidget;
   }
-  
+
   @Override
   public void onChanged(Change<? extends MeasureUnit> c) {
     ingredientNameTableView.getSelectionModel().clearSelection();
@@ -164,7 +165,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     measureUnitsWithNull.addAll(measureUnitService.getList());
     measureUnitComboBox.setItems(measureUnitsWithNull);
   }
-  
+
   private void initializeIngredientNameTableBox() {
     ingredientNameTableView.setItems(ingredientNameService.getList());
     ingredientNameTableView.setMinHeight(200); // prevent table from collapsing
@@ -201,7 +202,7 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
     ingredientNameTableView.getColumns().add(ingredientTypeColumn);
     ingredientNameTableView.getSelectionModel().selectedItemProperty()
         .addListener(ingredientNameChangeListener);
-    
+
     ingredientNameTableView.setRowFactory(callback -> {
       final TableRow<IngredientName> row = new TableRow<>();
       row.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
@@ -328,10 +329,8 @@ public class IngredientNameTableEditWidget implements  ListChangeListener<Measur
 
   private void updateIngredientName(ActionEvent actionEvent) {
     IngredientName update = new IngredientName.IngredientNameBuilder()
-        .withName(nameTextField.getText())
-        .withPluralName(pluralNameTextField.getText())
-        .withStock(stockCheckBox.isSelected())
-        .withMeasureUnit(measureUnitComboBox.getValue())
+        .withName(nameTextField.getText()).withPluralName(pluralNameTextField.getText())
+        .withStock(stockCheckBox.isSelected()).withMeasureUnit(measureUnitComboBox.getValue())
         .withShopType(shopTypeComboBox.getValue())
         .withIngredientType(ingredientTypeComboBox.getValue()).build();
 

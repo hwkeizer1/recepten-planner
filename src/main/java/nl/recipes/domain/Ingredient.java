@@ -30,12 +30,12 @@ public class Ingredient {
 
   @OneToOne(fetch = FetchType.EAGER)
   private IngredientName ingredientName;
-  
+
   @Transient
   private boolean onList;
-  
+
   protected Ingredient() {}
-  
+
   private Ingredient(IngredientBuilder builder) {
     this.recipe = builder.recipe;
     this.amount = builder.amount;
@@ -82,37 +82,37 @@ public class Ingredient {
   public void setOnList(boolean onList) {
     this.onList = onList;
   }
-  
+
   public static class IngredientBuilder {
     private Recipe recipe;
     private Float amount;
     private IngredientName ingredientName;
     private boolean onList;
-    
+
     public IngredientBuilder withRecipe(Recipe recipe) {
       this.recipe = recipe;
       return this;
     }
-    
+
     public IngredientBuilder withAmount(Float amount) {
       this.amount = amount;
       return this;
     }
-    
+
     public IngredientBuilder withIngredientName(IngredientName ingredientName) {
       this.ingredientName = ingredientName;
       return this;
     }
-    
+
     public IngredientBuilder withOnList(boolean onList) {
       this.onList = onList;
       return this;
     }
-    
+
     public Ingredient build() {
       return new Ingredient(this);
     }
-    
+
     public Ingredient build(Long id) {
       Ingredient ingredient = new Ingredient(this);
       ingredient.setId(id);
@@ -122,8 +122,8 @@ public class Ingredient {
 
   @Override
   public String toString() {
-    return "[" + id + ", " + amount + ", " + ingredientName.getMeasureUnit()
-        + ", " + ingredientName.getName() + "]";
+    return "[" + id + ", " + amount + ", " + ingredientName.getMeasureUnit() + ", "
+        + ingredientName.getName() + "]";
   }
 
   @Override

@@ -12,7 +12,7 @@ import javafx.util.Duration;
 public class ButtonFactory {
 
   private ButtonFactory() {}
-  
+
   public static Button createToolBarButton(String iconPath, String toolTipText) {
     URL url = ButtonFactory.class.getResource(iconPath);
     SVGImage image = SVGLoader.load(url).scale(0.4d);
@@ -26,7 +26,7 @@ public class ButtonFactory {
     button.setTooltip(toolTip);
     return button;
   }
-  
+
   public static Button createLargeToolBarButton(String iconPath, String toolTipText) {
     URL url = ButtonFactory.class.getResource(iconPath);
     SVGImage image = SVGLoader.load(url).scale(0.15d);

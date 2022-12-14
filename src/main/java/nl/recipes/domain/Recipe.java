@@ -75,7 +75,7 @@ public class Recipe {
   private Integer rating;
 
   protected Recipe() {}
-  
+
   private Recipe(RecipeBuilder builder) {
     this.name = builder.name;
     this.servingTips = builder.servingTips;
@@ -131,14 +131,14 @@ public class Recipe {
   public Set<Ingredient> getIngredients() {
     return ingredients;
   }
-  
+
   public void setIngredients(Set<Ingredient> ingredients) {
     this.ingredients.clear();
     for (Ingredient ingredient : ingredients) {
       addIngredient(ingredient);
     }
   }
-  
+
   public void addIngredient(Ingredient ingredient) {
     ingredient.setRecipe(this);
     ingredients.add(ingredient);
@@ -256,7 +256,7 @@ public class Recipe {
       return "";
     }
   }
-  
+
   public static class RecipeBuilder {
     private String name;
     private String servingTips;
@@ -273,86 +273,86 @@ public class Recipe {
     private String preparations;
     private String directions;
     private Integer rating;
-    
+
     public RecipeBuilder withName(String name) {
       this.name = name;
       return this;
     }
-    
+
     public RecipeBuilder withServingTips(String servingTips) {
       this.servingTips = servingTips;
       return this;
     }
-    
+
     public RecipeBuilder withNotes(String notes) {
       this.notes = notes;
       return this;
     }
-    
+
     public RecipeBuilder withIngredients(Set<Ingredient> ingredients) {
       this.ingredients = ingredients;
       return this;
     }
-    
+
     public RecipeBuilder withImage(String image) {
       this.image = image;
       return this;
     }
-    
+
     public RecipeBuilder withRecipeType(RecipeType recipeType) {
       this.recipeType = recipeType;
       return this;
     }
-    
-    public RecipeBuilder withTags(Set<Tag>  tags) {
+
+    public RecipeBuilder withTags(Set<Tag> tags) {
       this.tags = tags;
       return this;
     }
-    
+
     public RecipeBuilder withPreparationTime(Integer preparationTime) {
       this.preparationTime = preparationTime;
       return this;
     }
-    
+
     public RecipeBuilder withCookTime(Integer cookTime) {
       this.cookTime = cookTime;
       return this;
     }
-    
+
     public RecipeBuilder withServings(Integer servings) {
       this.servings = servings;
       return this;
     }
-    
+
     public RecipeBuilder withTimesServed(Integer timesServed) {
       this.timesServed = timesServed;
       return this;
     }
-    
+
     public RecipeBuilder withLastServed(LocalDate lastServed) {
       this.lastServed = lastServed;
       return this;
     }
-    
+
     public RecipeBuilder withPreparations(String preparations) {
       this.preparations = preparations;
       return this;
     }
-    
+
     public RecipeBuilder withDirections(String directions) {
       this.directions = directions;
       return this;
     }
-    
+
     public RecipeBuilder withRating(Integer rating) {
       this.rating = rating;
       return this;
     }
-    
+
     public Recipe build() {
       return new Recipe(this);
     }
-    
+
     public Recipe build(Long id) {
       Recipe recipe = new Recipe(this);
       recipe.setId(id);

@@ -12,7 +12,7 @@ import nl.recipes.services.PlanningService;
 public class StockShoppingPanel extends ShoppingList {
 
   private final PlanningService planningService;
-  
+
   public StockShoppingPanel(PlanningService planningService) {
     this.planningService = planningService;
   }
@@ -20,14 +20,11 @@ public class StockShoppingPanel extends ShoppingList {
   @Override
   protected Node view() {
     observableList = initializeList();
-    ShoppingPanel panel = new ShoppingPanel.ShoppingPanelBuilder()
-        .withHeader(STOCK_SHOPPINGS)
-        .withObservableList(observableList)
-        .withToolBar()
-        .build();
+    ShoppingPanel panel = new ShoppingPanel.ShoppingPanelBuilder().withHeader(STOCK_SHOPPINGS)
+        .withObservableList(observableList).withToolBar().build();
     return panel.view();
   }
-  
+
   private ObservableList<ShoppingItem> initializeList() {
     return FXCollections.observableList(planningService.getIngredientList().stream()
         .filter(i -> i.getIngredientName().isStock())

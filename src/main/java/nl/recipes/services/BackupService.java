@@ -72,8 +72,7 @@ public class BackupService {
   public BackupService(TagService tagService, IngredientNameService ingredientNameService,
       MeasureUnitService measureUnitService, RecipeService recipeService,
       ConfigService configService, StandardShoppingItemService standardShoppingItemService,
-      StockShoppingItemService stockShoppingItemService
-      ) {
+      StockShoppingItemService stockShoppingItemService) {
     this.stockShoppingItemService = stockShoppingItemService;
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
@@ -396,7 +395,8 @@ public class BackupService {
 
   private String backupShoppingItems() {
     List<ShoppingItem> shoppingItemList = new ArrayList<>();
-    // standardShoppingItemService.getBackupList will return all shoppingItems including the stockShoppingItems
+    // standardShoppingItemService.getBackupList will return all shoppingItems including the
+    // stockShoppingItems
     shoppingItemList.addAll(standardShoppingItemService.getBackupList());
     try {
       return objectMapper.writeValueAsString(shoppingItemList);
