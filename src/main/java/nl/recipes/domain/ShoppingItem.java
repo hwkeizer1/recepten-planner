@@ -36,6 +36,9 @@ public class ShoppingItem {
   private boolean isStandard;
 
   private Boolean onList;
+  
+  @Transient
+  private boolean highlight = false;
 
   @Enumerated(EnumType.STRING)
   @Column(length = 20)
@@ -132,6 +135,14 @@ public class ShoppingItem {
       support = new PropertyChangeSupport(this);
     }
     support.firePropertyChange("onList", previous, onList);
+  }
+  
+  public boolean highlight() {
+    return highlight;
+  }
+  
+  public void setHighlight(boolean highlight) {
+    this.highlight = highlight;
   }
 
   public ShopType getShopType() {

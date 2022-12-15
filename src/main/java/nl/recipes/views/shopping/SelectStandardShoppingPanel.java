@@ -36,6 +36,13 @@ public class SelectStandardShoppingPanel extends ShoppingList
       return s1.getName().compareTo(s2.getName());
     });
   }
+  
+  /*
+   * public update of list will only be used when item is highlighted because of duplication
+   */
+  public void updateShoppingListHighlighted() {
+    panel.refresh();
+  }
 
   @Override
   protected Node view() {

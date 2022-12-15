@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -21,11 +22,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
 import nl.recipes.views.components.utils.ButtonFactory;
 
+@Slf4j
 @Component
 public class ShoppingPage {
 
@@ -39,6 +42,7 @@ public class ShoppingPage {
   Button cloudButton;
   List<ShoppingItem> finalShoppingList;
   HBox finalShoppingPanels;
+  
 
   Comparator<ShoppingItem> comparator =
       (t1, t2) -> t1.getIngredientType().compareTo(t2.getIngredientType());
@@ -92,9 +96,29 @@ public class ShoppingPage {
     shoppingPanels.getChildren().addAll(recipeShoppingPanel.view(), stockShoppingPanel.view(),
         selectStockShoppingPanel.view(), selectStandardShoppingPanel.view(),
         oneTimeShoppingPanel.view());
+    highlightDuplicates();
     return shoppingPanels;
   }
-
+  
+  /*
+   * Check if selectStock items exist also on selectStandard list
+   * if true, remove from select stock list and highlight on selectStandard list
+   */
+  private void highlightDuplicates() {
+    if (selectStockShoppingPanel.getList() == null) return; // no duplicates
+    for (ShoppingItem standardItem : selectStandardShoppingPanel.getList()) {
+      for (Iterator<ShoppingItem> iterator = selectStockShoppingPanel.getList().iterator(); iterator.hasNext();) {
+        ShoppingItem stockItem = iterator.next();
+        if (standardItem.getName().equals(stockItem.getName())) {
+          standardItem.setHighlight(true);
+          iterator.remove();
+        }
+      }
+    }
+    selectStockShoppingPanel.updateShoppingListRemoval();
+    selectStandardShoppingPanel.updateShoppingListHighlighted();
+  }
+  
   private HBox getFinalPanels() {
     finalShoppingPanels = new HBox();
     return finalShoppingPanels;
@@ -125,6 +149,7 @@ public class ShoppingPage {
     finalShoppingList.addAll(selectStockShoppingPanel.getList());
     finalShoppingList.addAll(selectStandardShoppingPanel.getList());
     finalShoppingList.addAll(oneTimeShoppingPanel.getList());
+    finalShoppingList.forEach(s -> s.setHighlight(false));
   }
 
   private void sendShoppingListToGoogle(ActionEvent event) {

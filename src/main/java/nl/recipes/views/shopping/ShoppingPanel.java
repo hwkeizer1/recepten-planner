@@ -12,13 +12,18 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToolBar;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShoppingItem;
@@ -177,7 +182,6 @@ public class ShoppingPanel {
     nameColumn.setCellValueFactory(
         c -> new ReadOnlyObjectWrapper<>(getShoppingItemNameLabel(c.getValue())));
 
-
     TableColumn<ShoppingItem, Boolean> listColumn = new TableColumn<>();
     if (showCheckBoxes) {
       listColumn.setCellValueFactory(cellData -> {
@@ -203,6 +207,22 @@ public class ShoppingPanel {
     tableView.getColumns().add(measureUnitColumn);
     tableView.getColumns().add(nameColumn);
     tableView.getColumns().add(listColumn);
+
+    tableView.setRowFactory(tv -> new TableRow<ShoppingItem>() {
+      @Override
+      protected void updateItem(ShoppingItem item, boolean empty) {
+        super.updateItem(item, empty);
+        if (item != null && item.highlight()) {
+          setStyle("-fx-background-color: #EC9242;");
+          Tooltip toolTip = new Tooltip("Ook benodigd voor geplande recepten");
+          toolTip.setShowDelay(new Duration(500));
+          setTooltip(toolTip);
+        } else {
+          setStyle("");
+          setTooltip(null);
+        }
+      }
+    });
 
     hbox.getChildren().add(tableView);
     return hbox;

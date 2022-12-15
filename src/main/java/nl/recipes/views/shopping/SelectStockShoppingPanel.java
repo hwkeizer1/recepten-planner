@@ -89,6 +89,13 @@ public class SelectStockShoppingPanel extends ShoppingList {
     observableList = newList;
     panel.refresh(observableList);
   }
+  
+  /*
+   * public update of list will only be used when item is removed because of duplication
+   */
+  public void updateShoppingListRemoval() {
+    panel.refresh();
+  }
 
   private void selectAllStockingItems(ActionEvent event) {
     for (ShoppingItem shoppingItem : observableList) {
