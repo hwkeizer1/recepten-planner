@@ -12,7 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.PlanningService;
-import nl.recipes.views.components.utils.ButtonFactory;
+import nl.recipes.views.components.utils.ToolBarFactory;
 
 @Component
 public class RecipeShoppingPanel extends ShoppingList {
@@ -54,12 +54,12 @@ public class RecipeShoppingPanel extends ShoppingList {
 
   private List<Button> createToolBarButtonList() {
     List<Button> buttons = new ArrayList<>();
-    Button button = ButtonFactory.createToolBarButton("/icons/select_all.svg",
+    Button button = ToolBarFactory.createToolBarButton("/icons/select_all.svg", 20,
         "Selecteer alle boodschappen voor recepten");
     button.setOnAction(this::selectAllRecipeItems);
     buttons.add(button);
 
-    button = ButtonFactory.createToolBarButton("/icons/select_none.svg",
+    button = ToolBarFactory.createToolBarButton("/icons/select_none.svg", 20,
         "Deselecteer alle boodschappen voor recepten");
     button.setOnAction(this::selectNoneRecipeItems);
     buttons.add(button);

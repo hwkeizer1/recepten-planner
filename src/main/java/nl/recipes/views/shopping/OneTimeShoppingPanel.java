@@ -11,7 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.MeasureUnitService;
-import nl.recipes.views.components.utils.ButtonFactory;
+import nl.recipes.views.components.utils.ToolBarFactory;
 
 @Component
 public class OneTimeShoppingPanel extends ShoppingList {
@@ -38,21 +38,21 @@ public class OneTimeShoppingPanel extends ShoppingList {
   private List<Button> createToolBarButtonList() {
     List<Button> buttons = new ArrayList<>();
     Button button =
-        ButtonFactory.createToolBarButton("/icons/add.svg", "Voeg nieuwe eenmalige boodschap toe");
+        ToolBarFactory.createToolBarButton("/icons/add.svg", 20, "Voeg nieuwe eenmalige boodschap toe");
     button.setOnAction(this::addOneTimeShoppingItem);
     buttons.add(button);
 
-    button = ButtonFactory.createToolBarButton("/icons/remove.svg",
+    button = ToolBarFactory.createToolBarButton("/icons/remove.svg", 20,
         "Verwijder alle huidige eenmalige boodschappen");
     button.setOnAction(this::deleteAllOneTimeItems);
     buttons.add(button);
 
-    button = ButtonFactory.createToolBarButton("/icons/select_all.svg",
+    button = ToolBarFactory.createToolBarButton("/icons/select_all.svg", 20,
         "Selecteer alle eenmalige boodschappen");
     button.setOnAction(this::selectAllOneTimeItems);
     buttons.add(button);
 
-    button = ButtonFactory.createToolBarButton("/icons/select_none.svg",
+    button = ToolBarFactory.createToolBarButton("/icons/select_none.svg", 20,
         "Deselecteer alle eenmalige boodschappen");
     button.setOnAction(this::selectNoneOneTimeItems);
     buttons.add(button);

@@ -13,13 +13,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 @Component
-public class ButtonFactory {
+public class ToolBarFactory {
 
-  private ButtonFactory() {}
+  // ToolBar images should be .svg files with size 200x200px
+  private static double svgImageSize = 200;
+  
+  private ToolBarFactory() {}
   
   public static Node createToolBarImage(String imagePath, double size) {
-    URL url = ButtonFactory.class.getResource(imagePath);
-    SVGImage svgImage = SVGLoader.load(url).scale(0.1);
+    URL url = ToolBarFactory.class.getResource(imagePath);
+    SVGImage svgImage = SVGLoader.load(url).scale(size/svgImageSize);
     VBox vbox = new VBox();
     double paddingHeight = (size - svgImage.getScaledHeight())/2;
     double paddingWidth = (size - svgImage.getScaledWidth())/2;
@@ -30,34 +33,16 @@ public class ButtonFactory {
     vbox.setMaxSize(size, size);
     return vbox;
   }
-
-  public static Button createToolBarButton(String iconPath) {
-    return createToolBarButton(iconPath, null);
-  }
   
-  public static Button createToolBarButton(String iconPath, String toolTipText) {
-    URL url = ButtonFactory.class.getResource(iconPath);
-    SVGImage image = SVGLoader.load(url).scale(0.1);
+  public static Button createToolBarButton(String iconPath, double size, String toolTipText) {
+    URL url = ToolBarFactory.class.getResource(iconPath);
+    SVGImage image = SVGLoader.load(url).scale(size/svgImageSize);
     Button button = new Button();
     button.setGraphic(image);
-    button.setMinSize(20, 20);
-    button.setPrefSize(20, 20);
-    button.setMaxSize(20, 20);
+    button.setMinSize(size, size);
+    button.setPrefSize(size, size);
+    button.setMaxSize(size, size);
     if (toolTipText == null) return button;
-    Tooltip toolTip = new Tooltip(toolTipText);
-    toolTip.setShowDelay(new Duration(500));
-    button.setTooltip(toolTip);
-    return button;
-  }
-
-  public static Button createLargeToolBarButton(String iconPath, String toolTipText) {
-    URL url = ButtonFactory.class.getResource(iconPath);
-    SVGImage image = SVGLoader.load(url).scale(0.15d);
-    Button button = new Button();
-    button.setGraphic(image);
-    button.setMinSize(30, 30);
-    button.setPrefSize(30, 30);
-    button.setMaxSize(30, 30);
     Tooltip toolTip = new Tooltip(toolTipText);
     toolTip.setShowDelay(new Duration(500));
     button.setTooltip(toolTip);

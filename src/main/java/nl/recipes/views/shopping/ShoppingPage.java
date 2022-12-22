@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShopType;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.GoogleSheetService;
-import nl.recipes.views.components.utils.ButtonFactory;
+import nl.recipes.views.components.utils.ToolBarFactory;
 
 @Slf4j
 @Component
@@ -77,11 +77,11 @@ public class ShoppingPage {
   private ToolBar getToolBar() {
     ToolBar toolBar = new ToolBar();
     Button listButton =
-        ButtonFactory.createLargeToolBarButton("/icons/list.svg", "Genereer boodschappenlijst");
+        ToolBarFactory.createToolBarButton("/icons/list.svg", 30, "Genereer boodschappenlijst");
     listButton.setOnAction(this::createFinalShoppingPanels);
     toolBar.getItems().add(listButton);
 
-    cloudButton = ButtonFactory.createLargeToolBarButton("/icons/cloud.svg",
+    cloudButton = ToolBarFactory.createToolBarButton("/icons/cloud.svg", 30,
         "Upload boodschappenlijst naar Google sheets");
     cloudButton.setOnAction(this::sendShoppingListToGoogle);
     cloudButton.setVisible(false);

@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.StandardShoppingItemService;
-import nl.recipes.views.components.utils.ButtonFactory;
+import nl.recipes.views.components.utils.ToolBarFactory;
 
 @Slf4j
 @Component
@@ -87,12 +87,12 @@ public class SelectStandardShoppingPanel extends ShoppingList
 
   private List<Button> createToolBarButtonList() {
     List<Button> buttons = new ArrayList<>();
-    Button button = ButtonFactory.createToolBarButton("/icons/select_all.svg",
+    Button button = ToolBarFactory.createToolBarButton("/icons/select_all.svg", 20,
         "Selecteer alle standaard boodschappen");
     button.setOnAction(this::selectAllStandardItems);
     buttons.add(button);
 
-    button = ButtonFactory.createToolBarButton("/icons/select_none.svg",
+    button = ToolBarFactory.createToolBarButton("/icons/select_none.svg", 20, 
         "Deselecteer alle standaard boodschappen");
     button.setOnAction(this::selectNoneStandardItems);
     buttons.add(button);
@@ -146,7 +146,7 @@ public class SelectStandardShoppingPanel extends ShoppingList
   
   private HBox createSearchFilter() {
     HBox searchFilterBox = new HBox();
-    searchFilterBox.getChildren().add(ButtonFactory.createToolBarImage("/icons/filter.svg", 20));
+    searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg", 20));
     
     searchFilter = new TextField();
     searchFilter.setMaxHeight(20);
@@ -159,7 +159,7 @@ public class SelectStandardShoppingPanel extends ShoppingList
     searchFilter.textProperty().addListener(
         (observable, oldValue, newValue) -> filteredList.setPredicate(createPredicate(newValue)));
 
-    Button clear = ButtonFactory.createToolBarButton("/icons/filter-remove.svg",
+    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", 20,
         "Verwijder filter text");
     clear.setOnAction(this::clearSearch);
     
