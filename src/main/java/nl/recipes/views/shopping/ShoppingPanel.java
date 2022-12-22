@@ -34,6 +34,7 @@ public class ShoppingPanel {
   private String header;
   private boolean withToolBar = false;
   private List<Button> buttons;
+  private HBox searchFilter;
   private ObservableList<ShoppingItem> shoppingItems;
   private boolean showCheckBoxes;
   private TableView<ShoppingItem> tableView;
@@ -44,6 +45,7 @@ public class ShoppingPanel {
     this.header = builder.header;
     this.withToolBar = builder.withToolBar;
     this.buttons = builder.buttons;
+    this.searchFilter = builder.searchFilter;
     this.shoppingItems = builder.shoppingItems;
     this.showCheckBoxes = builder.showCheckBoxes;
   }
@@ -55,6 +57,7 @@ public class ShoppingPanel {
     private String header;
     private boolean withToolBar;
     private List<Button> buttons;
+    private HBox searchFilter;
     private ObservableList<ShoppingItem> shoppingItems;
     private boolean showCheckBoxes;
 
@@ -70,6 +73,11 @@ public class ShoppingPanel {
 
     public ShoppingPanelBuilder withButtons(List<Button> buttons) {
       this.buttons = buttons;
+      return this;
+    }
+    
+    public ShoppingPanelBuilder withSearchFilter(HBox searchFilter) {
+      this.searchFilter = searchFilter;
       return this;
     }
 
@@ -127,6 +135,9 @@ public class ShoppingPanel {
     toolBar.setPadding(new Insets(2, 5, 2, 5));
     if (buttons != null && !buttons.isEmpty()) {
       toolBar.getItems().addAll(buttons);
+    }
+    if (searchFilter != null) {
+      toolBar.getItems().add(searchFilter);
     }
     return toolBar;
   }

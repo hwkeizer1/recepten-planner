@@ -4,10 +4,10 @@
 <svg
    width="200"
    height="200"
-   viewBox="0 0 52.916665 52.916666"
+   viewBox="0 0 200 200"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.1 (0f2f062aeb, 2022-09-21, custom)"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01, custom)"
    sodipodi:docname="remove.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,10 +25,10 @@
      inkscape:document-units="px"
      showgrid="false"
      inkscape:zoom="2.8079686"
-     inkscape:cx="79.951037"
-     inkscape:cy="141.38335"
-     inkscape:window-width="1920"
-     inkscape:window-height="1163"
+     inkscape:cx="80.307166"
+     inkscape:cy="141.56141"
+     inkscape:window-width="3440"
+     inkscape:window-height="1322"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -41,7 +41,7 @@
      id="layer1">
     <g
        id="g253"
-       transform="matrix(0.84532644,0.82071752,-0.83802959,0.82786364,26.26527,-17.160377)"
+       transform="matrix(3.4784396,3.3771762,-3.4484138,3.4065818,99.205565,-79.48693)"
        style="fill:#d35f5f">
       <rect
          style="fill:#d35f5f;fill-rule:evenodd;stroke-width:0.264583"

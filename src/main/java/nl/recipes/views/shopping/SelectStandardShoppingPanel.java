@@ -4,13 +4,24 @@ import static nl.recipes.views.ViewMessages.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import org.springframework.stereotype.Component;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import lombok.extern.slf4j.Slf4j;
+import nl.recipes.domain.Recipe;
 import nl.recipes.domain.ShoppingItem;
 import nl.recipes.services.StandardShoppingItemService;
 import nl.recipes.views.components.utils.ButtonFactory;
@@ -23,6 +34,9 @@ public class SelectStandardShoppingPanel extends ShoppingList
   private final StandardShoppingItemService standardShoppingItemService;
 
   private ShoppingPanel panel;
+  
+  private TextField searchFilter;
+  private FilteredList<ShoppingItem> filteredList;
 
   public SelectStandardShoppingPanel(StandardShoppingItemService standardShoppingItemService) {
     this.standardShoppingItemService = standardShoppingItemService;
@@ -51,8 +65,9 @@ public class SelectStandardShoppingPanel extends ShoppingList
     }
     if (panel == null) {
       panel = new ShoppingPanel.ShoppingPanelBuilder().withHeader(SELECT_STANDARD_SHOPPINGS)
-          .withObservableList(observableList).withCheckBoxes(true).withToolBar()
-          .withButtons(createToolBarButtonList()).build();
+          .withObservableList(filteredList).withCheckBoxes(true).withToolBar()
+          .withButtons(createToolBarButtonList())
+          .withSearchFilter(createSearchFilter()).build();
     }
     return panel.view();
   }
@@ -66,7 +81,8 @@ public class SelectStandardShoppingPanel extends ShoppingList
       }
     }
     standardShoppingList.sort(comparator);
-    observableList = FXCollections.observableList(standardShoppingList);
+    observableList = new FilteredList<>(FXCollections.observableList(standardShoppingList));
+    filteredList = new FilteredList<>(observableList);
   }
 
   private List<Button> createToolBarButtonList() {
@@ -126,5 +142,46 @@ public class SelectStandardShoppingPanel extends ShoppingList
         }
       }
     }
+  }
+  
+  private HBox createSearchFilter() {
+    HBox searchFilterBox = new HBox();
+    searchFilterBox.getChildren().add(ButtonFactory.createToolBarImage("/icons/filter.svg", 20));
+    
+    searchFilter = new TextField();
+    searchFilter.setMaxHeight(20);
+    searchFilter.setMinHeight(20);
+    searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
+    searchFilter.setMaxWidth(142);
+    searchFilter.setMinWidth(142);
+    searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
+    searchFilterBox.getChildren().add(searchFilter);
+    searchFilter.textProperty().addListener(
+        (observable, oldValue, newValue) -> filteredList.setPredicate(createPredicate(newValue)));
+
+    Button clear = ButtonFactory.createToolBarButton("/icons/filter-remove.svg",
+        "Verwijder filter text");
+    clear.setOnAction(this::clearSearch);
+    
+    searchFilterBox.getChildren().add(clear);
+    return searchFilterBox;
+  }
+  
+  private Predicate<ShoppingItem> createPredicate(String searchText) {
+    return shopping -> {
+      if (searchText == null || searchText.isEmpty())
+        return true;
+      return searchFindShopping(shopping, searchText);
+    };
+  }
+  
+  private boolean searchFindShopping(ShoppingItem shoppingItem, String searchText) {
+    return (shoppingItem.getName().toLowerCase().contains(searchText.toLowerCase()))
+        || (shoppingItem.getPluralName().toLowerCase()
+            .contains(searchText.toLowerCase()));
+  }
+  
+  private void clearSearch(ActionEvent event) {
+    searchFilter.clear();
   }
 }

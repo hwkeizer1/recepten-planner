@@ -4,10 +4,10 @@
 <svg
    width="200"
    height="200"
-   viewBox="0 0 52.916665 52.916666"
+   viewBox="0 0 200 200"
    version="1.1"
    id="svg332"
-   inkscape:version="1.2.1 (0f2f062aeb, 2022-09-21, custom)"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01, custom)"
    sodipodi:docname="select_none.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,13 +25,13 @@
      inkscape:document-units="px"
      showgrid="false"
      inkscape:zoom="2.4189242"
-     inkscape:cx="112.23998"
+     inkscape:cx="112.65339"
      inkscape:cy="160.19518"
-     inkscape:window-width="1920"
-     inkscape:window-height="962"
-     inkscape:window-x="26"
-     inkscape:window-y="23"
-     inkscape:window-maximized="0"
+     inkscape:window-width="3440"
+     inkscape:window-height="1322"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
      id="defs329" />
@@ -40,11 +40,11 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.25266245;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:9.02041;stroke-dasharray:none;stroke-opacity:1"
        id="rect1013-6-3"
-       width="28.452997"
-       height="29.712152"
-       x="12.231834"
-       y="11.602257" />
+       width="113.93545"
+       height="118.97753"
+       x="43.032276"
+       y="40.511234" />
   </g>
 </svg>
