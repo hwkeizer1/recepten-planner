@@ -145,12 +145,13 @@ public class SelectStandardShoppingPanel extends ShoppingList
   }
   
   private HBox createSearchFilter() {
+    int searchFilterHeight = 20;
     HBox searchFilterBox = new HBox();
-    searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg", 20));
+    searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg", searchFilterHeight));
     
     searchFilter = new TextField();
-    searchFilter.setMaxHeight(20);
-    searchFilter.setMinHeight(20);
+    searchFilter.setMaxHeight(searchFilterHeight);
+    searchFilter.setMinHeight(searchFilterHeight);
     searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
     searchFilter.setMaxWidth(142);
     searchFilter.setMinWidth(142);
@@ -159,7 +160,7 @@ public class SelectStandardShoppingPanel extends ShoppingList
     searchFilter.textProperty().addListener(
         (observable, oldValue, newValue) -> filteredList.setPredicate(createPredicate(newValue)));
 
-    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", 20,
+    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight,
         "Verwijder filter text");
     clear.setOnAction(this::clearSearch);
     

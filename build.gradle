@@ -21,7 +21,7 @@ java {
 
 javafx {
     version = "17.0.1"
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.swing' ]
 }
 
 repositories {
@@ -41,6 +41,7 @@ dependencies {
     implementation 'org.openjfx:javafx-base:17.0.1'
     implementation 'org.openjfx:javafx-fxml:17.0.1'
     implementation 'org.openjfx:javafx-web:17.0.1'
+    implementation 'org.openjfx:javafx-swing:17.0.1'
     implementation 'org.controlsfx:controlsfx:11.1.1'
     implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
     implementation 'com.github.gwenn:sqlite-dialect:0.1.2'

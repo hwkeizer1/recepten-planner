@@ -26,6 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -33,6 +34,7 @@ import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
+import nl.recipes.views.components.utils.ToolBarFactory;
 import nl.recipes.views.root.RootView;
 
 @Component
@@ -159,30 +161,24 @@ public class RecipeListView {
   }
 
   private HBox createSearchFilter() {
+    int searchFilterHeight = 25;
     HBox searchFilterBox = new HBox();
-    searchFilterBox.setMaxHeight(25);
-    searchFilterBox.setSpacing(2);
-
-    StackPane imagePane = new StackPane();
-    imagePane.setPadding(new Insets(0, 2, 0, 0));
-    Image searchIcon = new Image("/icons/search.png", 15, 15, true, false);
-    ImageView searchIconView = new ImageView(searchIcon);
-    imagePane.getChildren().add(searchIconView);
-    searchFilterBox.getChildren().add(imagePane);
+    searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg", searchFilterHeight));
 
     searchFilter = new TextField();
+    searchFilter.setMaxHeight(searchFilterHeight);
+    searchFilter.setMinHeight(searchFilterHeight);
+    searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
+    searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
     searchFilterBox.getChildren().add(searchFilter);
     searchFilter.textProperty().addListener(
         (observable, oldValue, newValue) -> recipeList.setPredicate(createPredicate(newValue)));
 
-    Image clearIcon = new Image("/icons/clear.png", 21, 21, true, false);
-    ImageView clearIconView = new ImageView(clearIcon);
-    Button clear = new Button();
-    clear.setPadding(new Insets(1));
-    clear.setGraphic(clearIconView);
+    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight,
+        "Verwijder filter text");
     clear.setOnAction(this::clearSearch);
+    
     searchFilterBox.getChildren().add(clear);
-
     return searchFilterBox;
   }
 
