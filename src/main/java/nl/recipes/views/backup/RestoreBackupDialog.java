@@ -3,7 +3,8 @@ package nl.recipes.views.backup;
 import static nl.recipes.views.ViewMessages.*;
 
 import java.io.File;
-
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.springframework.stereotype.Component;
 
 import javafx.event.ActionEvent;
@@ -102,7 +103,13 @@ public class RestoreBackupDialog {
 
   public void selectRestoreFolder(ActionEvent actionEvent) {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    directoryChooser.setInitialDirectory(new File(configService.getConfigProperty(BACKUP_FOLDER)));
+    
+    if (folderExists(BACKUP_FOLDER)) {
+      directoryChooser.setInitialDirectory(new File(configService.getConfigProperty(BACKUP_FOLDER)));
+    } else {
+      directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+    }
+    
     File directory = directoryChooser.showDialog(dialog);
 
     if (directory != null) {
@@ -113,6 +120,11 @@ public class RestoreBackupDialog {
   public void restore(ActionEvent actionEvent) {
     backupService.restore(restoreFolderPathTextField.getText());
     dialog.close();
+  }
+  
+  private boolean folderExists(String folder) {
+    File file = new File(folder);
+    return file.exists();
   }
 
 }
