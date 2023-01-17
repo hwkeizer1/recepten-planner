@@ -21,6 +21,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.ShopType;
@@ -62,20 +63,23 @@ public class ShoppingPage {
 
   public ScrollPane view() {
     VBox shoppingPanel = new VBox();
-    shoppingPanel.setPadding(new Insets(15));
-    shoppingPanel.setSpacing(20);
-    shoppingPanel.getChildren().addAll(getToolBar(), getShoppingPanels(), getFinalPanels());
-
     AnchorPane anchorPane = new AnchorPane(shoppingPanel);
-
     ScrollPane scrollPane = new ScrollPane();
+    
+    shoppingPanel.setPadding(new Insets(0));
+    shoppingPanel.setSpacing(20);
+    shoppingPanel.getChildren().addAll(getToolBar(scrollPane), getShoppingPanels(), getFinalPanels());
+
+
     scrollPane.setPannable(true);
     scrollPane.setContent(anchorPane);
+    
     return scrollPane;
   }
 
-  private ToolBar getToolBar() {
+  private ToolBar getToolBar(ScrollPane anchorPane) {
     ToolBar toolBar = new ToolBar();
+    toolBar.prefWidthProperty().bind(anchorPane.widthProperty());
     Button listButton =
         ToolBarFactory.createToolBarButton("/icons/list.svg", 30, "Genereer boodschappenlijst");
     listButton.setOnAction(this::createFinalShoppingPanels);

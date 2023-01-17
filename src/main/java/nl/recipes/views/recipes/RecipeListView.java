@@ -3,6 +3,7 @@ package nl.recipes.views.recipes;
 import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -18,18 +19,24 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.services.PlanningService;
@@ -71,7 +78,7 @@ public class RecipeListView {
     AnchorPane.setRightAnchor(recipeListBox, 0.0);
     AnchorPane.setLeftAnchor(recipeListBox, 0.0);
 
-    recipeListBox.getChildren().add(createButtonAndSearchBar());
+    recipeListBox.getChildren().add(getToolBar(recipeListPane));
     recipeListBox.getChildren().add(createRecipeListTable());
 
     recipeListPane.getChildren().add(recipeListBox);
@@ -137,33 +144,48 @@ public class RecipeListView {
 
     return recipeListTableView;
   }
-
-  private HBox createButtonAndSearchBar() {
-    HBox buttonBox = new HBox();
-    buttonBox.setPadding(new Insets(10));
-    buttonBox.setSpacing(30);
-
-    Button newRecipe = new Button("Nieuw recept toevoegen");
+  
+  private ToolBar getToolBar(AnchorPane anchorPane) {
+    
+    final Pane rightSpacer = new Pane();
+    HBox.setHgrow(
+            rightSpacer,
+            Priority.SOMETIMES
+    );
+    
+    ToolBar toolBar = new ToolBar();
+    toolBar.prefWidthProperty().bind(anchorPane.widthProperty());
+    
+    Button newRecipe = ToolBarFactory.createToolBarButton("/icons/add.svg", 30,
+        "Nieuw recept toevoegen");
     newRecipe.setOnAction(this::showNewRecipeEditView);
-    buttonBox.getChildren().add(newRecipe);
+    toolBar.getItems().add(newRecipe);
+    
+    Button removeRecipe = ToolBarFactory.createToolBarButton("/icons/remove.svg", 30,
+        "Verwijder recept");
+    removeRecipe.setOnAction(this::showRemoveRecipeAlert);
+    toolBar.getItems().add(removeRecipe);
 
-    Button removeRecipeButton = new Button("Recept verwijderen");
-    removeRecipeButton.setOnAction(this::showRemoveRecipeAlert);
-    buttonBox.getChildren().add(removeRecipeButton);
+    toolBar.getItems().add(createSearchFilter());
+    
+    Button planRecipe = ToolBarFactory.createToolBarButton("/icons/plan.svg", 30,
+        "Recept inplannen");
+    planRecipe.setOnAction(this::planRecipe);
+    toolBar.getItems().add(planRecipe);
+    
+    toolBar.getItems().add(rightSpacer);
+    toolBar.getItems().add(createIngredientSearchFilter());
 
-    buttonBox.getChildren().add(createSearchFilter());
-
-    Button planRecipeButton = new Button("Recept inplannen");
-    planRecipeButton.setOnAction(this::planRecipe);
-    buttonBox.getChildren().add(planRecipeButton);
-
-    return buttonBox;
+    return toolBar;
   }
 
   private HBox createSearchFilter() {
     int searchFilterHeight = 25;
     HBox searchFilterBox = new HBox();
-    searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg", searchFilterHeight));
+    Label label = new Label("Filter: ");
+    label.setPrefHeight(25);
+    searchFilterBox.getChildren().add(label);
+//    searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg", searchFilterHeight));
 
     searchFilter = new TextField();
     searchFilter.setMaxHeight(searchFilterHeight);
@@ -172,7 +194,7 @@ public class RecipeListView {
     searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
     searchFilterBox.getChildren().add(searchFilter);
     searchFilter.textProperty().addListener(
-        (observable, oldValue, newValue) -> recipeList.setPredicate(createPredicate(newValue)));
+        (observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
 
     Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight,
         "Verwijder filter text");
@@ -189,11 +211,53 @@ public class RecipeListView {
         || (recipe.getTagString().toLowerCase().contains(searchText.toLowerCase()));
   }
 
-  private Predicate<Recipe> createPredicate(String searchText) {
+  private Predicate<Recipe> createRecipePredicate(String searchText) {
     return recipe -> {
       if (searchText == null || searchText.isEmpty())
         return true;
       return searchFindRecipe(recipe, searchText);
+    };
+  }
+  
+  private HBox createIngredientSearchFilter() {
+    int searchFilterHeight = 25;
+    HBox searchFilterBox = new HBox();
+    Label label = new Label("Filter op ingredient: ");
+    label.setPrefHeight(25);
+    searchFilterBox.getChildren().add(label);
+
+    searchFilter = new TextField();
+    searchFilter.setMaxHeight(searchFilterHeight);
+    searchFilter.setMinHeight(searchFilterHeight);
+    searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
+    searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
+    searchFilterBox.getChildren().add(searchFilter);
+    searchFilter.textProperty().addListener(
+        (observable, oldValue, newValue) -> recipeList.setPredicate(createIngredientPredicate(newValue)));
+
+    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight,
+        "Verwijder filter text");
+    clear.setOnAction(this::clearSearch);
+    
+    searchFilterBox.getChildren().add(clear);
+    return searchFilterBox;
+  }
+
+  private boolean searchFindIngredient(Recipe recipe, String searchText) {
+    boolean hasIngredient = false;
+    for (Iterator<Ingredient> it = recipe.getIngredients().iterator(); it.hasNext(); ) {
+      Ingredient ingredient = it.next();
+      hasIngredient = (ingredient.getIngredientName().getName().toLowerCase().contains(searchText.toLowerCase()));
+      if (hasIngredient) return hasIngredient;
+    }
+    return hasIngredient;
+  }
+
+  private Predicate<Recipe> createIngredientPredicate(String searchText) {
+    return recipe -> {
+      if (searchText == null || searchText.isEmpty())
+        return true;
+      return searchFindIngredient(recipe, searchText);
     };
   }
 
