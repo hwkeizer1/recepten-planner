@@ -55,6 +55,7 @@ public class StockShoppingItemService extends ListService<ShoppingItem>
           SHOPPING_ITEM_NAME_ + ingredientName.getName() + _ALREADY_EXISTS);
     }
     ShoppingItem shoppingItem = new ShoppingItem.ShoppingItemBuilder()
+        .withAmount(1f).withOnList(false)
         .withName(ingredientName.getName()).withPluralName(ingredientName.getPluralName())
         .withIngredientType(ingredientName.getIngredientType())
         .withShopType(ingredientName.getShopType()).withIsStandard(false).build();
