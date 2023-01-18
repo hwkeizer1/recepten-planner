@@ -109,6 +109,7 @@ public class ShoppingPage {
    * if true, remove from select stock list and highlight on selectStandard list
    */
   private void highlightDuplicates() {
+    resetHighLighting();
     if (selectStockShoppingPanel.getList() == null) return; // no duplicates
     for (ShoppingItem standardItem : selectStandardShoppingPanel.getList()) {
       for (Iterator<ShoppingItem> iterator = selectStockShoppingPanel.getList().iterator(); iterator.hasNext();) {
@@ -121,6 +122,12 @@ public class ShoppingPage {
     }
     selectStockShoppingPanel.updateShoppingListRemoval();
     selectStandardShoppingPanel.updateShoppingListHighlighted();
+  }
+  
+  private void resetHighLighting() {
+    for (ShoppingItem standardItem: selectStandardShoppingPanel.getList()) {
+      standardItem.setHighlight(false);
+    }
   }
   
   private HBox getFinalPanels() {
