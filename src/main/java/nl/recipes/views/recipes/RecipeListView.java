@@ -64,6 +64,7 @@ public class RecipeListView {
   TableView<Recipe> recipeListTableView;
 
   TextField searchFilter;
+  TextField searchIngredientFilter;
 
   Alert removeAlert;
 
@@ -226,18 +227,18 @@ public class RecipeListView {
     label.setPrefHeight(25);
     searchFilterBox.getChildren().add(label);
 
-    searchFilter = new TextField();
-    searchFilter.setMaxHeight(searchFilterHeight);
-    searchFilter.setMinHeight(searchFilterHeight);
-    searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
-    searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
-    searchFilterBox.getChildren().add(searchFilter);
-    searchFilter.textProperty().addListener(
+    searchIngredientFilter = new TextField();
+    searchIngredientFilter.setMaxHeight(searchFilterHeight);
+    searchIngredientFilter.setMinHeight(searchFilterHeight);
+    searchIngredientFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
+    searchIngredientFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
+    searchFilterBox.getChildren().add(searchIngredientFilter);
+    searchIngredientFilter.textProperty().addListener(
         (observable, oldValue, newValue) -> recipeList.setPredicate(createIngredientPredicate(newValue)));
 
     Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight,
         "Verwijder filter text");
-    clear.setOnAction(this::clearSearch);
+    clear.setOnAction(this::clearIngredientSearch);
     
     searchFilterBox.getChildren().add(clear);
     return searchFilterBox;
@@ -275,6 +276,10 @@ public class RecipeListView {
 
   private void clearSearch(ActionEvent event) {
     searchFilter.clear();
+  }
+  
+  private void clearIngredientSearch(ActionEvent event) {
+    searchIngredientFilter.clear();
   }
 
   private void showRemoveRecipeAlert(ActionEvent event) {
