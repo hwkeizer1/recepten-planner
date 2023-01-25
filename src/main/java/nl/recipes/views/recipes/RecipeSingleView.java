@@ -28,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
+import nl.recipes.services.ConfigService;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.components.pane.bootstrap.BootstrapColumn;
@@ -37,13 +38,14 @@ import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 import nl.recipes.views.root.RootView;
 
 import static nl.recipes.views.ViewConstants.*;
+import static nl.recipes.views.ViewMessages.*;
 
 @Component
 public class RecipeSingleView {
 
   private final RecipeService recipeService;
-
   private final PlanningService planningService;
+  private final ConfigService configService;
 
   private RootView rootView;
 
@@ -87,9 +89,11 @@ public class RecipeSingleView {
 
   Label directions = new Label();
 
-  public RecipeSingleView(RecipeService recipeService, PlanningService planningService) {
+  public RecipeSingleView(RecipeService recipeService, PlanningService planningService,
+      ConfigService configService) {
     this.recipeService = recipeService;
     this.planningService = planningService;
+    this.configService = configService;
 
     BootstrapPane root = makeView();
 
@@ -120,8 +124,7 @@ public class RecipeSingleView {
     lastTimeServed
         .setText(recipe.getLastServed() == null ? "-" : recipe.getLastServed().toString());
     rating.setText(recipe.getRating() == null ? "-" : recipe.getRating().toString());
-    // TODO: For now hard coded, image location will be part of recipe later on
-    imageView = setRoundedImage("/images/spaghetti brocolli spekjes.png");
+    imageView = setRoundedImage(loadRecipeImageUrl(recipe));
 
     ingredientTableView.setItems(recipeService.getReadonlyIngredientList(recipe.getId()));
     ingredientTableView.setFixedCellSize(25);
@@ -135,6 +138,14 @@ public class RecipeSingleView {
     directions.setText(recipe.getDirections());
 
     return scrollPane;
+  }
+  
+  private String loadRecipeImageUrl(Recipe recipe) {
+    if (recipe.getImage() == null) {
+      return "file:" + configService.getConfigProperty(IMAGE_FOLDER) + "/" + "no-image.png";
+    } else {
+      return "file:" + configService.getConfigProperty(IMAGE_FOLDER) + "/" + recipe.getImage();
+    }
   }
 
   private BootstrapPane makeView() {
