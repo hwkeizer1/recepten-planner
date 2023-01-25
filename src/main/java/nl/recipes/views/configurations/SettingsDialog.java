@@ -36,6 +36,7 @@ public class SettingsDialog {
   private TextField googleSpreadsheetIdField = new TextField();
   private TextField shoppingSheetIdField = new TextField();
   private TextField templateSheetIdField = new TextField();
+  private TextField imageFolderTextField = new TextField();
 
   public SettingsDialog(ConfigService configService) {
     this.configService = configService;
@@ -66,14 +67,17 @@ public class SettingsDialog {
     layout.getChildren().addAll(initializeForm(), buttons);
     layout.setPadding(new Insets(5));
 
-    dialog.setScene(new Scene(layout, 900, 325));
+    dialog.setScene(new Scene(layout, 900, 400));
     dialog.centerOnScreen();
     dialog.showAndWait();
   }
 
   private Node initializeForm() {
-    Button select = new Button("Selecteer de folder");
-    select.setOnAction(this::selectBackupFolder);
+    Button selectBackupFolderButton = new Button("Selecteer de folder");
+    selectBackupFolderButton.setOnAction(this::selectBackupFolder);
+    
+    Button selectImageFolderButton = new Button("Selecteer de folder");
+    selectImageFolderButton.setOnAction(this::selectImageFolder);
 
     GridPane inputForm = new GridPane();
     inputForm.setPadding(new Insets(20, 20, 20, 20));
@@ -94,7 +98,7 @@ public class SettingsDialog {
     inputForm.add(backupFolderLabel, 0, 0);
     backupFolderTextField.setText(configService.getConfigProperty(BACKUP_FOLDER));
     inputForm.add(backupFolderTextField, 1, 0);
-    inputForm.add(select, 2, 0);
+    inputForm.add(selectBackupFolderButton, 2, 0);
 
     Label backupsToKeepLabel = new Label("Aantal backups:");
     inputForm.add(backupsToKeepLabel, 0, 1);
@@ -121,6 +125,12 @@ public class SettingsDialog {
     inputForm.add(templateSheetIdLabel, 0, 4);
     templateSheetIdField.setText(configService.getConfigProperty(TEMPLATE_SHEET_ID));
     inputForm.add(templateSheetIdField, 1, 4);
+    
+    Label imageFolderLabel = new Label("Folder voor afbeeldingen:");
+    inputForm.add(imageFolderLabel, 0, 5);
+    imageFolderTextField.setText(configService.getConfigProperty(IMAGE_FOLDER));
+    inputForm.add(imageFolderTextField, 1, 5);
+    inputForm.add(selectImageFolderButton, 2, 5);
 
     GridPane.setHgrow(backupFolderLabel, Priority.ALWAYS);
     GridPane.setHgrow(backupFolderTextField, Priority.ALWAYS);
@@ -141,6 +151,20 @@ public class SettingsDialog {
       backupFolderTextField.setText(directory.getAbsolutePath());
     }
   }
+  
+  public void selectImageFolder(ActionEvent actionEvent) {
+    DirectoryChooser directoryChooser = new DirectoryChooser();
+    if (configService.getConfigProperty(IMAGE_FOLDER) != null
+        && !configService.getConfigProperty(IMAGE_FOLDER).isBlank()) {
+      directoryChooser
+          .setInitialDirectory(new File(configService.getConfigProperty(IMAGE_FOLDER)));
+    }
+    File directory = directoryChooser.showDialog(dialog);
+
+    if (directory != null) {
+      imageFolderTextField.setText(directory.getAbsolutePath());
+    }
+  }
 
   public void save(ActionEvent actionEvent) {
     configService.setConfigProperty(BACKUP_FOLDER, backupFolderTextField.getText());
@@ -148,6 +172,7 @@ public class SettingsDialog {
     configService.setConfigProperty(GOOGLE_SPREADSHEET_ID, googleSpreadsheetIdField.getText());
     configService.setConfigProperty(SHOPPING_SHEET_ID, shoppingSheetIdField.getText());
     configService.setConfigProperty(TEMPLATE_SHEET_ID, templateSheetIdField.getText());
+    configService.setConfigProperty(IMAGE_FOLDER, imageFolderTextField.getText());
     dialog.close();
   }
 

@@ -11,6 +11,7 @@ public final class ViewMessages {
   public static final String GOOGLE_SPREADSHEET_ID = "google-spreadsheet-id";
   public static final String SHOPPING_SHEET_ID = "shopping-sheet-id";
   public static final String TEMPLATE_SHEET_ID = "template-sheet-id";
+  public static final String IMAGE_FOLDER = "image-folder";
 
   public static final String AMOUNT = "Hoeveelheid";
   public static final String PLURAL_NAME = "Meervoud";
