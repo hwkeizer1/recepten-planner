@@ -29,6 +29,7 @@ import javafx.scene.shape.Rectangle;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.ConfigService;
+import nl.recipes.services.ImageService;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.components.pane.bootstrap.BootstrapColumn;
@@ -45,7 +46,7 @@ public class RecipeSingleView {
 
   private final RecipeService recipeService;
   private final PlanningService planningService;
-  private final ConfigService configService;
+  private final ImageService imageService;
 
   private RootView rootView;
 
@@ -90,10 +91,10 @@ public class RecipeSingleView {
   Label directions = new Label();
 
   public RecipeSingleView(RecipeService recipeService, PlanningService planningService,
-      ConfigService configService) {
+      ImageService imageService) {
     this.recipeService = recipeService;
     this.planningService = planningService;
-    this.configService = configService;
+    this.imageService = imageService;
 
     BootstrapPane root = makeView();
 
@@ -124,7 +125,7 @@ public class RecipeSingleView {
     lastTimeServed
         .setText(recipe.getLastServed() == null ? "-" : recipe.getLastServed().toString());
     rating.setText(recipe.getRating() == null ? "-" : recipe.getRating().toString());
-    imageView = setRoundedImage(loadRecipeImageUrl(recipe));
+    imageView = imageService.loadRoundedImage(imageView, recipe);
 
     ingredientTableView.setItems(recipeService.getReadonlyIngredientList(recipe.getId()));
     ingredientTableView.setFixedCellSize(25);
@@ -140,13 +141,7 @@ public class RecipeSingleView {
     return scrollPane;
   }
   
-  private String loadRecipeImageUrl(Recipe recipe) {
-    if (recipe.getImage() == null) {
-      return "file:" + configService.getConfigProperty(IMAGE_FOLDER) + "/" + "no-image.png";
-    } else {
-      return "file:" + configService.getConfigProperty(IMAGE_FOLDER) + "/" + recipe.getImage();
-    }
-  }
+
 
   private BootstrapPane makeView() {
     BootstrapPane bootstrapPane = new BootstrapPane();
@@ -333,29 +328,6 @@ public class RecipeSingleView {
 
     feature.getChildren().addAll(left, right);
     return feature;
-  }
-
-  private ImageView setRoundedImage(String imageLocation) {
-    Image image = new Image(imageLocation, 300, 300, true, false);
-    imageView.setImage(image);
-    imageView.getStyleClass().add(CSS_DROP_SHADOW);
-
-    Rectangle clip = new Rectangle();
-    clip.setWidth(300.0);
-    clip.setHeight(300.0);
-
-    clip.setArcHeight(20);
-    clip.setArcWidth(20);
-    clip.setStroke(Color.BLACK);
-    imageView.setClip(clip);
-
-    SnapshotParameters parameters = new SnapshotParameters();
-    parameters.setFill(Color.TRANSPARENT);
-    WritableImage writeableImage = imageView.snapshot(parameters, null);
-
-    imageView.setClip(null);
-    imageView.setImage(writeableImage);
-    return imageView;
   }
 
   private void showRecipeListView(ActionEvent event) {

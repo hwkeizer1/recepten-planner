@@ -2,6 +2,8 @@ package nl.recipes.views.recipes;
 
 import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
 import static nl.recipes.views.ViewConstants.CSS_WIDGET;
+import static nl.recipes.views.ViewMessages.IMAGE_FOLDER;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,27 +27,36 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
 import nl.recipes.domain.Tag;
 import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.NotFoundException;
+import nl.recipes.services.ConfigService;
+import nl.recipes.services.ImageService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.services.TagService;
 import nl.recipes.views.root.RootView;
 
+@Slf4j
 @Component
 public class RecipeEditView {
 
   private final RecipeService recipeService;
-
   private final TagService tagService;
-
+  private final ImageService imageService;
+  private final ConfigService configService;
+  
   private final IngredientEditView ingredientEditView;
 
   private RootView rootView;
@@ -59,6 +70,10 @@ public class RecipeEditView {
   Button updateButton;
 
   // Column 1 and 2
+  ImageView imageView = new ImageView();
+  
+  TextField recipeImage;
+  
   TextField recipeName;
 
   Label recipeNameError;
@@ -82,9 +97,11 @@ public class RecipeEditView {
   TextArea directions;
 
   public RecipeEditView(RecipeService recipeService, TagService tagService,
-      IngredientEditView ingredientEditView) {
+      IngredientEditView ingredientEditView, ImageService imageService, ConfigService configService) {
     this.recipeService = recipeService;
     this.tagService = tagService;
+    this.imageService = imageService;
+    this.configService = configService;
     this.ingredientEditView = ingredientEditView;
 
     GridPane recipeForm = createRecipeForm();
@@ -104,6 +121,7 @@ public class RecipeEditView {
 
   public Node getRecipeUpdateViewPanel(Recipe recipe) {
     selectedRecipe = recipe;
+    imageView = imageService.loadRoundedImage(imageView, selectedRecipe);
     selectedRecipeToFormFields();
 
     createButton.setVisible(false);
@@ -114,6 +132,7 @@ public class RecipeEditView {
 
   public Node getRecipeCreateViewPanel() {
     selectedRecipe = new Recipe.RecipeBuilder().build();
+    imageView = imageService.loadRoundedImage(imageView, selectedRecipe);
     selectedRecipeToFormFields();
 
     createButton.setVisible(true);
@@ -159,7 +178,7 @@ public class RecipeEditView {
     recipeForm.add(recipeNameWithValidation, 1, 0);
     recipeName.setOnKeyReleased(this::handleKeyReleasedAction);
     recipeNameError.getStyleClass().add(CSS_VALIDATION);
-
+    
     Label preparationTimeLabel = new Label("Voorbereidingstijd:");
     preparationTime = new TextField();
     preparationTime.setMaxWidth(100);
@@ -204,6 +223,16 @@ public class RecipeEditView {
     directions = new TextArea();
     recipeForm.add(directionsLabel, 0, 5);
     recipeForm.add(directions, 1, 5);
+    
+    recipeForm.add(imageView, 1, 6);
+    Label recipeImageLabel = new Label("Afbeelding:");
+    recipeImage = new TextField();
+    recipeForm.add(recipeImageLabel, 0, 7);
+    recipeForm.add(recipeImage, 1, 7);
+    
+    Button selectImageButton = new Button("selecteer een afbeelding");
+    selectImageButton.setOnAction(this::selectImage);
+    recipeForm.add(selectImageButton, 1, 8);
 
     // Column 2 and 3
     Label tagsLabel = new Label("Categorieën:");
@@ -247,6 +276,26 @@ public class RecipeEditView {
     GridPane.setValignment(ingredientLabel, VPos.TOP);
     recipeForm.add(ingredientLabel, 2, 5);
     recipeForm.add(ingredientEditView.getIngredientPanel(), 3, 5);
+  }
+  
+  private void selectImage(ActionEvent actionEvent) {
+    if (selectedRecipe.getName() == null || selectedRecipe.getName().isEmpty()) {
+      // TODO: create validation message that a recipe name is required before selecting an image!
+      log.debug("Recipe name is required before selecting an image!");
+      return;
+    }
+    FileChooser fileChooser = new FileChooser();
+    if (configService.getConfigProperty(IMAGE_FOLDER) != null
+        && !configService.getConfigProperty(IMAGE_FOLDER).isBlank()) {
+      fileChooser
+          .setInitialDirectory(new File(configService.getConfigProperty(IMAGE_FOLDER)));
+    }
+    Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
+    File newImageFile = fileChooser.showOpenDialog(stage);
+
+    if (newImageFile != null) {
+      recipeImage.setText(imageService.selectImage(selectedRecipe.getName(), newImageFile.getAbsolutePath()));
+    }
   }
 
   private Node initialiseButtons() {
@@ -325,6 +374,7 @@ public class RecipeEditView {
         .withIngredients(new HashSet<>(ingredientEditView.getIngredientList()))
         .withTags(getSelectedTags()).withRecipeType(recipeTypeComboBox.getValue())
         .withRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText()))
+        .withImage(recipeImage.getText())
         .withNotes(notes.getText()).build();
   }
 
