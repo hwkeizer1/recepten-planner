@@ -125,7 +125,7 @@ public class RecipeSingleView {
     lastTimeServed
         .setText(recipe.getLastServed() == null ? "-" : recipe.getLastServed().toString());
     rating.setText(recipe.getRating() == null ? "-" : recipe.getRating().toString());
-    imageView = imageService.loadRoundedImage(imageView, recipe);
+    imageView = imageService.loadImage(imageView, recipe);
 
     ingredientTableView.setItems(recipeService.getReadonlyIngredientList(recipe.getId()));
     ingredientTableView.setFixedCellSize(25);

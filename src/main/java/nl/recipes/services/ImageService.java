@@ -1,6 +1,5 @@
 package nl.recipes.services;
 
-import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
 import static nl.recipes.views.ViewMessages.IMAGE_FOLDER;
 import java.io.File;
 import java.io.IOException;
@@ -12,12 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Recipe;
 
@@ -70,26 +65,13 @@ public class ImageService {
     return deletePath;
   }
 
-  public ImageView loadRoundedImage(ImageView imageView, Recipe recipe) {
-    Image image = new Image(loadRecipeImageUrl(recipe), 300, 300, true, false);
+  public ImageView loadImage(ImageView imageView, Recipe recipe) {
+    Image image = new Image(loadRecipeImageUrl(recipe));
     imageView.setImage(image);
-    imageView.getStyleClass().add(CSS_DROP_SHADOW);
-
-    Rectangle clip = new Rectangle();
-    clip.setWidth(300.0);
-    clip.setHeight(300.0);
-
-    clip.setArcHeight(20);
-    clip.setArcWidth(20);
-    clip.setStroke(Color.BLACK);
-    imageView.setClip(clip);
-
-    SnapshotParameters parameters = new SnapshotParameters();
-    parameters.setFill(Color.TRANSPARENT);
-    WritableImage writeableImage = imageView.snapshot(parameters, null);
-
-    imageView.setClip(null);
-    imageView.setImage(writeableImage);
+    imageView.setFitWidth(300);
+    imageView.setPreserveRatio(true);
+    imageView.setSmooth(true);
+    imageView.setCache(false);
     return imageView;
   }
 

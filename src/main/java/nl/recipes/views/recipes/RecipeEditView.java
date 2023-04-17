@@ -121,7 +121,7 @@ public class RecipeEditView {
 
   public Node getRecipeUpdateViewPanel(Recipe recipe) {
     selectedRecipe = recipe;
-    imageView = imageService.loadRoundedImage(imageView, selectedRecipe);
+    imageView = imageService.loadImage(imageView, selectedRecipe);
     selectedRecipeToFormFields();
 
     createButton.setVisible(false);
@@ -132,7 +132,7 @@ public class RecipeEditView {
 
   public Node getRecipeCreateViewPanel() {
     selectedRecipe = new Recipe.RecipeBuilder().build();
-    imageView = imageService.loadRoundedImage(imageView, selectedRecipe);
+    imageView = imageService.loadImage(imageView, selectedRecipe);
     selectedRecipeToFormFields();
 
     createButton.setVisible(true);
