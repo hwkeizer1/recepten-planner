@@ -1,7 +1,6 @@
 package nl.recipes.views.recipes;
 
 import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
-import static nl.recipes.views.ViewMessages.IMAGE_FOLDER;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.Optional;
@@ -14,28 +13,22 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
@@ -65,8 +58,6 @@ public class RecipeListView {
 
   TextField searchFilter;
   TextField searchIngredientFilter;
-
-  Alert a;
 
   public RecipeListView(RecipeService recipeService, PlanningService planningService) {
     this.recipeService = recipeService;
@@ -286,7 +277,6 @@ public class RecipeListView {
   private void showRemoveRecipeConfirmation(ActionEvent event) {
     if (selectedRecipe != null) {
       Alert alert = new Alert(AlertType.CONFIRMATION);
-      alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
       alert.setTitle("Bevestig uw keuze");
       alert.setHeaderText("Weet u zeker dat u het geselecteerde recept '" + selectedRecipe.getName() + "'  wilt verwijderen?");
       alert.initOwner(recipeListPane.getScene().getWindow());
