@@ -1,7 +1,7 @@
 package nl.recipes.views.recipes;
 
 import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
-
+import static nl.recipes.views.ViewMessages.IMAGE_FOLDER;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.Optional;
@@ -66,7 +66,7 @@ public class RecipeListView {
   TextField searchFilter;
   TextField searchIngredientFilter;
 
-  Alert removeAlert;
+  Alert a;
 
   public RecipeListView(RecipeService recipeService, PlanningService planningService) {
     this.recipeService = recipeService;
@@ -93,8 +93,8 @@ public class RecipeListView {
     recipeList = new FilteredList<>(recipeService.getList());
     recipeListTableView.setItems(recipeList);
     recipeListTableView.setFixedCellSize(25);
-    recipeListTableView.prefHeightProperty().bind(recipeListTableView.fixedCellSizeProperty()
-        .multiply(Bindings.size(recipeListTableView.getItems())).add(30));
+    recipeListTableView.prefHeightProperty()
+        .bind(recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())).add(30));
     return recipeListPane;
   }
 
@@ -113,10 +113,8 @@ public class RecipeListView {
     recipeListTableView.getColumns().add(timesServedColumn);
     recipeListTableView.getStyleClass().add(CSS_BASIC_TABLE);
 
-    ChangeListener<Recipe> recipeChangeListener =
-        (observable, oldValue, newValue) -> selectedRecipe = newValue;
-    recipeListTableView.getSelectionModel().selectedItemProperty()
-        .addListener(recipeChangeListener);
+    ChangeListener<Recipe> recipeChangeListener = (observable, oldValue, newValue) -> selectedRecipe = newValue;
+    recipeListTableView.getSelectionModel().selectedItemProperty().addListener(recipeChangeListener);
 
     nameColumn.prefWidthProperty().bind(recipeListTableView.widthProperty().multiply(0.35));
     typeColumn.prefWidthProperty().bind(recipeListTableView.widthProperty().multiply(0.15));
@@ -138,42 +136,34 @@ public class RecipeListView {
     nameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getName()));
     typeColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getRecipeType()));
     tagColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTagString()));
-    lastServedColumn
-        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getLastServed()));
-    timesServedColumn
-        .setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTimesServed()));
+    lastServedColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getLastServed()));
+    timesServedColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getTimesServed()));
 
     return recipeListTableView;
   }
-  
+
   private ToolBar getToolBar(AnchorPane anchorPane) {
-    
+
     final Pane rightSpacer = new Pane();
-    HBox.setHgrow(
-            rightSpacer,
-            Priority.SOMETIMES
-    );
-    
+    HBox.setHgrow(rightSpacer, Priority.SOMETIMES);
+
     ToolBar toolBar = new ToolBar();
     toolBar.prefWidthProperty().bind(anchorPane.widthProperty());
-    
-    Button newRecipe = ToolBarFactory.createToolBarButton("/icons/add.svg", 30,
-        "Nieuw recept toevoegen");
+
+    Button newRecipe = ToolBarFactory.createToolBarButton("/icons/add.svg", 30, "Nieuw recept toevoegen");
     newRecipe.setOnAction(this::showNewRecipeEditView);
     toolBar.getItems().add(newRecipe);
-    
-    Button removeRecipe = ToolBarFactory.createToolBarButton("/icons/remove.svg", 30,
-        "Verwijder recept");
-    removeRecipe.setOnAction(this::showRemoveRecipeAlert);
+
+    Button removeRecipe = ToolBarFactory.createToolBarButton("/icons/remove.svg", 30, "Verwijder recept");
+    removeRecipe.setOnAction(this::showRemoveRecipeConfirmation);
     toolBar.getItems().add(removeRecipe);
 
     toolBar.getItems().add(createSearchFilter());
-    
-    Button planRecipe = ToolBarFactory.createToolBarButton("/icons/plan.svg", 30,
-        "Recept inplannen");
+
+    Button planRecipe = ToolBarFactory.createToolBarButton("/icons/plan.svg", 30, "Recept inplannen");
     planRecipe.setOnAction(this::planRecipe);
     toolBar.getItems().add(planRecipe);
-    
+
     toolBar.getItems().add(rightSpacer);
     toolBar.getItems().add(createIngredientSearchFilter());
 
@@ -186,7 +176,8 @@ public class RecipeListView {
     Label label = new Label("Filter: ");
     label.setPrefHeight(25);
     searchFilterBox.getChildren().add(label);
-//    searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg", searchFilterHeight));
+    // searchFilterBox.getChildren().add(ToolBarFactory.createToolBarImage("/icons/filter.svg",
+    // searchFilterHeight));
 
     searchFilter = new TextField();
     searchFilter.setMaxHeight(searchFilterHeight);
@@ -194,21 +185,18 @@ public class RecipeListView {
     searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
     searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
     searchFilterBox.getChildren().add(searchFilter);
-    searchFilter.textProperty().addListener(
-        (observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
+    searchFilter.textProperty().addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
 
-    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight,
-        "Verwijder filter text");
+    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
     clear.setOnAction(this::clearSearch);
-    
+
     searchFilterBox.getChildren().add(clear);
     return searchFilterBox;
   }
 
   private boolean searchFindRecipe(Recipe recipe, String searchText) {
     return (recipe.getName().toLowerCase().contains(searchText.toLowerCase()))
-        || (recipe.getRecipeType().getDisplayName().toLowerCase()
-            .contains(searchText.toLowerCase()))
+        || (recipe.getRecipeType().getDisplayName().toLowerCase().contains(searchText.toLowerCase()))
         || (recipe.getTagString().toLowerCase().contains(searchText.toLowerCase()));
   }
 
@@ -219,7 +207,7 @@ public class RecipeListView {
       return searchFindRecipe(recipe, searchText);
     };
   }
-  
+
   private HBox createIngredientSearchFilter() {
     int searchFilterHeight = 25;
     HBox searchFilterBox = new HBox();
@@ -233,23 +221,23 @@ public class RecipeListView {
     searchIngredientFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
     searchIngredientFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
     searchFilterBox.getChildren().add(searchIngredientFilter);
-    searchIngredientFilter.textProperty().addListener(
-        (observable, oldValue, newValue) -> recipeList.setPredicate(createIngredientPredicate(newValue)));
+    searchIngredientFilter.textProperty()
+        .addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createIngredientPredicate(newValue)));
 
-    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight,
-        "Verwijder filter text");
+    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
     clear.setOnAction(this::clearIngredientSearch);
-    
+
     searchFilterBox.getChildren().add(clear);
     return searchFilterBox;
   }
 
   private boolean searchFindIngredient(Recipe recipe, String searchText) {
     boolean hasIngredient = false;
-    for (Iterator<Ingredient> it = recipe.getIngredients().iterator(); it.hasNext(); ) {
+    for (Iterator<Ingredient> it = recipe.getIngredients().iterator(); it.hasNext();) {
       Ingredient ingredient = it.next();
       hasIngredient = (ingredient.getIngredientName().getName().toLowerCase().contains(searchText.toLowerCase()));
-      if (hasIngredient) return hasIngredient;
+      if (hasIngredient)
+        return hasIngredient;
     }
     return hasIngredient;
   }
@@ -277,20 +265,9 @@ public class RecipeListView {
   private void clearSearch(ActionEvent event) {
     searchFilter.clear();
   }
-  
+
   private void clearIngredientSearch(ActionEvent event) {
     searchIngredientFilter.clear();
-  }
-
-  private void showRemoveRecipeAlert(ActionEvent event) {
-    if (selectedRecipe != null) {
-      removeAlert =
-          new Alert(AlertType.CONFIRMATION, "Weet u zeker dat u het geselecteerde recept '"
-              + selectedRecipe.getName() + "'  wilt verwijderen?");
-      removeAlert.initModality(Modality.WINDOW_MODAL);
-      removeAlert.showAndWait().filter(response -> response == ButtonType.OK)
-          .ifPresent(response -> removeRecipe());
-    }
   }
 
   private void removeRecipe() {
@@ -306,4 +283,14 @@ public class RecipeListView {
     }
   }
 
+  private void showRemoveRecipeConfirmation(ActionEvent event) {
+    if (selectedRecipe != null) {
+      Alert alert = new Alert(AlertType.CONFIRMATION);
+      alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+      alert.setTitle("Bevestig uw keuze");
+      alert.setHeaderText("Weet u zeker dat u het geselecteerde recept '" + selectedRecipe.getName() + "'  wilt verwijderen?");
+      alert.initOwner(recipeListPane.getScene().getWindow());
+      alert.showAndWait().filter(response -> response == ButtonType.OK).ifPresent(response -> removeRecipe());
+    }
+  }
 }

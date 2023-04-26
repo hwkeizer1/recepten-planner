@@ -306,21 +306,9 @@ public class RecipeEditView {
         } catch (IOException e) {
           log.error("Could not select the image, need further error handling");
         }
-        
+
       }
     }
-  }
-
-  public void showSelectFromImageFolderError() {
-    Alert alert = new Alert(AlertType.ERROR);
-    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-    alert.initModality(Modality.APPLICATION_MODAL);
-    alert.setTitle("Fout: Deze afbeelding kan niet worden geselecteerd.");
-    alert.setHeaderText("Afbeeldingen uit '" + configService.getConfigProperty(IMAGE_FOLDER) + "' zijn al in \n"
-        + "gebruik en kunnen niet worden geselecteerd als nieuwe afbeelding.");
-    alert.setContentText("Selecteer astublieft een afbeelding van een andere lokatie.");
-    alert.initOwner(scrollPanel.getScene().getWindow());
-    alert.show();
   }
 
   private Node initialiseButtons() {
@@ -442,4 +430,14 @@ public class RecipeEditView {
 
   }
 
+  private void showSelectFromImageFolderError() {
+    Alert alert = new Alert(AlertType.ERROR);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.setTitle("Fout: Deze afbeelding kan niet worden geselecteerd.");
+    alert.setHeaderText("Afbeeldingen uit '" + configService.getConfigProperty(IMAGE_FOLDER) + "' zijn al in \n"
+        + "gebruik en kunnen helaas niet worden geselecteerd als nieuwe afbeelding.\n\n"
+        + "Selecteer astublieft een afbeelding van een andere lokatie.");
+    alert.initOwner(scrollPanel.getScene().getWindow());
+    alert.showAndWait();
+  }
 }
