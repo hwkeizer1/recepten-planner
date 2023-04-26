@@ -4,6 +4,7 @@ import static nl.recipes.views.ViewConstants.CSS_VALIDATION;
 import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 import static nl.recipes.views.ViewMessages.IMAGE_FOLDER;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.CheckBox;
@@ -26,15 +28,19 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.converter.IntegerStringConverter;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Recipe;
@@ -56,7 +62,7 @@ public class RecipeEditView {
   private final TagService tagService;
   private final ImageService imageService;
   private final ConfigService configService;
-  
+
   private final IngredientEditView ingredientEditView;
 
   private RootView rootView;
@@ -71,9 +77,9 @@ public class RecipeEditView {
 
   // Column 1 and 2
   ImageView imageView = new ImageView();
-  
+
   TextField recipeImage;
-  
+
   TextField recipeName;
 
   Label recipeNameError;
@@ -96,8 +102,8 @@ public class RecipeEditView {
 
   TextArea directions;
 
-  public RecipeEditView(RecipeService recipeService, TagService tagService,
-      IngredientEditView ingredientEditView, ImageService imageService, ConfigService configService) {
+  public RecipeEditView(RecipeService recipeService, TagService tagService, IngredientEditView ingredientEditView,
+      ImageService imageService, ConfigService configService) {
     this.recipeService = recipeService;
     this.tagService = tagService;
     this.imageService = imageService;
@@ -178,7 +184,7 @@ public class RecipeEditView {
     recipeForm.add(recipeNameWithValidation, 1, 0);
     recipeName.setOnKeyReleased(this::handleKeyReleasedAction);
     recipeNameError.getStyleClass().add(CSS_VALIDATION);
-    
+
     Label preparationTimeLabel = new Label("Voorbereidingstijd:");
     preparationTime = new TextField();
     preparationTime.setMaxWidth(100);
@@ -223,13 +229,13 @@ public class RecipeEditView {
     directions = new TextArea();
     recipeForm.add(directionsLabel, 0, 5);
     recipeForm.add(directions, 1, 5);
-    
+
     recipeForm.add(imageView, 1, 6);
     Label recipeImageLabel = new Label("Afbeelding:");
     recipeImage = new TextField();
     recipeForm.add(recipeImageLabel, 0, 7);
     recipeForm.add(recipeImage, 1, 7);
-    
+
     Button selectImageButton = new Button("selecteer een afbeelding");
     selectImageButton.setOnAction(this::selectImage);
     recipeForm.add(selectImageButton, 1, 8);
@@ -260,8 +266,7 @@ public class RecipeEditView {
       }
       return null;
     };
-    TextFormatter<Integer> formatter =
-        new TextFormatter<>(new IntegerStringConverter(), 0, ratingTextFilter);
+    TextFormatter<Integer> formatter = new TextFormatter<>(new IntegerStringConverter(), 0, ratingTextFilter);
     rating.setTextFormatter(formatter);
     recipeForm.add(ratingLabel, 2, 2);
     recipeForm.add(rating, 3, 2);
@@ -277,7 +282,7 @@ public class RecipeEditView {
     recipeForm.add(ingredientLabel, 2, 5);
     recipeForm.add(ingredientEditView.getIngredientPanel(), 3, 5);
   }
-  
+
   private void selectImage(ActionEvent actionEvent) {
     if (selectedRecipe.getName() == null || selectedRecipe.getName().isEmpty()) {
       // TODO: create validation message that a recipe name is required before selecting an image!
@@ -285,17 +290,37 @@ public class RecipeEditView {
       return;
     }
     FileChooser fileChooser = new FileChooser();
-    if (configService.getConfigProperty(IMAGE_FOLDER) != null
-        && !configService.getConfigProperty(IMAGE_FOLDER).isBlank()) {
-      fileChooser
-          .setInitialDirectory(new File(configService.getConfigProperty(IMAGE_FOLDER)));
+    if (configService.getConfigProperty(IMAGE_FOLDER) != null && !configService.getConfigProperty(IMAGE_FOLDER).isBlank()) {
+      fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
     }
-    Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
+    Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
     File newImageFile = fileChooser.showOpenDialog(stage);
 
     if (newImageFile != null) {
-      recipeImage.setText(imageService.selectImage(selectedRecipe.getName(), newImageFile.getAbsolutePath()));
+      if (newImageFile.getParent().equals(configService.getConfigProperty(IMAGE_FOLDER))) {
+        showSelectFromImageFolderError();
+      } else {
+        try {
+          recipeImage.setText(imageService.selectImage(selectedRecipe.getName(), newImageFile.getAbsolutePath()));
+          imageService.loadImage(imageView, selectedRecipe);
+        } catch (IOException e) {
+          log.error("Could not select the image, need further error handling");
+        }
+        
+      }
     }
+  }
+
+  public void showSelectFromImageFolderError() {
+    Alert alert = new Alert(AlertType.ERROR);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.initModality(Modality.APPLICATION_MODAL);
+    alert.setTitle("Fout: Deze afbeelding kan niet worden geselecteerd.");
+    alert.setHeaderText("Afbeeldingen uit '" + configService.getConfigProperty(IMAGE_FOLDER) + "' zijn al in \n"
+        + "gebruik en kunnen niet worden geselecteerd als nieuwe afbeelding.");
+    alert.setContentText("Selecteer astublieft een afbeelding van een andere lokatie.");
+    alert.initOwner(scrollPanel.getScene().getWindow());
+    alert.show();
   }
 
   private Node initialiseButtons() {
@@ -366,15 +391,12 @@ public class RecipeEditView {
 
   private Recipe formFieldsToRecipe() {
     return new Recipe.RecipeBuilder().withName(recipeName.getText())
-        .withPreparationTime((preparationTime.getText().isEmpty()) ? null
-            : Integer.valueOf(preparationTime.getText()))
+        .withPreparationTime((preparationTime.getText().isEmpty()) ? null : Integer.valueOf(preparationTime.getText()))
         .withCookTime((cookTime.getText().isEmpty()) ? null : Integer.valueOf(cookTime.getText()))
-        .withServings((servings.getText().isEmpty()) ? null : Integer.valueOf(servings.getText()))
-        .withPreparations(preparations.getText()).withDirections(directions.getText())
-        .withIngredients(new HashSet<>(ingredientEditView.getIngredientList()))
+        .withServings((servings.getText().isEmpty()) ? null : Integer.valueOf(servings.getText())).withPreparations(preparations.getText())
+        .withDirections(directions.getText()).withIngredients(new HashSet<>(ingredientEditView.getIngredientList()))
         .withTags(getSelectedTags()).withRecipeType(recipeTypeComboBox.getValue())
-        .withRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText()))
-        .withImage(recipeImage.getText())
+        .withRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText())).withImage(recipeImage.getText())
         .withNotes(notes.getText()).build();
   }
 
@@ -395,16 +417,13 @@ public class RecipeEditView {
 
     // Column 1 and 2
     recipeName.setText(selectedRecipe.getName());
-    preparationTime.setText((selectedRecipe.getPreparationTime() == null) ? ""
-        : selectedRecipe.getPreparationTime().toString());
-    cookTime.setText(
-        (selectedRecipe.getCookTime() == null) ? "" : selectedRecipe.getCookTime().toString());
-    servings.setText(
-        (selectedRecipe.getServings() == null) ? "" : selectedRecipe.getServings().toString());
+    preparationTime.setText((selectedRecipe.getPreparationTime() == null) ? "" : selectedRecipe.getPreparationTime().toString());
+    cookTime.setText((selectedRecipe.getCookTime() == null) ? "" : selectedRecipe.getCookTime().toString());
+    servings.setText((selectedRecipe.getServings() == null) ? "" : selectedRecipe.getServings().toString());
     preparations.setText(selectedRecipe.getPreparations());
     directions.setText(selectedRecipe.getDirections());
-    ingredientEditView
-        .setIngredientList(recipeService.getEditableIngredientList(selectedRecipe.getId()));
+    recipeImage.setText(selectedRecipe.getImage());
+    ingredientEditView.setIngredientList(recipeService.getEditableIngredientList(selectedRecipe.getId()));
 
     // column 3 and 4
     for (CheckBox checkBox : tagCheckBoxes) {
@@ -418,8 +437,7 @@ public class RecipeEditView {
     }
 
     recipeTypeComboBox.setValue(selectedRecipe.getRecipeType());
-    rating
-        .setText((selectedRecipe.getRating() == null) ? "" : selectedRecipe.getRating().toString());
+    rating.setText((selectedRecipe.getRating() == null) ? "" : selectedRecipe.getRating().toString());
     notes.setText(selectedRecipe.getNotes());
 
   }

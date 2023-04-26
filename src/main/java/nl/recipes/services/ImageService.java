@@ -28,27 +28,35 @@ public class ImageService {
     this.configService = configService;
   }
 
-  public String selectImage(String recipeName, String selectedImage) {
+  public String selectImage(String recipeName, String selectedImage) throws IOException {
     Path selectedImagePath = Paths.get(selectedImage);
+
+    // Special case where selected image is the deleted image for the same recipe.
+    // The selectedImage is renamed to a temporary file and used in the normal way 
+    if (selectedImagePath.equals(Paths.get(getDeletePath().toString(), selectedImagePath.getFileName().toString()))) {
+      Path newSelectedImagePath =
+          Paths.get(getDeletePath().toString(), "temp" + getFileExtensionWithDot(selectedImagePath.getFileName().toString()));
+      Files.move(selectedImagePath, newSelectedImagePath, StandardCopyOption.REPLACE_EXISTING);
+      selectedImagePath = newSelectedImagePath;
+    }
 
     Path newImagePath = Paths.get(configService.getConfigProperty(IMAGE_FOLDER),
         recipeName + getFileExtensionWithDot(selectedImagePath.getFileName().toString()));
-   
-      try {
-        moveExistingFileToDeleteFolder(newImagePath.getFileName().toString());
-        Files.copy(selectedImagePath, newImagePath);
-      } catch (IOException e) {
-        log.error("Could not copy " + selectedImagePath.toString() + " to " + newImagePath.toString());
-      }
+
+    try {
+      moveExistingFileToDeleteFolder(newImagePath.getFileName().toString());
+      Files.copy(selectedImagePath, newImagePath);
+    } catch (IOException e) {
+      log.error("Could not copy " + selectedImagePath.toString() + " to " + newImagePath.toString());
+    }
     return newImagePath.getFileName().toString();
   }
 
   private void moveExistingFileToDeleteFolder(String fileName) throws IOException {
     if (filenameAlreadyExists(fileName)) {
-      Path deletePath = getDeletePath();
 
       Path existingFile = Paths.get(configService.getConfigProperty(IMAGE_FOLDER), fileName);
-      Path deletedFile = Paths.get(deletePath.toString(), fileName);
+      Path deletedFile = Paths.get(getDeletePath().toString(), fileName);
       try {
         Files.move(existingFile, deletedFile, StandardCopyOption.REPLACE_EXISTING);
       } catch (IOException e) {
