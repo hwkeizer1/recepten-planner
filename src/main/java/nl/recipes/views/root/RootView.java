@@ -17,6 +17,7 @@ import nl.recipes.views.configurations.ConfigurationView;
 import nl.recipes.views.configurations.SettingsDialog;
 import nl.recipes.views.planning.PlanningListView;
 import nl.recipes.views.recipes.RecipeEditView;
+import nl.recipes.views.recipes.RecipeListCardView;
 import nl.recipes.views.recipes.RecipeListView;
 import nl.recipes.views.recipes.RecipeSingleView;
 import nl.recipes.views.shopping.ShoppingPage;
@@ -28,6 +29,8 @@ public class RootView {
   private final ConfigurationView configurationView;
 
   private final RecipeListView recipeListView;
+  
+  private final RecipeListCardView recipeListCardView;
 
   private final RecipeSingleView recipeSingleView;
 
@@ -48,13 +51,14 @@ public class RootView {
   private MenuBar menuBar = new MenuBar();
 
   public RootView(RecipeSingleView recipeSingleView, RecipeListView recipeListView,
-      RecipeEditView recipeEditView, ConfigurationView configurationView,
-      RestoreBackupDialog restoreBackupDialog, CreateBackupDialog createBackupDialog,
-      SettingsDialog settingsDialog, PlanningListView planningListView,
-      ShoppingPage shoppingPage) {
+      RecipeListCardView recipeListCardView, RecipeEditView recipeEditView, 
+      ConfigurationView configurationView, RestoreBackupDialog restoreBackupDialog, 
+      CreateBackupDialog createBackupDialog, SettingsDialog settingsDialog,
+      PlanningListView planningListView, ShoppingPage shoppingPage) {
 
     this.configurationView = configurationView;
     this.recipeListView = recipeListView;
+    this.recipeListCardView = recipeListCardView;
     this.recipeSingleView = recipeSingleView;
     this.recipeEditView = recipeEditView;
     this.restoreBackupDialog = restoreBackupDialog;
@@ -64,6 +68,7 @@ public class RootView {
     this.shoppingPage = shoppingPage;
 
     recipeListView.setRootView(this);
+    recipeListCardView.setRootView(this);
     recipeSingleView.setRootView(this);
     recipeEditView.setRootView(this);
     planningListView.setRootView(this);
@@ -78,7 +83,8 @@ public class RootView {
 
   private void initializeRootWindow() {
     rootWindow.getStyleClass().add(CSS_BACKGROUND);
-    rootWindow.setCenter(recipeListView.getRecipeListPanel());
+//    rootWindow.setCenter(recipeListView.getRecipeListPanel());
+    rootWindow.setCenter(recipeListCardView.getRecipeListCardPanel());
     rootWindow.setTop(menuBar);
   }
 

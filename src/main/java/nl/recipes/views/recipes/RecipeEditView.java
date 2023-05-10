@@ -75,8 +75,6 @@ public class RecipeEditView {
   // Column 1 and 2
   ImageView imageView = new ImageView();
 
-  TextField recipeImage;
-
   TextField recipeName;
 
   Label recipeNameError;
@@ -124,7 +122,7 @@ public class RecipeEditView {
 
   public Node getRecipeUpdateViewPanel(Recipe recipe) {
     selectedRecipe = recipe;
-    imageView = imageService.loadImage(imageView, selectedRecipe);
+    imageView = imageService.loadRecipeImage(imageView, selectedRecipe);
     selectedRecipeToFormFields();
 
     createButton.setVisible(false);
@@ -135,7 +133,7 @@ public class RecipeEditView {
 
   public Node getRecipeCreateViewPanel() {
     selectedRecipe = new Recipe.RecipeBuilder().build();
-    imageView = imageService.loadImage(imageView, selectedRecipe);
+    imageView = imageService.loadRecipeImage(imageView, selectedRecipe);
     selectedRecipeToFormFields();
 
     createButton.setVisible(true);
@@ -179,7 +177,7 @@ public class RecipeEditView {
     recipeNameWithValidation.getChildren().addAll(recipeName, recipeNameError);
     recipeForm.add(nameLabel, 0, 0);
     recipeForm.add(recipeNameWithValidation, 1, 0);
-    recipeName.setOnKeyReleased(this::handleKeyReleasedAction);
+    recipeName.setOnKeyReleased(this::handleRecipeNameKeyReleasedAction);
     recipeNameError.getStyleClass().add(CSS_VALIDATION);
 
     Label preparationTimeLabel = new Label("Voorbereidingstijd:");
@@ -229,9 +227,7 @@ public class RecipeEditView {
 
     recipeForm.add(imageView, 1, 6);
     Label recipeImageLabel = new Label("Afbeelding:");
-    recipeImage = new TextField();
     recipeForm.add(recipeImageLabel, 0, 7);
-    recipeForm.add(recipeImage, 1, 7);
 
     Button selectImageButton = new Button("selecteer een afbeelding");
     selectImageButton.setOnAction(this::selectImage);
@@ -282,10 +278,15 @@ public class RecipeEditView {
 
   private void selectImage(ActionEvent actionEvent) {
     if (selectedRecipe.getName() == null || selectedRecipe.getName().isEmpty()) {
-      // TODO: create validation message that a recipe name is required before selecting an image!
-      log.debug("Recipe name is required before selecting an image!");
+      showRecipeNameRequiredForImageSelection();
       return;
     }
+    Optional<Recipe> recipe = recipeService.findByName(selectedRecipe.getName());
+    if (recipe.isPresent() && createButton.isVisible()) {
+      showRecipeNameInvalidForImageSelection();
+      return;
+    }
+    
     FileChooser fileChooser = new FileChooser();
     if (configService.getConfigProperty(IMAGE_FOLDER) != null && !configService.getConfigProperty(IMAGE_FOLDER).isBlank()) {
       fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
@@ -298,8 +299,8 @@ public class RecipeEditView {
         showSelectFromImageFolderError();
       } else {
         try {
-          recipeImage.setText(imageService.selectImage(selectedRecipe.getName(), newImageFile.getAbsolutePath()));
-          imageService.loadImage(imageView, selectedRecipe);
+          selectedRecipe.setImage(imageService.selectImage(selectedRecipe.getName(), newImageFile.getAbsolutePath()));
+          imageService.loadRecipeImage(imageView, selectedRecipe);
         } catch (IOException e) {
           log.error("Could not select the image, need further error handling");
         }
@@ -351,6 +352,10 @@ public class RecipeEditView {
 
   private void createRecipe(ActionEvent event) {
     selectedRecipe = formFieldsToRecipe();
+    if (!imageService.validateImageName(selectedRecipe)) { 
+      String newFileName = imageService.renameImageFileName(selectedRecipe.getImage(), selectedRecipe.getName());
+      selectedRecipe.setImage(newFileName);
+    }
     try {
       Recipe createdRecipe = recipeService.create(selectedRecipe);
       rootView.showRecipeSingleViewPanel(createdRecipe);
@@ -361,6 +366,10 @@ public class RecipeEditView {
 
   private void updateRecipe(ActionEvent event) {
     Recipe update = formFieldsToRecipe();
+    if (!imageService.validateImageName(selectedRecipe)) {
+      String newFileName = imageService.renameImageFileName(selectedRecipe.getImage(), selectedRecipe.getName());
+      selectedRecipe.setImage(newFileName);
+    }
     try {
       Recipe updatedRecipe = recipeService.update(selectedRecipe, update);
       rootView.showRecipeSingleViewPanel(updatedRecipe);
@@ -370,7 +379,8 @@ public class RecipeEditView {
     }
   }
 
-  private void handleKeyReleasedAction(KeyEvent keyEvent) {
+  private void handleRecipeNameKeyReleasedAction(KeyEvent keyEvent) {
+    selectedRecipe.setName(recipeName.getText());
     recipeNameError.setText(null);
   }
 
@@ -381,7 +391,7 @@ public class RecipeEditView {
         .withServings((servings.getText().isEmpty()) ? null : Integer.valueOf(servings.getText())).withPreparations(preparations.getText())
         .withDirections(directions.getText()).withIngredients(new HashSet<>(ingredientEditView.getIngredientList()))
         .withTags(getSelectedTags()).withRecipeType(recipeTypeComboBox.getValue())
-        .withRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText())).withImage(recipeImage.getText())
+        .withRating((rating.getText().isEmpty()) ? null : Integer.valueOf(rating.getText())).withImage(selectedRecipe.getImage())
         .withNotes(notes.getText()).build();
   }
 
@@ -407,7 +417,6 @@ public class RecipeEditView {
     servings.setText((selectedRecipe.getServings() == null) ? "" : selectedRecipe.getServings().toString());
     preparations.setText(selectedRecipe.getPreparations());
     directions.setText(selectedRecipe.getDirections());
-    recipeImage.setText(selectedRecipe.getImage());
     ingredientEditView.setIngredientList(recipeService.getEditableIngredientList(selectedRecipe.getId()));
 
     // column 3 and 4
@@ -434,6 +443,25 @@ public class RecipeEditView {
     alert.setHeaderText("Afbeeldingen uit '" + configService.getConfigProperty(IMAGE_FOLDER) + "' zijn al in \n"
         + "gebruik en kunnen helaas niet worden geselecteerd als nieuwe afbeelding.\n\n"
         + "Selecteer astublieft een afbeelding van een andere lokatie.");
+    alert.initOwner(scrollPanel.getScene().getWindow());
+    alert.showAndWait();
+  }
+  
+  private void showRecipeNameRequiredForImageSelection() {
+    Alert alert = new Alert(AlertType.ERROR);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.setTitle("Fout: Kan geen afbeelding selecteren.");
+    alert.setHeaderText("Het recept dient eerst een naam te hebben voordat een afbeelding kan worden geselecteerd.");
+    alert.initOwner(scrollPanel.getScene().getWindow());
+    alert.showAndWait();
+  }
+  
+  private void showRecipeNameInvalidForImageSelection() {
+    Alert alert = new Alert(AlertType.ERROR);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.setTitle("Fout: Kan geen afbeelding selecteren.");
+    alert.setHeaderText("De receptnaam die je gebruikt bestaat al. Kies eerst een unieke naam voor het recept voordat\n"
+        + "je een afbeelding selecteerd.");
     alert.initOwner(scrollPanel.getScene().getWindow());
     alert.showAndWait();
   }

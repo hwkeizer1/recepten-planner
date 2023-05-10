@@ -12,6 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import nl.recipes.domain.IngredientName;
+import nl.recipes.domain.IngredientType;
+import nl.recipes.domain.Recipe;
+import nl.recipes.domain.ShopType;
 
 class ImageServiceTest {
   
@@ -41,6 +45,34 @@ class ImageServiceTest {
     assertEquals(true, imageService.filenameAlreadyExists("test.jpg"));
     assertEquals(false, imageService.filenameAlreadyExists("tes.png"));
     assertEquals(true, imageService.filenameAlreadyExists("test"));
+  }
+  
+  @Test
+  void testValidateImageName() {
+    Recipe recipe = new Recipe.RecipeBuilder().withName("recipeName").withImage("recipeName.txt").build();
+    assertEquals(true, imageService.validateImageName(recipe));
+    
+    recipe = new Recipe.RecipeBuilder().withName("recipename").withImage("recipeName.txt").build();
+    assertEquals(false, imageService.validateImageName(recipe));
+    
+    recipe = new Recipe.RecipeBuilder().withName("recipe name").withImage("recipe name.txt").build();
+    assertEquals(true, imageService.validateImageName(recipe));
+    
+    recipe = new Recipe.RecipeBuilder().withName("recipe name").withImage("recipe name.").build();
+    assertEquals(true, imageService.validateImageName(recipe));
+    
+    recipe = new Recipe.RecipeBuilder().withName("recipe name").withImage("recipe name").build();
+    assertEquals(true, imageService.validateImageName(recipe));
+    
+    recipe = new Recipe.RecipeBuilder().withName("recipe.name").withImage("recipe.name.txt").build();
+    assertEquals(true, imageService.validateImageName(recipe));
+    
+    recipe = new Recipe.RecipeBuilder().withName("recipe.name").withImage("recipe.name").build();
+    assertEquals(false, imageService.validateImageName(recipe));
+    
+    recipe = new Recipe.RecipeBuilder().withName("recipe.name").build();
+    assertEquals(true, imageService.validateImageName(recipe));
+        
   }
 
 }

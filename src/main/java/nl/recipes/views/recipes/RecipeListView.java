@@ -1,6 +1,7 @@
 package nl.recipes.views.recipes;
 
 import static nl.recipes.views.ViewConstants.CSS_BASIC_TABLE;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.Optional;
@@ -29,20 +30,23 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
+import nl.recipes.services.ImageService;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.components.utils.ToolBarFactory;
 import nl.recipes.views.root.RootView;
 
+@Slf4j
 @Component
 public class RecipeListView {
 
   private final RecipeService recipeService;
-
   private final PlanningService planningService;
+  private final ImageService imageService;
 
   private RootView rootView;
 
@@ -59,9 +63,10 @@ public class RecipeListView {
   TextField searchFilter;
   TextField searchIngredientFilter;
 
-  public RecipeListView(RecipeService recipeService, PlanningService planningService) {
+  public RecipeListView(RecipeService recipeService, PlanningService planningService, ImageService imageService) {
     this.recipeService = recipeService;
     this.planningService = planningService;
+    this.imageService = imageService;
 
     recipeListPane = new AnchorPane();
     recipeListBox = new VBox();
@@ -264,6 +269,11 @@ public class RecipeListView {
   private void removeRecipe() {
     Optional<Recipe> optionalRecipe = recipeService.findById(selectedRecipe.getId());
     if (optionalRecipe.isPresent()) {
+      try {
+        imageService.moveFileToDeleteFolderIfExists(selectedRecipe.getImage());
+      } catch (IOException e) {
+        log.error("Could not delete image " + selectedRecipe.getImage());
+      }
       recipeService.remove(optionalRecipe.get());
     }
   }
