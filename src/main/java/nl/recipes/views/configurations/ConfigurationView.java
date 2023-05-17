@@ -36,8 +36,6 @@ public class ConfigurationView {
     scrollPane.setFitToWidth(true);
     scrollPane.setFitToHeight(true);
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    scrollPane.widthProperty()
-        .addListener((observable, oldValue, newValue) -> root.notifyWidthChange(newValue));
   }
 
   public Node getConfigurationViewPanel() {
