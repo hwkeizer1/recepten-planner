@@ -84,7 +84,7 @@ public class RootView {
   private void initializeRootWindow() {
     rootWindow.getStyleClass().add(CSS_BACKGROUND);
 //    rootWindow.setCenter(recipeListView.getRecipeListPanel());
-    rootWindow.setCenter(recipeListCardView.getRecipeListCardPanel());
+    rootWindow.setCenter(recipeListCardView.getView());
     rootWindow.setTop(menuBar);
   }
 
@@ -136,7 +136,7 @@ public class RootView {
   }
 
   public void showRecipeListPanel(ActionEvent actionEvent) {
-    rootWindow.setCenter(recipeListView.getRecipeListPanel());
+    rootWindow.setCenter(recipeListCardView.getView());
   }
 
   public void showConfigurationPanel(ActionEvent actionEvent) {

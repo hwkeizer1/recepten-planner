@@ -10,12 +10,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,6 +29,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.ConfigService;
@@ -40,7 +44,10 @@ import nl.recipes.views.root.RootView;
 
 import static nl.recipes.views.ViewConstants.*;
 import static nl.recipes.views.ViewMessages.*;
+import java.io.IOException;
+import java.util.Optional;
 
+@Slf4j
 @Component
 public class RecipeSingleView {
 
@@ -53,6 +60,8 @@ public class RecipeSingleView {
   private Recipe selectedRecipe;
 
   ScrollPane scrollPane;
+
+  BootstrapPane root;
 
   ImageView imageView = new ImageView();
 
@@ -90,13 +99,12 @@ public class RecipeSingleView {
 
   Label directions = new Label();
 
-  public RecipeSingleView(RecipeService recipeService, PlanningService planningService,
-      ImageService imageService) {
+  public RecipeSingleView(RecipeService recipeService, PlanningService planningService, ImageService imageService) {
     this.recipeService = recipeService;
     this.planningService = planningService;
     this.imageService = imageService;
 
-    BootstrapPane root = makeView();
+    root = makeView();
 
     scrollPane = new ScrollPane(root);
     scrollPane.setFitToWidth(true);
@@ -114,20 +122,18 @@ public class RecipeSingleView {
 
     tagString.setText(recipe.getTagString());
     recipeType.setText(recipe.getRecipeType().getDisplayName());
-    preparationTime.setText(
-        recipe.getPreparationTime() == null ? "-" : recipe.getPreparationTime().toString());
+    preparationTime.setText(recipe.getPreparationTime() == null ? "-" : recipe.getPreparationTime().toString());
     cookTime.setText(recipe.getCookTime() == null ? "-" : recipe.getCookTime().toString());
     servings.setText(recipe.getServings() == null ? "-" : recipe.getServings().toString());
     timesServed.setText(recipe.getTimesServed() == null ? "-" : recipe.getTimesServed().toString());
-    lastTimeServed
-        .setText(recipe.getLastServed() == null ? "-" : recipe.getLastServed().toString());
+    lastTimeServed.setText(recipe.getLastServed() == null ? "-" : recipe.getLastServed().toString());
     rating.setText(recipe.getRating() == null ? "-" : recipe.getRating().toString());
     imageView = imageService.loadRecipeImage(imageView, recipe);
 
     ingredientTableView.setItems(recipeService.getReadonlyIngredientList(recipe.getId()));
     ingredientTableView.setFixedCellSize(25);
-    ingredientTableView.prefHeightProperty().bind(Bindings.size(ingredientTableView.getItems())
-        .multiply(ingredientTableView.getFixedCellSize()).add(4));
+    ingredientTableView.prefHeightProperty()
+        .bind(Bindings.size(ingredientTableView.getItems()).multiply(ingredientTableView.getFixedCellSize()).add(4));
     ingredientTableView.minHeightProperty().bind(ingredientTableView.prefHeightProperty());
     ingredientTableView.maxHeightProperty().bind(ingredientTableView.prefHeightProperty());
 
@@ -137,7 +143,7 @@ public class RecipeSingleView {
 
     return scrollPane;
   }
-  
+
 
 
   private BootstrapPane makeView() {
@@ -174,6 +180,9 @@ public class RecipeSingleView {
     Button edit = new Button("Recept wijzigen");
     edit.setOnAction(this::showRecipeEditView);
     edit.setMinWidth(150);
+    Button remove = new Button("Recept verwijderen");
+    remove.setOnAction(this::showRemoveRecipeConfirmation);
+    remove.setMinWidth(150);
     Button plan = new Button("Recept plannen");
     plan.setOnAction(this::planRecipe);
     plan.setMinWidth(150);
@@ -183,7 +192,7 @@ public class RecipeSingleView {
     Button planning = new Button("Terug naar planning");
     planning.setOnAction(this::showPlanning);
     planning.setMinWidth(150);
-    buttonPanel.getChildren().addAll(edit, plan, list, planning);
+    buttonPanel.getChildren().addAll(edit, remove, plan, list, planning);
 
     Region buffer = new Region();
     HBox.setHgrow(buffer, Priority.ALWAYS);
@@ -257,35 +266,30 @@ public class RecipeSingleView {
 
     amountColumn.prefWidthProperty().bind(ingredientTableView.widthProperty().multiply(0.1));
     measureUnitColumn.prefWidthProperty().bind(ingredientTableView.widthProperty().multiply(0.35));
-    ingredientNameColumn.prefWidthProperty()
-        .bind(ingredientTableView.widthProperty().multiply(0.45));
+    ingredientNameColumn.prefWidthProperty().bind(ingredientTableView.widthProperty().multiply(0.45));
     stockColumn.prefWidthProperty().bind(ingredientTableView.widthProperty().multiply(0.1));
 
     ingredientTableView.getStyleClass().add(CSS_INGREDIENT_TABLE);
 
-    amountColumn.setCellValueFactory(
-        c -> (c.getValue().getAmount() != null && (10 * c.getValue().getAmount() % 10) == 0)
-            ? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
-            : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
+    amountColumn.setCellValueFactory(c -> (c.getValue().getAmount() != null && (10 * c.getValue().getAmount() % 10) == 0)
+        ? new ReadOnlyObjectWrapper<>(Math.round(c.getValue().getAmount()))
+        : new ReadOnlyObjectWrapper<>(c.getValue().getAmount()));
 
     measureUnitColumn.setCellValueFactory(c -> {
       if (c.getValue().getIngredientName().getMeasureUnit() == null) {
         return new ReadOnlyObjectWrapper<>("");
       } else {
-        return new ReadOnlyObjectWrapper<>(
-            (c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
-                ? c.getValue().getIngredientName().getMeasureUnit().getName()
-                : c.getValue().getIngredientName().getMeasureUnit().getPluralName());
+        return new ReadOnlyObjectWrapper<>((c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
+            ? c.getValue().getIngredientName().getMeasureUnit().getName()
+            : c.getValue().getIngredientName().getMeasureUnit().getPluralName());
       }
     });
 
     ingredientNameColumn.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(
-        (c.getValue().getAmount() == null || c.getValue().getAmount() <= 1)
-            ? c.getValue().getIngredientName().getName()
+        (c.getValue().getAmount() == null || c.getValue().getAmount() <= 1) ? c.getValue().getIngredientName().getName()
             : c.getValue().getIngredientName().getPluralName()));
 
-    stockColumn.setCellValueFactory(
-        c -> new SimpleBooleanProperty(c.getValue().getIngredientName().isStock()));
+    stockColumn.setCellValueFactory(c -> new SimpleBooleanProperty(c.getValue().getIngredientName().isStock()));
     stockColumn.setCellFactory(c -> new CheckBoxTableCell<>());
 
     return widget;
@@ -338,6 +342,33 @@ public class RecipeSingleView {
       rootView.showRecipeEditViewPanel(selectedRecipe);
     }
   }
+
+  private void showRemoveRecipeConfirmation(ActionEvent event) {
+    if (selectedRecipe != null) {
+      Alert alert = new Alert(AlertType.CONFIRMATION);
+      alert.setTitle("Bevestig uw keuze");
+      alert.setHeaderText("Weet u zeker dat u het geselecteerde recept '" + selectedRecipe.getName() + "'  wilt verwijderen?");
+      alert.initOwner(root.getScene().getWindow());
+      alert.showAndWait().filter(response -> response == ButtonType.OK).ifPresent(response -> {
+        removeRecipe();
+        showRecipeListView(null);
+      });
+    }
+
+  }
+
+  private void removeRecipe() {
+    Optional<Recipe> optionalRecipe = recipeService.findById(selectedRecipe.getId());
+    if (optionalRecipe.isPresent()) {
+      try {
+        imageService.moveFileToDeleteFolderIfExists(selectedRecipe.getImage());
+      } catch (IOException e) {
+        log.error("Could not delete image " + selectedRecipe.getImage());
+      }
+      recipeService.remove(optionalRecipe.get());
+    }
+  }
+
 
   private void showPlanning(ActionEvent event) {
     if (rootView != null) {
