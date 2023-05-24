@@ -3,46 +3,39 @@ package nl.recipes.views.recipes;
 import java.util.Iterator;
 import java.util.function.Predicate;
 import org.springframework.stereotype.Component;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
+import nl.recipes.services.ImageService;
 import nl.recipes.services.RecipeService;
 import nl.recipes.views.components.pane.bootstrap.BootstrapColumn;
 import nl.recipes.views.components.pane.bootstrap.BootstrapPane;
 import nl.recipes.views.components.pane.bootstrap.BootstrapRow;
 import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 import nl.recipes.views.components.utils.ToolBarFactory;
-import nl.recipes.views.components.utils.Utils;
 import nl.recipes.views.root.RootView;
 
-@Slf4j
 @Component
 public class RecipeListCardView {
 
   private final RecipeService recipeService;
+  private final ImageService imageService;
 
   private RootView rootView;
 
@@ -54,8 +47,9 @@ public class RecipeListCardView {
   VBox view;
   BootstrapPane recipeListCardPane;
 
-  public RecipeListCardView(RecipeService recipeService) {
+  public RecipeListCardView(RecipeService recipeService, ImageService imageService) {
     this.recipeService = recipeService;
+    this.imageService = imageService;
 
     scrollPane = new ScrollPane();
     scrollPane.setFitToWidth(true);
@@ -114,7 +108,12 @@ public class RecipeListCardView {
     recipeCard.setPrefWidth(800);
     recipeCard.setOnMouseClicked(event -> onMouseClicked(event, recipe));
     recipeCard.getStyleClass().add("widget");
-    recipeCard.getChildren().add(new Label(recipe.getName()));
+    
+    ImageView imageView = new ImageView();
+    imageView = imageService.loadRecipeImage(imageView, recipe, 60d);
+    
+    Label recipeName = new Label(recipe.getName());
+    recipeCard.getChildren().addAll(imageView,recipeName);
     return recipeCard;
   }
 

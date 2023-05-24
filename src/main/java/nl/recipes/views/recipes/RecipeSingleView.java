@@ -1,7 +1,13 @@
 package nl.recipes.views.recipes;
 
+import static nl.recipes.views.ViewConstants.CSS_DROP_SHADOW;
+import static nl.recipes.views.ViewConstants.CSS_INGREDIENT_TABLE;
+import static nl.recipes.views.ViewConstants.CSS_RECIPE_TITLE;
+import static nl.recipes.views.ViewConstants.CSS_TITLE;
+import static nl.recipes.views.ViewConstants.CSS_WIDGET;
+import java.io.IOException;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -9,8 +15,8 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -18,21 +24,15 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
-import nl.recipes.services.ConfigService;
 import nl.recipes.services.ImageService;
 import nl.recipes.services.PlanningService;
 import nl.recipes.services.RecipeService;
@@ -41,11 +41,6 @@ import nl.recipes.views.components.pane.bootstrap.BootstrapPane;
 import nl.recipes.views.components.pane.bootstrap.BootstrapRow;
 import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 import nl.recipes.views.root.RootView;
-
-import static nl.recipes.views.ViewConstants.*;
-import static nl.recipes.views.ViewMessages.*;
-import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @Component

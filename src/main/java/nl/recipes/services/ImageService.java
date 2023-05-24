@@ -32,7 +32,7 @@ public class ImageService {
     Path selectedImagePath = Paths.get(selectedImage);
 
     // Special case where selected image is the deleted image for the same recipe.
-    // The selectedImage is renamed to a temporary file and used in the normal way 
+    // The selectedImage is renamed to a temporary file and used in the normal way
     if (selectedImagePath.equals(Paths.get(getDeletePath().toString(), selectedImagePath.getFileName().toString()))) {
       Path newSelectedImagePath =
           Paths.get(getDeletePath().toString(), "temp" + getFileExtensionWithDot(selectedImagePath.getFileName().toString()));
@@ -53,7 +53,8 @@ public class ImageService {
   }
 
   public void moveFileToDeleteFolderIfExists(String fileName) throws IOException {
-    if (fileName == null) return;
+    if (fileName == null)
+      return;
     if (filenameAlreadyExists(fileName)) {
 
       Path existingFile = Paths.get(configService.getConfigProperty(IMAGE_FOLDER), fileName);
@@ -67,22 +68,28 @@ public class ImageService {
   }
 
   public ImageView loadRecipeImage(ImageView imageView, Recipe recipe) {
-    if (recipe != null) {
-      return loadImage(imageView, recipe.getImage());
-    } 
-     return loadImage(imageView, null);
+    return loadRecipeImage(imageView, recipe, 300d);
   }
 
-  public ImageView loadImage(ImageView imageView, String fileName) {
+  public ImageView loadRecipeImage(ImageView imageView, Recipe recipe, Double width) {
+    if (recipe != null) {
+      return loadImage(imageView, recipe.getImage(), width);
+    }
+    return loadImage(imageView, null, width);
+  }
+
+  public ImageView loadImage(ImageView imageView, String fileName, Double width) {
+    if (fileName == null || fileName.isEmpty())
+      return imageView;
     Image image = new Image(loadRecipeImageUrl(fileName));
     imageView.setImage(image);
-    imageView.setFitWidth(300);
+    imageView.setFitWidth(width);
     imageView.setPreserveRatio(true);
     imageView.setSmooth(true);
     imageView.setCache(false);
     return imageView;
   }
-  
+
   public String renameImageFileName(String oldName, String newName) {
     String file = getFilenameWithoutExtension(newName) + getFileExtensionWithDot(oldName);
     try {
@@ -94,7 +101,7 @@ public class ImageService {
     }
     return file;
   }
-  
+
   private Path getDeletePath() throws IOException {
     Path deletePath = Paths.get(configService.getConfigProperty(IMAGE_FOLDER), "deleted");
     if (!Files.exists(deletePath)) {
@@ -104,20 +111,19 @@ public class ImageService {
   }
 
   private String loadRecipeImageUrl(String image) {
-    if (image == null) {
-      return "file:" + configService.getConfigProperty(IMAGE_FOLDER) + "/" + "no-image.png";
-    } else {
-      return "file:" + configService.getConfigProperty(IMAGE_FOLDER) + "/" + image;
-    }
+    return "file:" + configService.getConfigProperty(IMAGE_FOLDER) + "/" + image;
+
   }
-  
+
   /**
    * Validate if the image name is equal to the recipename
+   * 
    * @param recipe
    * @return
    */
   public boolean validateImageName(Recipe recipe) {
-    if (recipe.getImage() == null || recipe.getImage().isEmpty()) return true;
+    if (recipe.getImage() == null || recipe.getImage().isEmpty())
+      return true;
     return recipe.getName().equals(getFilenameWithoutExtension(recipe.getImage()));
   }
 
