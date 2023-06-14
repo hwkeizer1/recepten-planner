@@ -21,8 +21,7 @@ public class ToolBarFactory {
   private ToolBarFactory() {}
   
   public static Node createToolBarImage(String imagePath, double size) {
-    URL url = ToolBarFactory.class.getResource(imagePath);
-    SVGImage svgImage = SVGLoader.load(url).scale(size/svgImageSize);
+    SVGImage svgImage = createImage(imagePath, size);
     VBox vbox = new VBox();
     double paddingHeight = (size - svgImage.getScaledHeight())/2;
     double paddingWidth = (size - svgImage.getScaledWidth())/2;
@@ -35,8 +34,7 @@ public class ToolBarFactory {
   }
   
   public static Button createToolBarButton(String iconPath, double size, String toolTipText) {
-    URL url = ToolBarFactory.class.getResource(iconPath);
-    SVGImage image = SVGLoader.load(url).scale(size/svgImageSize);
+    SVGImage image = createImage(iconPath, size);
     Button button = new Button();
     button.setGraphic(image);
     button.setMinSize(size, size);
@@ -47,5 +45,10 @@ public class ToolBarFactory {
     toolTip.setShowDelay(new Duration(500));
     button.setTooltip(toolTip);
     return button;
+  }
+  
+  public static SVGImage createImage(String path, double size) {
+    URL url = ToolBarFactory.class.getResource(path);
+    return SVGLoader.load(url).scale(size/svgImageSize);
   }
 }

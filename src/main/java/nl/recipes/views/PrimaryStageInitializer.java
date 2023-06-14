@@ -26,7 +26,9 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
         getClass().getResource("/css/recipe-list-view.css").toExternalForm(),
         getClass().getResource("/css/single-recipe-view.css").toExternalForm(),
         getClass().getResource("/css/planning.css").toExternalForm(),
-        getClass().getResource("/css/shopping-panel.css").toExternalForm());
+        getClass().getResource("/css/shopping-panel.css").toExternalForm(),
+        getClass().getResource("/css/recipe-card.css").toExternalForm());
+    
     stage.setScene(scene);
     stage.setTitle(ViewMessages.PROGRAM_TITLE);
     stage.show();

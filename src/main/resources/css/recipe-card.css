@@ -1,0 +1,15 @@
+/*
+ * Widget styling
+ */
+.recipe-card{
+    -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.recipe-card .title {
+	-fx-font-weight: bold;
+	-fx-text-fill: rp-header-text;
+	-fx-max-width: 100000;
+}
+ 
