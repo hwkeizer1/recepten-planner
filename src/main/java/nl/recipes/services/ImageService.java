@@ -79,8 +79,10 @@ public class ImageService {
   }
 
   public ImageView loadImage(ImageView imageView, String fileName, Double width) {
-    if (fileName == null || fileName.isEmpty())
+    if (fileName == null || fileName.isEmpty()) {
+      imageView.setImage(null);
       return imageView;
+    }
     Image image = new Image(loadRecipeImageUrl(fileName));
     imageView.setImage(image);
     imageView.setFitWidth(width);
