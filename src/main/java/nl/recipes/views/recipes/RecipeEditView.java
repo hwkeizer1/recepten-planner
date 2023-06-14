@@ -368,7 +368,7 @@ public class RecipeEditView {
     Recipe update = formFieldsToRecipe();
     if (!imageService.validateImageName(selectedRecipe)) {
       String newFileName = imageService.renameImageFileName(selectedRecipe.getImage(), selectedRecipe.getName());
-      selectedRecipe.setImage(newFileName);
+      update.setImage(newFileName);
     }
     try {
       Recipe updatedRecipe = recipeService.update(selectedRecipe, update);
