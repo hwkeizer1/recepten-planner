@@ -3,6 +3,7 @@
  */
 .recipe-card{
     -fx-background-color: derive(rp-bg-contra-color, 20%);
+    -fx-effect: dropshadow(gaussian, rp-shadow, 10, 0.5, 0.0, 0.0);
     -fx-background-radius: 5px;
     -fx-padding: 5px;
 }
@@ -12,4 +13,12 @@
 	-fx-text-fill: rp-header-text;
 	-fx-max-width: 100000;
 }
+
+.recipe-card .card-content .lines .type{
+	-fx-font-weight: bold;
+}
+  
+ .recipe-card .card-content .lines .categories {
+ 	-fx-text-fill: #008ae6;
+ }
  

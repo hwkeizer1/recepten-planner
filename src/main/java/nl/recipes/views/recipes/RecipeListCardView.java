@@ -1,13 +1,10 @@
 package nl.recipes.views.recipes;
 
-import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Iterator;
 import java.util.function.Predicate;
 import org.girod.javafx.svgimage.SVGImage;
-import org.girod.javafx.svgimage.SVGLoader;
-import org.hibernate.validator.constraints.CompositionType;
 import org.springframework.stereotype.Component;
 import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
@@ -23,7 +20,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -31,7 +27,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
@@ -44,7 +39,6 @@ import nl.recipes.views.components.pane.bootstrap.BootstrapRow;
 import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 import nl.recipes.views.components.utils.ToolBarFactory;
 import nl.recipes.views.root.RootView;
-import nl.recipes.views.util.Util;
 
 @Slf4j
 @Component
@@ -64,6 +58,7 @@ public class RecipeListCardView {
 
   ScrollPane scrollPane;
   VBox view;
+  VBox content;
   BootstrapPane recipeListCardPane;
 
   public RecipeListCardView(RecipeService recipeService, ImageService imageService, PlanningService planningService) {
@@ -81,20 +76,21 @@ public class RecipeListCardView {
     this.rootView = rootView;
   }
 
-  public ScrollPane getView() {
+  public Node getView() {
     recipeList = new FilteredList<>(recipeService.getList());
 
     recipeList.addListener((ListChangeListener.Change<? extends Recipe> c) -> {
-      view.getChildren().remove(1);
-      view.getChildren().add(createRecipeListCardPane());
-      scrollPane.setContent(view);
+      content.getChildren().remove(0);
+      content.getChildren().add(createRecipeListCardPane());
+      scrollPane.setContent(content);
     });
 
     view = new VBox();
-    view.getChildren().addAll(createToolBar(view), createRecipeListCardPane());
-    scrollPane.setContent(view);
-
-    return scrollPane;
+    content = new VBox();
+    content.getChildren().add(createRecipeListCardPane());
+    scrollPane.setContent(content);
+    view.getChildren().addAll(createToolBar(view), scrollPane);
+    return view;
   }
 
   private BootstrapPane createRecipeListCardPane() {
@@ -149,17 +145,24 @@ public class RecipeListCardView {
 
     header.getChildren().addAll(planningCheckBox, headerLine);
 
-    HBox content = new HBox();
-    HBox.setHgrow(content, Priority.ALWAYS);
-    content.setMinHeight(160);
+    HBox cardContent = new HBox();
+    HBox.setHgrow(cardContent, Priority.ALWAYS);
+    cardContent.getStyleClass().add("card-content");
+    cardContent.setMinHeight(160);
 
 
     VBox lines = new VBox();
     VBox.setVgrow(lines, Priority.ALWAYS);
+    lines.getStyleClass().add("lines");
     lines.setPadding(new Insets(5));
     lines.setSpacing(5);
 
+    Label recipeTypeLabel = new Label(recipe.getRecipeType().getDisplayName());
+    recipeTypeLabel.getStyleClass().add("type");
+    lines.getChildren().add(recipeTypeLabel);
+    
     Label categoryLabel = new Label(recipe.getTagString());
+    categoryLabel.getStyleClass().add("categories");
     categoryLabel.setWrapText(true);
     categoryLabel.setAlignment(Pos.TOP_LEFT);
     lines.getChildren().add(categoryLabel);
@@ -173,7 +176,7 @@ public class RecipeListCardView {
     
     Integer totalTime = recipe.getPreparationTime() != null ? recipe.getPreparationTime() : 0;
     totalTime = totalTime + (recipe.getCookTime() != null ? recipe.getCookTime() : 0);
-    String cooktime = "Totale tijd " + totalTime + " minuten";
+    String cooktime = "Klaar in " + totalTime + " minuten";
     Label cooktimeLabel = new Label(cooktime);
     cooktimeLabel.setWrapText(true);
     if (!totalTime.equals(0)) {
@@ -187,15 +190,14 @@ public class RecipeListCardView {
       lines.getChildren().add(timesServedLabel);
     }
     
-    Region buffer = new Region();
-    VBox.setVgrow(buffer, Priority.ALWAYS);
-    lines.getChildren().add(buffer);
-    
+    Region vBuffer = new Region();
+    VBox.setVgrow(vBuffer, Priority.ALWAYS);
+    lines.getChildren().add(vBuffer);
     
     if (recipe.getRating() != null && recipe.getRating() != 0) {
       HBox rating = new HBox();   
       for (int i = 0; i < recipe.getRating(); i++) {
-        SVGImage starImage = ToolBarFactory.createImage("/icons/rating.svg", 20d);
+        SVGImage starImage = ToolBarFactory.createImage("/icons/rating.svg", 18d);
         rating.getChildren().add(starImage);
       }
       lines.getChildren().add(rating);
@@ -209,9 +211,9 @@ public class RecipeListCardView {
     imageView = imageService.loadRecipeImage(imageView, recipe, 150d);
     imageViewBox.getChildren().add(imageView);
 
-    content.getChildren().addAll(imageViewBox, lines);
+    cardContent.getChildren().addAll(imageViewBox, lines);
 
-    recipeCard.getChildren().addAll(header, new Separator(Orientation.HORIZONTAL), content);
+    recipeCard.getChildren().addAll(header, new Separator(Orientation.HORIZONTAL), cardContent);
     return recipeCard;
   }
 
@@ -222,7 +224,6 @@ public class RecipeListCardView {
   }
 
   private void onPlanningCheckBoxClicked(ActionEvent event, Recipe recipe) {
-    log.debug("{}", ((CheckBox) event.getSource()).isSelected());
     if (((CheckBox) event.getSource()).isSelected()) {
       planRecipe(event, recipe);
     } else {
