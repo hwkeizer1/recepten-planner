@@ -43,6 +43,9 @@ public final class ViewMessages {
   public static final String EDIT_SHOPPING_ITEMS = "Boodschappen bewerken";
   public static final String SHOPPING_ITEM_NAME_CANNOT_BE_EMPTY =
       "Boodschap naam mag niet leeg zijn";
+  
+  public static final String SERVINGS_MUST_BE_MORE_THEN_NULL =
+	      "Aantal personen moet meer dan 0 zijn";
 
   public static final String RECIPE = "Recept";
   public static final String RECIPE_ = "Recept ";
