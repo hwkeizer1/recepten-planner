@@ -61,6 +61,6 @@ tasks.withType(JavaCompile) {
 apply plugin: 'org.springframework.boot'
 
 bootJar {    
-    baseName = "Recepten-planner"
+    archiveFileName = "Recepten-planner"
 }
 
