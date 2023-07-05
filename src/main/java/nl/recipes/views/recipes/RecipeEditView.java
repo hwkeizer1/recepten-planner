@@ -76,7 +76,6 @@ public class RecipeEditView {
   ImageView imageView = new ImageView();
 
   TextField recipeName;
-
   Label recipeNameError;
 
   TextField preparationTime;
@@ -84,6 +83,7 @@ public class RecipeEditView {
   TextField cookTime;
 
   TextField servings;
+  Label servingsError;
 
   TextArea preparations;
 
@@ -202,16 +202,22 @@ public class RecipeEditView {
     recipeForm.add(cookTimeLabel, 0, 2);
     recipeForm.add(cookTime, 1, 2);
 
-    Label servingsLabel = new Label("Aantal personen:");
-    servings = new TextField();
-    servings.setMaxWidth(100);
-    servings.textProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.matches("\\d*"))
-        return;
-      servings.setText(newValue.replaceAll("[^\\d]", ""));
-    });
+	Label servingsLabel = new Label("Aantal personen:");
+	GridPane.setValignment(servingsLabel, VPos.TOP);
+	VBox servingsWithValidation = new VBox();
+	servings = new TextField();
+	servingsError = new Label();
+	servings.setMaxWidth(100);
+	servings.textProperty().addListener((observable, oldValue, newValue) -> {
+		if (newValue.matches("\\d*")) {
+			servingsError.setText(null);
+			return;
+		}
+		servings.setText(newValue.replaceAll("[^\\d]", ""));
+	});
+    servingsWithValidation.getChildren().addAll(servings, servingsError);
     recipeForm.add(servingsLabel, 0, 3);
-    recipeForm.add(servings, 1, 3);
+    recipeForm.add(servingsWithValidation, 1, 3);
 
     Label preparationsLabel = new Label("Voorbereiding:");
     GridPane.setValignment(preparationsLabel, VPos.TOP);
@@ -374,13 +380,11 @@ public class RecipeEditView {
       Recipe updatedRecipe = recipeService.update(selectedRecipe, update);
       rootView.showRecipeSingleViewPanel(updatedRecipe);
     } catch (NotFoundException | AlreadyExistsException e) {
-      // Fix this error message
-      e.printStackTrace();
+    	recipeNameError.setText(e.getMessage());
     }
   }
 
   private void handleRecipeNameKeyReleasedAction(KeyEvent keyEvent) {
-    selectedRecipe.setName(recipeName.getText());
     recipeNameError.setText(null);
   }
 
