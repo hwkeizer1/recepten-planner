@@ -25,87 +25,94 @@ import nl.recipes.views.root.RootView;
 @Component
 public class PlanningView {
 
-  private RootView rootView;
+	private RootView rootView;
 
-  private final PlanningService planningService;
+	private final PlanningService planningService;
 
-  VBox planningBox;
+	VBox planningBox;
+	Label servings;
 
-  public PlanningView(PlanningService planningService) {
-    this.planningService = planningService;
-  }
+	public PlanningView(PlanningService planningService) {
+		this.planningService = planningService;
+	}
 
-  public void setRootView(RootView rootView) {
-    this.rootView = rootView;
-  }
+	public void setRootView(RootView rootView) {
+		this.rootView = rootView;
+	}
 
-  public VBox getPlanningView(Planning planning) {
-    DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("cccc dd MMMM yyyy");
-    Label dateLabel = new Label(customFormatter.format(planning.getDate()));
-    dateLabel.getStyleClass().add(CSS_PLANNING_DATE);
+	public VBox getPlanningView(Planning planning) {
 
-    Region regionHeader = new Region();
-    HBox.setHgrow(regionHeader, Priority.ALWAYS);
+		planning.setServings(2); // Default for now, configurable later
+		DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("cccc dd MMMM yyyy");
+		Label dateLabel = new Label(customFormatter.format(planning.getDate()));
+		dateLabel.getStyleClass().add(CSS_PLANNING_DATE);
 
-    Button clear = new Button("Leeg maken");
-    clear.setOnAction(e -> clearPlanning(planning));
-    clear.setMinWidth(100);
+		Region regionHeader = new Region();
+		HBox.setHgrow(regionHeader, Priority.ALWAYS);
 
-    HBox headerBox = new HBox();
-    headerBox.getChildren().addAll(dateLabel, regionHeader, clear);
+		Button clear = new Button("Leeg maken");
+		clear.setOnAction(e -> clearPlanning(planning));
+		clear.setMinWidth(100);
 
-    planningBox = new VBox();
+		HBox headerBox = new HBox();
+		headerBox.getChildren().addAll(dateLabel, regionHeader, clear);
 
-    planningBox.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
-    planningBox.getChildren().add(headerBox);
+		planningBox = new VBox();
+		planningBox.setSpacing(10);
 
-    Region regionFooter = new Region();
-    HBox.setHgrow(regionFooter, Priority.ALWAYS);
+		planningBox.getStyleClass().addAll(CSS_DROP_SHADOW, CSS_WIDGET);
+		planningBox.getChildren().add(headerBox);
 
-    CheckBox shoppingCheckBox = new CheckBox("Op boodschappenlijst");
-    shoppingCheckBox.setSelected(planning.isOnShoppingList());
-    shoppingCheckBox.setOnAction(e -> setOnShoppingList(planning, shoppingCheckBox.isSelected()));
+		servings = new Label(planning.getServings() == null ? "-" : "Aantal personen: " + planning.getServings().toString());
 
-    HBox footerBox = new HBox();
-    footerBox.getChildren().addAll(regionFooter, shoppingCheckBox);
+		Region regionFooter = new Region();
+		HBox.setHgrow(regionFooter, Priority.ALWAYS);
 
-    GridPane recipeList = new GridPane();
+		CheckBox shoppingCheckBox = new CheckBox("Op boodschappenlijst");
+		shoppingCheckBox.setSelected(planning.isOnShoppingList());
+		shoppingCheckBox.setOnAction(e -> setOnShoppingList(planning, shoppingCheckBox.isSelected()));
 
-    int row = 0;
-    if (planning.getRecipes().isEmpty()) {
-      shoppingCheckBox.setVisible(false);
-    }
-    for (Recipe recipe : planning.getRecipesOrderedByType()) {
-      Label recipeTypeLabel = new Label(recipe.getRecipeType().getDisplayName() + ":");
-      recipeTypeLabel.setMinWidth(120);
-      recipeList.add(recipeTypeLabel, 0, row);
-      Label recipeNameLabel = new Label(recipe.getName());
-      recipeNameLabel.getStyleClass().add(CSS_PLANNING_RECIPE_LINK);
-      recipeNameLabel.setOnMouseClicked(event -> showRecipeSingleView(recipe));
-      recipeList.add(recipeNameLabel, 1, row);
-      row++;
-    }
+		HBox footerBox = new HBox();
+		footerBox.getChildren().addAll(servings, regionFooter, shoppingCheckBox);
 
-    planningBox.getChildren().addAll(recipeList, footerBox);
-    return planningBox;
-  }
+		GridPane recipeList = new GridPane();
 
-  private void showRecipeSingleView(Recipe recipe) {
-    if (rootView != null) {
-      rootView.showRecipeSingleViewPanel(recipe);
-    }
-  }
+		int row = 0;
+		if (planning.getRecipes().isEmpty()) {
+			shoppingCheckBox.setVisible(false);
+			servings.setVisible(false);
+		}
+		for (Recipe recipe : planning.getRecipesOrderedByType()) {
+			Label recipeTypeLabel = new Label(recipe.getRecipeType().getDisplayName() + ":");
+			recipeTypeLabel.setMinWidth(120);
+			recipeList.add(recipeTypeLabel, 0, row);
+			Label recipeNameLabel = new Label(recipe.getName());
+			recipeNameLabel.getStyleClass().add(CSS_PLANNING_RECIPE_LINK);
+			recipeNameLabel.setOnMouseClicked(event -> showRecipeSingleView(recipe));
+			recipeList.add(recipeNameLabel, 1, row);
+			row++;
+		}
 
-  private void clearPlanning(Planning planning) {
-    planningService.clearPlanning(planning);
-    if (rootView != null) {
-      rootView.showPlanningPanel(null);
-    }
-  }
+		planningBox.getChildren().addAll(recipeList, footerBox);
+		return planningBox;
+	}
 
-  private void setOnShoppingList(Planning planning, boolean onShoppingList) {
-    planning.setOnShoppingList(onShoppingList);
-    planningService.updatePlanning(planning);
-  }
+	private void showRecipeSingleView(Recipe recipe) {
+		if (rootView != null) {
+			rootView.showRecipeSingleViewPanel(recipe);
+		}
+	}
+
+	private void clearPlanning(Planning planning) {
+		planningService.clearPlanning(planning);
+		if (rootView != null) {
+			rootView.showPlanningPanel(null);
+		}
+	}
+
+	private void setOnShoppingList(Planning planning, boolean onShoppingList) {
+		planning.setOnShoppingList(onShoppingList);
+		planningService.updatePlanning(planning);
+	}
 
 }
