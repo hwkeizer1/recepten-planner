@@ -372,7 +372,7 @@ public class RecipeSingleView {
   }
 
   private void planRecipe(ActionEvent event) {
-    planningService.addRecipeToPlanning(selectedRecipe);
+    planningService.addRecipeToRecipeList(selectedRecipe);
   }
 
 }

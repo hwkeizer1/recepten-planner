@@ -280,7 +280,7 @@ public class RecipeListView {
 
   private void planRecipe(ActionEvent event) {
     if (selectedRecipe != null) {
-      planningService.addRecipeToPlanning(selectedRecipe);
+      planningService.addRecipeToRecipeList(selectedRecipe);
     }
   }
 

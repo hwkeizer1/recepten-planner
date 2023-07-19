@@ -70,7 +70,8 @@ public class PlanningView {
 
 		CheckBox shoppingCheckBox = new CheckBox("Op boodschappenlijst");
 		shoppingCheckBox.setSelected(planning.isOnShoppingList());
-		shoppingCheckBox.setOnAction(e -> setOnShoppingList(planning, shoppingCheckBox.isSelected()));
+//		shoppingCheckBox.setOnAction(e -> setOnShoppingList(planning, shoppingCheckBox.isSelected()));
+		shoppingCheckBox.setOnAction(e -> planningService.setOnShoppingList(planning, shoppingCheckBox.isSelected()));
 
 		HBox footerBox = new HBox();
 		footerBox.getChildren().addAll(servings, regionFooter, shoppingCheckBox);
@@ -109,10 +110,4 @@ public class PlanningView {
 			rootView.showPlanningPanel(null);
 		}
 	}
-
-	private void setOnShoppingList(Planning planning, boolean onShoppingList) {
-		planning.setOnShoppingList(onShoppingList);
-		planningService.updatePlanning(planning);
-	}
-
 }

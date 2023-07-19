@@ -24,14 +24,17 @@ public class PlanningService {
   private final PlanningRepository planningRepository;
 
   private final RecipeService recipeService;
+  private final IngredientService ingredientService;
 
   private ObservableList<Recipe> observableRecipesList;
 
   private ObservableList<Planning> observablePlanningList;
 
-  public PlanningService(PlanningRepository planningRepository, RecipeService recipeService) {
+  public PlanningService(PlanningRepository planningRepository, RecipeService recipeService,
+      IngredientService ingredientService) {
     this.planningRepository = planningRepository;
     this.recipeService = recipeService;
+    this.ingredientService = ingredientService;
 
     List<Recipe> recipeList = new ArrayList<>();
     observableRecipesList = FXCollections.observableArrayList(recipeList);
@@ -46,11 +49,11 @@ public class PlanningService {
     return observablePlanningList;
   }
 
-  public void addRecipeToPlanning(Recipe recipe) {
+  public void addRecipeToRecipeList(Recipe recipe) {
     observableRecipesList.add(recipe);
   }
 
-  public void removeRecipeFromPlanning(Recipe recipe) {
+  public void removeRecipeFromRecipeList(Recipe recipe) {
     observableRecipesList.remove(observableRecipesList.indexOf(recipe));
   }
 
@@ -73,49 +76,13 @@ public class PlanningService {
     planningRepository.saveAll(observablePlanningList);
   }
 
-  public void updatePlanning(Planning planning) {
-    observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
-    planningRepository.saveAll(observablePlanningList);
+  public void setOnShoppingList(Planning planning, boolean onShoppingList) {
+    planning.setOnShoppingList(onShoppingList);
+    updatePlanning(planning);
   }
 
   public List<Ingredient> getIngredientList() {
-    List<Ingredient> ingredients = getIngredientsFromPlanning();
-    return consolidateIngredients(ingredients);
-  }
-
-  List<Ingredient> consolidateIngredients(List<Ingredient> ingredients) {
-    List<Ingredient> ingredientList = new ArrayList<>();
-    for (Ingredient ingredient : ingredients) {
-
-      boolean exists = false;
-      for (Ingredient resultIngredient : ingredientList) {
-        if (canMerge(ingredient, resultIngredient)) {
-          exists = true;
-          if (ingredient.getAmount() != null && resultIngredient.getAmount() != null) {
-            resultIngredient.setAmount(ingredient.getAmount() + resultIngredient.getAmount());
-          }
-        }
-      }
-      if (!exists) {
-        Ingredient clonedIngredient = new Ingredient.IngredientBuilder()
-            .withAmount(ingredient.getAmount()).withIngredientName(ingredient.getIngredientName())
-            .withOnList(ingredient.isOnList()).withRecipe(ingredient.getRecipe()).build();
-        ingredientList.add(clonedIngredient);
-      }
-    }
-    return ingredientList;
-  }
-
-  boolean canMerge(Ingredient x, Ingredient y) {
-    if (x.getIngredientName().getMeasureUnit() == null) {
-      return (x.getIngredientName().getName().equals(y.getIngredientName().getName())
-          && y.getIngredientName().getMeasureUnit() == null);
-    }
-    if (y.getIngredientName().getMeasureUnit() == null)
-      return false;
-    return (x.getIngredientName().getName().equals(y.getIngredientName().getName())
-        && x.getIngredientName().getMeasureUnit().getName()
-            .equals(y.getIngredientName().getMeasureUnit().getName()));
+    return ingredientService.consolidateIngredients(getIngredientsFromPlanning());
   }
 
   private List<Ingredient> getIngredientsFromPlanning() {
@@ -165,6 +132,11 @@ public class PlanningService {
         e.printStackTrace();
       }
     }
+  }
+
+  private void updatePlanning(Planning planning) {
+    observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
+    planningRepository.saveAll(observablePlanningList);
   }
 
   private void deletePlanning(Planning planning) {

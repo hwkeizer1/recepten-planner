@@ -227,13 +227,13 @@ public class RecipeListCardView {
     if (((CheckBox) event.getSource()).isSelected()) {
       planRecipe(event, recipe);
     } else {
-      planningService.removeRecipeFromPlanning(recipe);
+      planningService.removeRecipeFromRecipeList(recipe);
     }
   }
 
   private void planRecipe(ActionEvent event, Recipe recipe) {
     if (recipe != null) {
-      planningService.addRecipeToPlanning(recipe);
+      planningService.addRecipeToRecipeList(recipe);
     }
   }
 

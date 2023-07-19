@@ -30,6 +30,9 @@ class PlanningServiceTest {
 
   @Mock
   RecipeService recipeService;
+  
+  @Mock
+  IngredientService ingredientService;
 
   @Mock
   PlanningService mockPlanningService;
@@ -62,7 +65,7 @@ class PlanningServiceTest {
   @Test
   void testMoveRecipeToPlanning() {
     for (Recipe recipe : mockRecipes.getRecipeListBasic()) {
-      planningService.addRecipeToPlanning(recipe);
+      planningService.addRecipeToRecipeList(recipe);
     }
     assertEquals(mockRecipes.getRecipeListBasic(), planningService.getRecipeList());
 
@@ -76,19 +79,19 @@ class PlanningServiceTest {
   @Test
   void testRemoveRecipeFromPlanning() {
     for (Recipe recipe : mockRecipes.getRecipeListBasic()) {
-      planningService.addRecipeToPlanning(recipe);
+      planningService.addRecipeToRecipeList(recipe);
     }
     assertEquals(mockRecipes.getRecipeListBasic(), planningService.getRecipeList());
 
     assertEquals(4, planningService.getRecipeList().size());
-    planningService.removeRecipeFromPlanning(mockRecipes.getRecipeListBasic().get(2));
+    planningService.removeRecipeFromRecipeList(mockRecipes.getRecipeListBasic().get(2));
     assertEquals(3, planningService.getRecipeList().size());
   }
 
   @Test
   void testClearPlanning() {
     for (Recipe recipe : mockRecipes.getRecipeListBasic()) {
-      planningService.addRecipeToPlanning(recipe);
+      planningService.addRecipeToRecipeList(recipe);
     }
     when(recipeService.findById(Long.valueOf("1")))
         .thenReturn(Optional.of(mockRecipes.getRecipeListBasic().get(0)));
@@ -103,128 +106,6 @@ class PlanningServiceTest {
     // Recipe moved back from PlanningList to RecipeList
     assertEquals(4, planningService.getRecipeList().size());
     assertNull(planningService.getMockObservablePlanningList().get(0).getRecipes());
-  }
-
-  @Test
-  void testUpdatePlanning() {
-    Planning planning = mockPlannings.getPlanningList().get(3);
-
-    assertEquals(true, planningService.getMockObservablePlanningList().get(3).isOnShoppingList());
-    planning.setOnShoppingList(false);
-
-    planningService.updatePlanning(planning);
-    assertEquals(false, planningService.getMockObservablePlanningList().get(3).isOnShoppingList());
-  }
-
-  @Test
-  void testGetIngredientsFromPlanning() {
-    for (Recipe recipe : mockRecipes.getRecipeListBasic()) {
-      planningService.addRecipeToPlanning(recipe);
-    }
-    when(recipeService.findById(Long.valueOf("1")))
-        .thenReturn(Optional.of(mockRecipes.getRecipeListBasic().get(0)));
-    planningService.moveRecipeToPlanning(mockPlannings.getPlanningList().get(0), "1");
-
-    assertEquals(mockIngredients.getConsolidatedIngredientList(),
-        planningService.getIngredientList());
-  }
-
-  @Test
-  void testCanMerge_BothEqual() {
-    assertEquals(true,
-        planningService
-            .canMerge(
-                new Ingredient.IngredientBuilder()
-                    .withIngredientName(new IngredientName.IngredientNameBuilder()
-                        .withMeasureUnit(
-                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
-                        .withName("ui").build())
-                    .build(),
-                new Ingredient.IngredientBuilder()
-                    .withIngredientName(new IngredientName.IngredientNameBuilder()
-                        .withMeasureUnit(
-                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
-                        .withName("ui").build())
-                    .build()));
-  }
-
-  @Test
-  void testCanMerge_MeasureUnitsDifferent() {
-    assertEquals(false,
-        planningService
-            .canMerge(
-                new Ingredient.IngredientBuilder()
-                    .withIngredientName(new IngredientName.IngredientNameBuilder()
-                        .withMeasureUnit(
-                            new MeasureUnit.MeasureUnitBuilder().withName("bak").build())
-                        .withName("ui").build())
-                    .build(),
-                new Ingredient.IngredientBuilder()
-                    .withIngredientName(new IngredientName.IngredientNameBuilder()
-                        .withMeasureUnit(
-                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
-                        .withName("ui").build())
-                    .build()));
-  }
-
-  @Test
-  void testCanMerge_IngredientNamesDifferent() {
-    assertEquals(false,
-        planningService
-            .canMerge(
-                new Ingredient.IngredientBuilder().withIngredientName(
-                    new IngredientName.IngredientNameBuilder()
-                        .withMeasureUnit(
-                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
-                        .withName("prei").build())
-                    .build(),
-                new Ingredient.IngredientBuilder()
-                    .withIngredientName(new IngredientName.IngredientNameBuilder()
-                        .withMeasureUnit(
-                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
-                        .withName("ui").build())
-                    .build()));
-  }
-
-  @Test
-  void testCanMerge_BothMeasureUnitsNull() {
-    assertEquals(true, planningService.canMerge(
-        new Ingredient.IngredientBuilder()
-            .withIngredientName(new IngredientName.IngredientNameBuilder().withName("ui").build())
-            .build(),
-        new Ingredient.IngredientBuilder()
-            .withIngredientName(new IngredientName.IngredientNameBuilder().withName("ui").build())
-            .build()));
-  }
-
-  @Test
-  void testCanMerge_FirstMeasureUnitNull() {
-    assertEquals(false,
-        planningService.canMerge(
-            new Ingredient.IngredientBuilder().withIngredientName(
-                new IngredientName.IngredientNameBuilder().withName("ui").build()).build(),
-            new Ingredient.IngredientBuilder()
-                .withIngredientName(new IngredientName.IngredientNameBuilder()
-                    .withMeasureUnit(new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
-                    .withName("ui").build())
-                .build()));
-  }
-
-  @Test
-  void testCanMerge_LastMeasureUnitNull() {
-    assertEquals(false,
-        planningService
-            .canMerge(
-                new Ingredient.IngredientBuilder()
-                    .withIngredientName(new IngredientName.IngredientNameBuilder().withName("ui")
-                        .withMeasureUnit(
-                            new MeasureUnit.MeasureUnitBuilder().withName("zak").build())
-                        .build())
-                    .build(),
-                new Ingredient.IngredientBuilder()
-                    .withIngredientName(
-                        new IngredientName.IngredientNameBuilder().withName("ui").build())
-                    .build()));
   }
 
   @Test
