@@ -27,7 +27,7 @@ class PlanningServiceTest {
 
   @Mock
   RecipeService recipeService;
-  
+
   @Mock
   IngredientService ingredientService;
 
@@ -71,6 +71,8 @@ class PlanningServiceTest {
     planningService.moveRecipeToPlanningList(mockPlannings.getPlanningList().get(0), "1");
     assertEquals(1, planningService.getMockObservablePlanningList().get(0).getRecipes().size());
     assertEquals(3, planningService.getRecipeList().size());
+    assertEquals(1, planningService.getMockObservablePlanningList().get(0).getServings(),
+        "Servings should be 1 (based on lowest recipe servings)");
   }
 
   @Test

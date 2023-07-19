@@ -14,7 +14,7 @@ public class MockRecipes {
   public ObservableList<Recipe> getRecipeListBasic() {
     List<Recipe> recipeList = new ArrayList<>();
     recipeList.add(new Recipe.RecipeBuilder().withName("First recipe").withRecipeType(RecipeType.HOOFDGERECHT)
-        .withServings(2).withIngredients(mockIngredients.getIngredientSet()).build(1L));
+        .withServings(1).withIngredients(mockIngredients.getIngredientSet()).build(1L));
     recipeList.add(new Recipe.RecipeBuilder().withName("Second recipe").withServings(2).withRecipeType(RecipeType.AMUSE)
         .build(2L));
     recipeList.add(new Recipe.RecipeBuilder().withName("Third recipe").withServings(2)
