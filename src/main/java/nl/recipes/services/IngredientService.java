@@ -3,12 +3,10 @@ package nl.recipes.services;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
 
-@Slf4j
 @Service
 public class IngredientService {
   

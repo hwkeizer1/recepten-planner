@@ -8,7 +8,6 @@ import static nl.recipes.views.ViewConstants.CSS_WIDGET;
 import java.time.format.DateTimeFormatter;
 import java.util.function.UnaryOperator;
 import org.springframework.stereotype.Component;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -20,14 +19,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.util.converter.IntegerStringConverter;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.PlanningService;
 import nl.recipes.views.root.RootView;
 
-@Slf4j
 @Component
 public class PlanningView {
 
