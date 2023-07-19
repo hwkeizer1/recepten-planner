@@ -59,9 +59,13 @@ public class PlanningService {
 
   public void moveRecipeToPlanningList(Planning planning, String recipeId) {
     recipeService.findById(Long.valueOf(recipeId)).ifPresent(recipe -> {
-      Integer servings = recipe.getServings() > planning.getServings() ? recipe.getServings() : planning.getServings();
+      if (planning.getServings() == 0) {
+        planning.setServings(recipe.getServings());
+      } else {
+        planning.setServings(recipe.getServings() < planning.getServings() ? recipe.getServings()
+            : planning.getServings());
+      }
       planning.addRecipe(recipe);
-      planning.setServings(servings);
       observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
       planningRepository.saveAll(observablePlanningList);
       observableRecipesList.remove(recipe);
@@ -73,6 +77,7 @@ public class PlanningService {
       observableRecipesList.add(recipe);
     }
     planning.setRecipes(null);
+    planning.setServings(0);
     observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
     planningRepository.saveAll(observablePlanningList);
   }
