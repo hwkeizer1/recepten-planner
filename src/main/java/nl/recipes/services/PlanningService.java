@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
@@ -18,6 +19,7 @@ import nl.recipes.exceptions.AlreadyExistsException;
 import nl.recipes.exceptions.NotFoundException;
 import nl.recipes.repositories.PlanningRepository;
 
+@Slf4j
 @Service
 public class PlanningService {
 
@@ -87,16 +89,17 @@ public class PlanningService {
     updatePlanning(planning);
   }
 
-  public List<Ingredient> getIngredientList() {
-    return ingredientService.consolidateIngredients(getIngredientsFromPlanningList());
+  public void setServings(Planning planning, String servings) {
+    if (servings != null && !servings.isEmpty()) {
+      planning.setServings(Integer.valueOf(servings));
+      updatePlanning(planning);
+    }
   }
 
-  private List<Ingredient> getIngredientsFromPlanningList() {
 
-    List<Ingredient> ingredients = observablePlanningList.stream()
-        .filter(Planning::isOnShoppingList).map(Planning::getRecipes).flatMap(List::stream)
-        .map(Recipe::getIngredients).flatMap(Set::stream).collect(Collectors.toList());
-    return ingredients;
+  public List<Ingredient> getIngredientList() {
+    return ingredientService.getConsolidatedIngredientsFromPlanningList(
+        FXCollections.unmodifiableObservableList(observablePlanningList));
   }
 
   private void preparePlanningList() {

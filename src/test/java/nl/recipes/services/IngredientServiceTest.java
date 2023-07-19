@@ -25,48 +25,48 @@ class IngredientServiceTest {
   @Test
   void testConsolidateEqualIngredients() {
     assertEquals(IngredientListFactory.equalIngredientsResult,
-        ingredientService.consolidateIngredients(IngredientListFactory.equalIngredients));
+        ingredientService.getConsolidatedIngredients(IngredientListFactory.equalIngredients));
   }
 
   @Test
   void testNotConsolidateIngredientsWithDifferentMeasureUnits() {
     assertEquals(IngredientListFactory.ingredientsWithDifferentMeasureUnits, ingredientService
-        .consolidateIngredients(IngredientListFactory.ingredientsWithDifferentMeasureUnits));
+        .getConsolidatedIngredients(IngredientListFactory.ingredientsWithDifferentMeasureUnits));
   }
 
   @Test
   void testNotConsolidateIngredientsWithDifferentNames() {
     assertEquals(IngredientListFactory.ingredientsWithDifferentNames, ingredientService
-        .consolidateIngredients(IngredientListFactory.ingredientsWithDifferentNames));
+        .getConsolidatedIngredients(IngredientListFactory.ingredientsWithDifferentNames));
   }
 
   @Test
   void testConsolidateEqualIngredientsWithoutMeasureUnit() {
     assertEquals(IngredientListFactory.equalIngredientsWithoutMeasureUnitResult, ingredientService
-        .consolidateIngredients(IngredientListFactory.equalIngredientsWithoutMeasureUnit));
+        .getConsolidatedIngredients(IngredientListFactory.equalIngredientsWithoutMeasureUnit));
   }
 
   @Test
   void testNotConsolidateEqualIngredientsWithFirstMeasureUnitNull() {
     assertEquals(IngredientListFactory.equalIngredientsWithFirstMeasureUnitNull, ingredientService
-        .consolidateIngredients(IngredientListFactory.equalIngredientsWithFirstMeasureUnitNull));
+        .getConsolidatedIngredients(IngredientListFactory.equalIngredientsWithFirstMeasureUnitNull));
   }
 
   @Test
   void testNotConsolidateEqualIngredientsWithSecondMeasureUnitNull() {
     assertEquals(IngredientListFactory.equalIngredientsWithSecondMeasureUnitNull, ingredientService
-        .consolidateIngredients(IngredientListFactory.equalIngredientsWithSecondMeasureUnitNull));
+        .getConsolidatedIngredients(IngredientListFactory.equalIngredientsWithSecondMeasureUnitNull));
   }
 
   @Test
   void testNotConsolidateEqualIngredientsFirstWithoutAmount() {
     assertEquals(IngredientListFactory.equalIngredientsWithFirstWithoutAmount, ingredientService
-        .consolidateIngredients(IngredientListFactory.equalIngredientsWithFirstWithoutAmount));
+        .getConsolidatedIngredients(IngredientListFactory.equalIngredientsWithFirstWithoutAmount));
   }
 
   @Test
   void testNotConsolidateEqualIngredientsSecondWithoutAmount() {
     assertEquals(IngredientListFactory.equalIngredientsWithSecondWithoutAmount, ingredientService
-        .consolidateIngredients(IngredientListFactory.equalIngredientsWithSecondWithoutAmount));
+        .getConsolidatedIngredients(IngredientListFactory.equalIngredientsWithSecondWithoutAmount));
   }
 }
