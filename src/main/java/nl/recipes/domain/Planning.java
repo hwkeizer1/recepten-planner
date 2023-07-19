@@ -33,7 +33,7 @@ public class Planning implements Comparable<Planning> {
       inverseJoinColumns = @JoinColumn(name = "recipe_id"))
   private List<Recipe> recipes = new ArrayList<>();
 
-  private Integer servings;
+  private Integer servings = 0;
 
   private boolean onShoppingList = true;
 

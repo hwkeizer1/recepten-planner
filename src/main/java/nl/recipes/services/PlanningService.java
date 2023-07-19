@@ -57,14 +57,15 @@ public class PlanningService {
     observableRecipesList.remove(observableRecipesList.indexOf(recipe));
   }
 
-  public void moveRecipeToPlanning(Planning planning, String recipeId) {
-    Optional<Recipe> optionalRecipe = recipeService.findById(Long.valueOf(recipeId));
-    if (optionalRecipe.isPresent()) {
-      planning.addRecipe(optionalRecipe.get());
+  public void moveRecipeToPlanningList(Planning planning, String recipeId) {
+    recipeService.findById(Long.valueOf(recipeId)).ifPresent(recipe -> {
+      Integer servings = recipe.getServings() > planning.getServings() ? recipe.getServings() : planning.getServings();
+      planning.addRecipe(recipe);
+      planning.setServings(servings);
       observablePlanningList.set(observablePlanningList.indexOf(planning), planning);
       planningRepository.saveAll(observablePlanningList);
-      observableRecipesList.remove(optionalRecipe.get());
-    }
+      observableRecipesList.remove(recipe);
+    });
   }
 
   public void clearPlanning(Planning planning) {
@@ -82,10 +83,10 @@ public class PlanningService {
   }
 
   public List<Ingredient> getIngredientList() {
-    return ingredientService.consolidateIngredients(getIngredientsFromPlanning());
+    return ingredientService.consolidateIngredients(getIngredientsFromPlanningList());
   }
 
-  private List<Ingredient> getIngredientsFromPlanning() {
+  private List<Ingredient> getIngredientsFromPlanningList() {
 
     List<Ingredient> ingredients = observablePlanningList.stream()
         .filter(Planning::isOnShoppingList).map(Planning::getRecipes).flatMap(List::stream)

@@ -12,9 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import javafx.collections.FXCollections;
-import nl.recipes.domain.Ingredient;
-import nl.recipes.domain.IngredientName;
-import nl.recipes.domain.MeasureUnit;
 import nl.recipes.domain.Planning;
 import nl.recipes.domain.Recipe;
 import nl.recipes.domain.RecipeType;
@@ -71,7 +68,7 @@ class PlanningServiceTest {
 
     when(recipeService.findById(Long.valueOf("1")))
         .thenReturn(Optional.of(mockRecipes.getRecipeListBasic().get(0)));
-    planningService.moveRecipeToPlanning(mockPlannings.getPlanningList().get(0), "1");
+    planningService.moveRecipeToPlanningList(mockPlannings.getPlanningList().get(0), "1");
     assertEquals(1, planningService.getMockObservablePlanningList().get(0).getRecipes().size());
     assertEquals(3, planningService.getRecipeList().size());
   }
@@ -95,7 +92,7 @@ class PlanningServiceTest {
     }
     when(recipeService.findById(Long.valueOf("1")))
         .thenReturn(Optional.of(mockRecipes.getRecipeListBasic().get(0)));
-    planningService.moveRecipeToPlanning(mockPlannings.getPlanningList().get(0), "1");
+    planningService.moveRecipeToPlanningList(mockPlannings.getPlanningList().get(0), "1");
 
     // Recipe moved from RecipeList to PlanningList
     assertEquals(3, planningService.getRecipeList().size());

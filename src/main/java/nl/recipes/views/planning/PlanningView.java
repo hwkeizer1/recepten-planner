@@ -40,9 +40,8 @@ public class PlanningView {
 		this.rootView = rootView;
 	}
 
-	public VBox getPlanningView(Planning planning) {
+	public VBox createPlanningsView(Planning planning) {
 
-		planning.setServings(2); // Default for now, configurable later
 		DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("cccc dd MMMM yyyy");
 		Label dateLabel = new Label(customFormatter.format(planning.getDate()));
 		dateLabel.getStyleClass().add(CSS_PLANNING_DATE);
@@ -70,7 +69,6 @@ public class PlanningView {
 
 		CheckBox shoppingCheckBox = new CheckBox("Op boodschappenlijst");
 		shoppingCheckBox.setSelected(planning.isOnShoppingList());
-//		shoppingCheckBox.setOnAction(e -> setOnShoppingList(planning, shoppingCheckBox.isSelected()));
 		shoppingCheckBox.setOnAction(e -> planningService.setOnShoppingList(planning, shoppingCheckBox.isSelected()));
 
 		HBox footerBox = new HBox();

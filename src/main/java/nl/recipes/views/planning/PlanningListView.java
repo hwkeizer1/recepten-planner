@@ -137,11 +137,11 @@ public class PlanningListView {
 
     planningList = planningService.getPlanningList();
     for (Planning planning : planningList) {
-      VBox planningListItem = planningView.getPlanningView(planning);
+      VBox planningListItem = planningView.createPlanningsView(planning);
       planningListItem.setOnDragOver(event -> event.acceptTransferModes(TransferMode.MOVE));
       planningListItem.setOnDragDropped(event -> {
         Dragboard db = event.getDragboard();
-        planningService.moveRecipeToPlanning(planning, db.getString());
+        planningService.moveRecipeToPlanningList(planning, db.getString());
         refreshPlanningPanel();
       });
       planningListPanel.getChildren().add(planningListItem);
