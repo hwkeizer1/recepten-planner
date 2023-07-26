@@ -28,8 +28,6 @@ public class RootView {
 
   private final ConfigurationView configurationView;
 
-  private final RecipeListView recipeListView;
-  
   private final RecipeListCardView recipeListCardView;
 
   private final RecipeSingleView recipeSingleView;
@@ -50,14 +48,13 @@ public class RootView {
 
   private MenuBar menuBar = new MenuBar();
 
-  public RootView(RecipeSingleView recipeSingleView, RecipeListView recipeListView,
+  public RootView(RecipeSingleView recipeSingleView,
       RecipeListCardView recipeListCardView, RecipeEditView recipeEditView, 
       ConfigurationView configurationView, RestoreBackupDialog restoreBackupDialog, 
       CreateBackupDialog createBackupDialog, SettingsDialog settingsDialog,
       PlanningListView planningListView, ShoppingPage shoppingPage) {
 
     this.configurationView = configurationView;
-    this.recipeListView = recipeListView;
     this.recipeListCardView = recipeListCardView;
     this.recipeSingleView = recipeSingleView;
     this.recipeEditView = recipeEditView;
@@ -67,7 +64,6 @@ public class RootView {
     this.planningView = planningListView;
     this.shoppingPage = shoppingPage;
 
-    recipeListView.setRootView(this);
     recipeListCardView.setRootView(this);
     recipeSingleView.setRootView(this);
     recipeEditView.setRootView(this);
@@ -83,7 +79,6 @@ public class RootView {
 
   private void initializeRootWindow() {
     rootWindow.getStyleClass().add(CSS_BACKGROUND);
-//    rootWindow.setCenter(recipeListView.getRecipeListPanel());
     rootWindow.setCenter(recipeListCardView.getView());
     rootWindow.setTop(menuBar);
   }

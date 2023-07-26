@@ -42,6 +42,7 @@ import nl.recipes.views.root.RootView;
 
 @Slf4j
 @Component
+@Deprecated
 public class RecipeListView {
 
   private final RecipeService recipeService;
@@ -89,8 +90,8 @@ public class RecipeListView {
     recipeList = new FilteredList<>(recipeService.getList());
     recipeListTableView.setItems(recipeList);
     recipeListTableView.setFixedCellSize(25);
-    recipeListTableView.prefHeightProperty()
-        .bind(recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())).add(30));
+    recipeListTableView.prefHeightProperty().bind(
+        recipeListTableView.fixedCellSizeProperty().multiply(Bindings.size(recipeListTableView.getItems())).add(30));
     return recipeListPane;
   }
 
@@ -181,9 +182,11 @@ public class RecipeListView {
     searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
     searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
     searchFilterBox.getChildren().add(searchFilter);
-    searchFilter.textProperty().addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
+    searchFilter.textProperty()
+        .addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
 
-    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
+    Button clear =
+        ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
     clear.setOnAction(this::clearSearch);
 
     searchFilterBox.getChildren().add(clear);
@@ -220,7 +223,8 @@ public class RecipeListView {
     searchIngredientFilter.textProperty()
         .addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createIngredientPredicate(newValue)));
 
-    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
+    Button clear =
+        ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
     clear.setOnAction(this::clearIngredientSearch);
 
     searchFilterBox.getChildren().add(clear);
@@ -288,7 +292,8 @@ public class RecipeListView {
     if (selectedRecipe != null) {
       Alert alert = new Alert(AlertType.CONFIRMATION);
       alert.setTitle("Bevestig uw keuze");
-      alert.setHeaderText("Weet u zeker dat u het geselecteerde recept '" + selectedRecipe.getName() + "'  wilt verwijderen?");
+      alert.setHeaderText(
+          "Weet u zeker dat u het geselecteerde recept '" + selectedRecipe.getName() + "'  wilt verwijderen?");
       alert.initOwner(recipeListPane.getScene().getWindow());
       alert.showAndWait().filter(response -> response == ButtonType.OK).ifPresent(response -> removeRecipe());
     }
