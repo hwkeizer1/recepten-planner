@@ -69,13 +69,17 @@ public class PlanningView {
     servingsField.setMaxWidth(50);
     UnaryOperator<Change> integerFilter = change -> {
       String input = change.getText();
-      if (input.matches("[1-9]*")) { 
-          return change;
+      if (input.matches("[1-9]*")) {
+        return change;
       }
       return null;
-  };
-  servingsField.setTextFormatter(new TextFormatter<String>(integerFilter));
-    servingsField.setText(planning.getServings().toString());
+    };
+    servingsField.setTextFormatter(new TextFormatter<String>(integerFilter));
+    if (planning.getServings() == null) {
+      planning.setServings(0);
+    }
+      servingsField.setText(planning.getServings().toString());
+    
     servingsField
         .setOnKeyReleased(e -> planningService.setServings(planning, servingsField.getText()));
     servingBox.getChildren().addAll(servingLabel, servingsField);
