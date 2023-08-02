@@ -3,6 +3,7 @@ package nl.recipes.views.recipes;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 import org.girod.javafx.svgimage.SVGImage;
 import org.springframework.stereotype.Component;
@@ -42,7 +43,7 @@ import nl.recipes.views.root.RootView;
 
 @Slf4j
 @Component
-public class RecipeListCardView {
+public class RecipeCardListView {
 
   private final RecipeService recipeService;
   private final ImageService imageService;
@@ -55,13 +56,12 @@ public class RecipeListCardView {
   FilteredList<Recipe> recipeList;
   TextField searchFilter;
   TextField searchIngredientFilter;
-
   ScrollPane scrollPane;
   VBox view;
   VBox content;
-  BootstrapPane recipeListCardPane;
+  BootstrapPane recipeCardListPane;
 
-  public RecipeListCardView(RecipeService recipeService, ImageService imageService, PlanningService planningService) {
+  public RecipeCardListView(RecipeService recipeService, ImageService imageService, PlanningService planningService) {
     this.recipeService = recipeService;
     this.imageService = imageService;
     this.planningService = planningService;
@@ -70,7 +70,7 @@ public class RecipeListCardView {
     scrollPane.setFitToWidth(true);
     scrollPane.setFitToHeight(true);
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-  }
+    }
 
   public void setRootView(RootView rootView) {
     this.rootView = rootView;
@@ -80,6 +80,7 @@ public class RecipeListCardView {
     recipeList = new FilteredList<>(recipeService.getList());
 
     recipeList.addListener((ListChangeListener.Change<? extends Recipe> c) -> {
+      log.debug("Change detected");
       content.getChildren().remove(0);
       content.getChildren().add(createRecipeListCardPane());
       scrollPane.setContent(content);
@@ -94,11 +95,11 @@ public class RecipeListCardView {
   }
 
   private BootstrapPane createRecipeListCardPane() {
-    recipeListCardPane = new BootstrapPane();
-    recipeListCardPane.setPadding(new Insets(15));
-    recipeListCardPane.getStyleClass().add("background");
-    recipeListCardPane.setVgap(25);
-    recipeListCardPane.setHgap(25);
+    recipeCardListPane = new BootstrapPane();
+    recipeCardListPane.setPadding(new Insets(15));
+    recipeCardListPane.getStyleClass().add("background");
+    recipeCardListPane.setVgap(25);
+    recipeCardListPane.setHgap(25);
 
     BootstrapRow row = new BootstrapRow();
     for (Recipe recipe : recipeList) {
@@ -106,8 +107,8 @@ public class RecipeListCardView {
       Node recipeCard = createRecipeCard(recipe, isPlanned);
       row.addColumn(createColumn(recipeCard));
     }
-    recipeListCardPane.addRow(row);
-    return recipeListCardPane;
+    recipeCardListPane.addRow(row);
+    return recipeCardListPane;
   }
 
   private BootstrapColumn createColumn(Node recipeCard) {

@@ -40,6 +40,23 @@ public class RecipeCard extends VBox{
     initializeComponents();
   }
   
+  
+  public void setOnPlanningCheckBoxAction(EventHandler<ActionEvent> event) {
+    planningCheckBox.setOnAction(event);
+  }
+  
+  public void setOnRecipeCardClicked(EventHandler<? super MouseEvent> value) {
+    this.setOnMouseClicked(value);
+  }
+  
+  public void setImage(ImageView imageView) {
+    this.imageViewBox.getChildren().add(imageView);
+  }
+  
+  public void SetVisible(boolean isVisible) {
+    // TODO: implement
+  }
+  
   private void initializeComponents() {
     planningCheckBox = new CheckBox();
     planningCheckBox.setSelected(isPlanned);
@@ -124,17 +141,5 @@ public class RecipeCard extends VBox{
     cardContent.getChildren().addAll(imageViewBox, lines);
 
     this.getChildren().addAll(header, new Separator(Orientation.HORIZONTAL), cardContent);
-  }
-  
-  public void setOnPlanningCheckBoxAction(EventHandler<ActionEvent> event) {
-    planningCheckBox.setOnAction(event);
-  }
-  
-  public void setOnRecipeCardClicked(EventHandler<? super MouseEvent> value) {
-    this.setOnMouseClicked(value);
-  }
-  
-  public void setImage(ImageView imageView) {
-    this.imageViewBox.getChildren().add(imageView);
   }
 }

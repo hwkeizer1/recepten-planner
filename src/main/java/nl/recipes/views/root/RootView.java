@@ -17,7 +17,7 @@ import nl.recipes.views.configurations.ConfigurationView;
 import nl.recipes.views.configurations.SettingsDialog;
 import nl.recipes.views.planning.PlanningListView;
 import nl.recipes.views.recipes.RecipeEditView;
-import nl.recipes.views.recipes.RecipeListCardView;
+import nl.recipes.views.recipes.RecipeCardListView;
 import nl.recipes.views.recipes.RecipeListView;
 import nl.recipes.views.recipes.RecipeSingleView;
 import nl.recipes.views.shopping.ShoppingPage;
@@ -28,7 +28,7 @@ public class RootView {
 
   private final ConfigurationView configurationView;
 
-  private final RecipeListCardView recipeListCardView;
+  private final RecipeCardListView recipeListCardView;
 
   private final RecipeSingleView recipeSingleView;
 
@@ -49,7 +49,7 @@ public class RootView {
   private MenuBar menuBar = new MenuBar();
 
   public RootView(RecipeSingleView recipeSingleView,
-      RecipeListCardView recipeListCardView, RecipeEditView recipeEditView, 
+      RecipeCardListView recipeListCardView, RecipeEditView recipeEditView, 
       ConfigurationView configurationView, RestoreBackupDialog restoreBackupDialog, 
       CreateBackupDialog createBackupDialog, SettingsDialog settingsDialog,
       PlanningListView planningListView, ShoppingPage shoppingPage) {
