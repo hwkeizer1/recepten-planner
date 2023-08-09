@@ -3,22 +3,17 @@ package nl.recipes.views.recipes;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Predicate;
-import org.girod.javafx.svgimage.SVGImage;
 import org.springframework.stereotype.Component;
 import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
@@ -28,7 +23,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.ImageService;
@@ -41,7 +35,6 @@ import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 import nl.recipes.views.components.utils.ToolBarFactory;
 import nl.recipes.views.root.RootView;
 
-@Slf4j
 @Component
 public class RecipeCardListView {
 
@@ -58,52 +51,59 @@ public class RecipeCardListView {
   TextField searchIngredientFilter;
   ScrollPane scrollPane;
   VBox view;
-  VBox content;
-  BootstrapPane recipeCardListPane;
 
   public RecipeCardListView(RecipeService recipeService, ImageService imageService, PlanningService planningService) {
     this.recipeService = recipeService;
     this.imageService = imageService;
     this.planningService = planningService;
 
-    scrollPane = new ScrollPane();
-    scrollPane.setFitToWidth(true);
-    scrollPane.setFitToHeight(true);
-    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-    }
+    view = new VBox();
+    view.getChildren().addAll(createToolBar(view), new ScrollPane());
+  }
 
   public void setRootView(RootView rootView) {
     this.rootView = rootView;
   }
 
   public Node getView() {
+    clearAllFilters();
     recipeList = new FilteredList<>(recipeService.getList());
 
     recipeList.addListener((ListChangeListener.Change<? extends Recipe> c) -> {
-      log.debug("Change detected");
-      content.getChildren().remove(0);
-      content.getChildren().add(createRecipeListCardPane());
-      scrollPane.setContent(content);
+      recreateScrollPane();
     });
 
-    view = new VBox();
-    content = new VBox();
-    content.getChildren().add(createRecipeListCardPane());
-    scrollPane.setContent(content);
-    view.getChildren().addAll(createToolBar(view), scrollPane);
+    recreateScrollPane();
     return view;
   }
 
+  /**
+   * Recreate the current scrollPane to prevent viewport from increasing when replacing content. Seems
+   * some sort of bug
+   */
+  private void recreateScrollPane() {
+    scrollPane = new ScrollPane();
+    scrollPane.setFitToWidth(true);
+    scrollPane.setFitToHeight(true);
+    scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    scrollPane.setContent(createRecipeListCardPane());
+    view.getChildren().remove(1);
+    view.getChildren().add(scrollPane);
+  }
+
   private BootstrapPane createRecipeListCardPane() {
-    recipeCardListPane = new BootstrapPane();
+    BootstrapPane recipeCardListPane = new BootstrapPane();
     recipeCardListPane.setPadding(new Insets(15));
     recipeCardListPane.getStyleClass().add("background");
     recipeCardListPane.setVgap(25);
     recipeCardListPane.setHgap(25);
+    if (recipeList == null || recipeList.isEmpty())
+      return recipeCardListPane;
 
     BootstrapRow row = new BootstrapRow();
     for (Recipe recipe : recipeList) {
-      boolean isPlanned = planningService.getRecipeList().stream().anyMatch(plannedRecipe -> plannedRecipe.getId().equals(recipe.getId()));
+      boolean isPlanned = planningService.getRecipeList().stream()
+          .anyMatch(plannedRecipe -> plannedRecipe.getId().equals(recipe.getId()));
       Node recipeCard = createRecipeCard(recipe, isPlanned);
       row.addColumn(createColumn(recipeCard));
     }
@@ -190,9 +190,11 @@ public class RecipeCardListView {
     searchFilter.setPrefHeight(Region.USE_COMPUTED_SIZE);
     searchFilter.setPrefWidth(Region.USE_COMPUTED_SIZE);
     searchFilterBox.getChildren().add(searchFilter);
-    searchFilter.textProperty().addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
+    searchFilter.textProperty()
+        .addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
 
-    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
+    Button clear =
+        ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
     clear.setOnAction(this::clearSearch);
 
     searchFilterBox.getChildren().add(clear);
@@ -229,7 +231,8 @@ public class RecipeCardListView {
     searchIngredientFilter.textProperty()
         .addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createIngredientPredicate(newValue)));
 
-    Button clear = ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
+    Button clear =
+        ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
     clear.setOnAction(this::clearIngredientSearch);
 
     searchFilterBox.getChildren().add(clear);
@@ -253,6 +256,10 @@ public class RecipeCardListView {
         return true;
       return searchFindIngredient(recipe, searchText);
     };
+  }
+  private void clearAllFilters() {
+    searchFilter.clear();
+    searchIngredientFilter.clear();
   }
 
   private void clearSearch(ActionEvent event) {
