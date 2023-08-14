@@ -2,7 +2,9 @@ package nl.recipes.views.recipes;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Predicate;
 import org.springframework.stereotype.Component;
 import javafx.collections.ListChangeListener;
@@ -23,6 +25,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 import nl.recipes.domain.Ingredient;
 import nl.recipes.domain.Recipe;
 import nl.recipes.services.ImageService;
@@ -35,6 +38,7 @@ import nl.recipes.views.components.pane.bootstrap.Breakpoint;
 import nl.recipes.views.components.utils.ToolBarFactory;
 import nl.recipes.views.root.RootView;
 
+@Slf4j
 @Component
 public class RecipeCardListView {
 
@@ -47,6 +51,7 @@ public class RecipeCardListView {
   DateTimeFormatter df = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
 
   FilteredList<Recipe> recipeList;
+  List<RecipeCard> recipeCardList;
   TextField searchFilter;
   TextField searchIngredientFilter;
   ScrollPane scrollPane;
@@ -56,6 +61,8 @@ public class RecipeCardListView {
     this.recipeService = recipeService;
     this.imageService = imageService;
     this.planningService = planningService;
+
+    recipeCardList = new ArrayList<>();
 
     view = new VBox();
     view.getChildren().addAll(createToolBar(view), new ScrollPane());
@@ -68,10 +75,9 @@ public class RecipeCardListView {
   public Node getView() {
     clearAllFilters();
     recipeList = new FilteredList<>(recipeService.getList());
+    createRecipeCardList();
 
-    recipeList.addListener((ListChangeListener.Change<? extends Recipe> c) -> {
-      recreateScrollPane();
-    });
+    recipeList.addListener((ListChangeListener.Change<? extends Recipe> c) -> recreateScrollPane());
 
     recreateScrollPane();
     return view;
@@ -83,10 +89,10 @@ public class RecipeCardListView {
    */
   private void recreateScrollPane() {
     scrollPane = new ScrollPane();
-    scrollPane.setFitToWidth(true);
-    scrollPane.setFitToHeight(true);
     scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     scrollPane.setContent(createRecipeListCardPane());
+    scrollPane.setFitToWidth(true);
+    scrollPane.setFitToHeight(true);
     view.getChildren().remove(1);
     view.getChildren().add(scrollPane);
   }
@@ -101,14 +107,23 @@ public class RecipeCardListView {
       return recipeCardListPane;
 
     BootstrapRow row = new BootstrapRow();
-    for (Recipe recipe : recipeList) {
-      boolean isPlanned = planningService.getRecipeList().stream()
-          .anyMatch(plannedRecipe -> plannedRecipe.getId().equals(recipe.getId()));
-      Node recipeCard = createRecipeCard(recipe, isPlanned);
-      row.addColumn(createColumn(recipeCard));
+    for (RecipeCard recipeCard : recipeCardList) {
+      if (recipeCard.isCardVisible()) {
+        row.addColumn(createColumn(recipeCard));
+      }
     }
     recipeCardListPane.addRow(row);
     return recipeCardListPane;
+  }
+
+  private void createRecipeCardList() {
+    recipeCardList.clear();
+    for (Recipe recipe : recipeList) {
+      boolean isPlanned = planningService.getRecipeList().stream()
+          .anyMatch(plannedRecipe -> plannedRecipe.getId().equals(recipe.getId()));
+      RecipeCard recipeCard = createRecipeCard(recipe, isPlanned);
+      recipeCardList.add(recipeCard);
+    }
   }
 
   private BootstrapColumn createColumn(Node recipeCard) {
@@ -121,7 +136,7 @@ public class RecipeCardListView {
     return column;
   }
 
-  private Node createRecipeCard(Recipe recipe, boolean isPlanned) {
+  private RecipeCard createRecipeCard(Recipe recipe, boolean isPlanned) {
     RecipeCard recipeCard = new RecipeCard(recipe, isPlanned);
     recipeCard.setOnPlanningCheckBoxAction(event -> onPlanningCheckBoxClicked(event, recipe));
     recipeCard.setOnRecipeCardClicked(event -> onMouseClicked(event, recipe));
@@ -193,6 +208,7 @@ public class RecipeCardListView {
     searchFilter.textProperty()
         .addListener((observable, oldValue, newValue) -> recipeList.setPredicate(createRecipePredicate(newValue)));
 
+
     Button clear =
         ToolBarFactory.createToolBarButton("/icons/filter-remove.svg", searchFilterHeight, "Verwijder filter text");
     clear.setOnAction(this::clearSearch);
@@ -209,10 +225,20 @@ public class RecipeCardListView {
 
   private Predicate<Recipe> createRecipePredicate(String searchText) {
     return recipe -> {
-      if (searchText == null || searchText.isEmpty())
+      if (searchText == null || searchText.isEmpty()) {
         return true;
-      return searchFindRecipe(recipe, searchText);
+      }
+      boolean match = searchFindRecipe(recipe, searchText);
+      updateRecipeCardVisibility(recipe.getName(), match);
+      return match;
     };
+  }
+
+  private void updateRecipeCardVisibility(String name, boolean match) {
+    for (RecipeCard recipeCard : recipeCardList) {
+      if (recipeCard.hasRecipeName(name))
+        recipeCard.setCardVisible(match);
+    }
   }
 
   private HBox createIngredientSearchFilter() {
@@ -252,22 +278,39 @@ public class RecipeCardListView {
 
   private Predicate<Recipe> createIngredientPredicate(String searchText) {
     return recipe -> {
-      if (searchText == null || searchText.isEmpty())
+      if (searchText == null || searchText.isEmpty()) {
         return true;
-      return searchFindIngredient(recipe, searchText);
+      }
+      boolean match = searchFindIngredient(recipe, searchText);
+      updateRecipeCardVisibility(recipe.getName(), match);
+      return match;
     };
   }
+
   private void clearAllFilters() {
+    clearSearchFilter();
+    clearSearchIngredientFilter();
+  }
+
+  private void clearSearchFilter() {
     searchFilter.clear();
+  }
+
+  private void clearSearchIngredientFilter() {
     searchIngredientFilter.clear();
   }
 
   private void clearSearch(ActionEvent event) {
     searchFilter.clear();
+    for (RecipeCard recipeCard : recipeCardList) {
+      recipeCard.setVisible(true);
+    }
+    recreateScrollPane();
   }
 
   private void clearIngredientSearch(ActionEvent event) {
     searchIngredientFilter.clear();
+    recreateScrollPane();
   }
 
 

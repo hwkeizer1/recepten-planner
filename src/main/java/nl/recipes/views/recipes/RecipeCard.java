@@ -53,8 +53,16 @@ public class RecipeCard extends VBox{
     this.imageViewBox.getChildren().add(imageView);
   }
   
-  public void SetVisible(boolean isVisible) {
-    // TODO: implement
+  public void setCardVisible(boolean isVisible) {
+    setVisible(isVisible);
+  }
+  
+  public boolean isCardVisible() {
+    return isVisible();
+  }
+  
+  public boolean hasRecipeName(String name) {
+    return name.equals(recipe.getName());
   }
   
   private void initializeComponents() {
